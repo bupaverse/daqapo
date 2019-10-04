@@ -22,7 +22,7 @@ missing_values(activity_log, level_of_aggregation = "overview",
 Information on the absolute and relative number of missing values at the requested level of aggregation
 }
 \description{
-Function detecting missing values at different levels of aggregation:
+Function detecting missing values at different levels of aggregation
 \itemize{
 \item overview: presents an overview of the absolute and relative number of missing values for each column
 \item column: presents an overview of the absolute and relative number of missing values for a particular column

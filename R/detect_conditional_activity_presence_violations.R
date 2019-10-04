@@ -8,18 +8,48 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the degree to which the specified conditional activity presence is respected/violated.
 #' @export
+
 conditional_activity_presence <- function(activity_log, condition_vector, activity_vector, details = TRUE, filter_condition = NULL){
 
-  # Apply filter condition when specified
-  if(!is.null(filter_condition)) {
-    activity_log <- activity_log %>% filter_(filter_condition)
+  # Initiate warning variables
+  warning.filtercondition <- FALSE
+  error.conditionfilter <- FALSE
+
+  # Check if the required columns are present in the log
+  missing_columns <- check_colnames(activity_log, c("case_id", "activity"))
+  if(!is.null(missing_columns)){
+    stop("The following columns, which are required for the test, were not found in the activity log: ",
+         paste(missing_columns, collapse = "\t"), ".", "\n  ",
+         "Please check rename_activity_log.")
   }
 
-  # Concatenate condition_vector and condition_vector2
+  # Apply filter condition when specified
+  tryCatch({
+    if(!is.null(filter_condition)) {
+      activity_log <- activity_log %>% filter_(filter_condition)
+    }
+  }, error = function(e) {
+    warning.filtercondition <<- TRUE
+  }
+  )
+
+  if(warning.filtercondition) {
+    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
+  }
+
+  # Concatenate condition_vector
   condition_vector <- paste(condition_vector, collapse = " & ")
 
   # Determine cases in activity log for which conditions in condition_vector holds
-  cases_cond_satisfied <- unique((activity_log %>% filter_(condition_vector))$case_id)
+  tryCatch({
+    cases_cond_satisfied <- unique((activity_log %>% filter_(condition_vector))$case_id)
+  }, error = function(e) {
+    error.conditionfilter <<- TRUE
+  })
+
+  if(error.conditionfilter) {
+    stop("The condition vector (", condition_vector, ") is not valid. Check the syntax and column names.")
+  }
 
   # Determine whether activities in activity_vector are recorded for cases in cases_cond_satisfied
   activity_log <- activity_log %>% filter(case_id %in% cases_cond_satisfied, activity %in% activity_vector) %>%

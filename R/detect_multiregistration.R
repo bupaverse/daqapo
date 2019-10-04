@@ -2,14 +2,25 @@
 #'
 #' Function detecting multi-registration for the same case or by the same resource at the same point in time
 #' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
-#' @param level_of_aggregation Level of aggregation at which multi-registration should be detected (either "resource" or "case)
-#' @param timestamp Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)
+#' @param level_of_aggregation Level of aggregation at which multi-registration should be detected (either "resource" or "case")
+#' @param timestamp Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both")
 #' @param threshold_in_seconds Threshold which is applied to determine whether multi-registration occurs (expressed in seconds) (time gaps smaller than threshold are considered as multi-registration)
 #' @param details Boolean indicating wheter details of the results need to be shown
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the occurrence of multi-registration at the selected level of aggregation
 #' @export
 multi_registration <- function(activity_log, level_of_aggregation = "resource", timestamp = "complete", threshold_in_seconds, details = TRUE, filter_condition = NULL){
+
+  # Initiate warning variables
+  warning.filtercondition <- FALSE
+
+  # Check if the required columns are present in the log
+  missing_columns <- check_colnames(activity_log, c("case_id", "resource", "start", "complete"))
+  if(!is.null(missing_columns)){
+    stop("The following columns, which are required for the test, were not found in the activity log: ",
+         paste(missing_columns, collapse = "\t"), ".", "\n  ",
+         "Please check rename_activity_log.")
+  }
 
   # Generate warning if inappropriate level of aggregation is selected
   if(!(level_of_aggregation %in% c("resource", "case"))){
@@ -24,64 +35,99 @@ multi_registration <- function(activity_log, level_of_aggregation = "resource", 
   }
 
   # Apply filter condition when specified
-  if(!is.null(filter_condition)) {
-    activity_log <- activity_log %>% filter_(filter_condition)
+  tryCatch({
+    if(!is.null(filter_condition)) {
+      activity_log <- activity_log %>% filter_(filter_condition)
+    }
+  }, error = function(e) {
+    warning.filtercondition <<- TRUE
+  }
+  )
+
+  if(warning.filtercondition) {
+    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
   }
 
   # Sort the activity log and create appropriate prior-columns
   if(level_of_aggregation == "resource"){
     if(timestamp == "start"){
-      activity_log <- activity_log %>% arrange(resource, start,complete)
-      activity_log$start <- as.character(activity_log$start)
-      activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
-      activity_log$prior_resource <- c(NA, activity_log$resource[-nrow(activity_log)])
-      activity_log$start <- ymd_hms(activity_log$start)
-      activity_log$prior_start <- ymd_hms(activity_log$prior_start)
+      activity_log <- activity_log %>% arrange(resource, start,complete) %>%
+        mutate(
+          prior_start = lag(start),
+          prior_resource = lag(resource)
+        )
+      # activity_log$start <- as.character(activity_log$start)
+      # activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
+      # activity_log$prior_resource <- c(NA, activity_log$resource[-nrow(activity_log)])
+      # activity_log$start <- ymd_hms(activity_log$start)
+      # activity_log$prior_start <- ymd_hms(activity_log$prior_start)
     } else if(timestamp == "complete"){
-      activity_log <- activity_log %>% arrange(resource, complete, start)
-      activity_log$complete <- as.character(activity_log$complete)
-      activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
-      activity_log$prior_resource <- c(NA, activity_log$resource[-nrow(activity_log)])
-      activity_log$complete <- ymd_hms(activity_log$complete)
-      activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
+      activity_log <- activity_log %>% arrange(resource, complete, start) %>%
+        mutate(
+          prior_complete = lag(complete),
+          prior_resource = lag(resource)
+        )
+      # activity_log$complete <- as.character(activity_log$complete)
+      # activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
+      # activity_log$prior_resource <- c(NA, activity_log$resource[-nrow(activity_log)])
+      # activity_log$complete <- ymd_hms(activity_log$complete)
+      # activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
     } else{
-      activity_log <- activity_log %>% arrange(resource, start, complete)
-      activity_log$start <- as.character(activity_log$start)
-      activity_log$complete <- as.character(activity_log$complete)
-      activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
-      activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
-      activity_log$prior_resource <- c(NA, activity_log$resource[-nrow(activity_log)])
-      activity_log$start <- ymd_hms(activity_log$start)
-      activity_log$prior_start <- ymd_hms(activity_log$prior_start)
-      activity_log$complete <- ymd_hms(activity_log$complete)
-      activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
+      activity_log <- activity_log %>% arrange(resource, start, complete) %>%
+        mutate(
+          prior_start = lag(start),
+          prior_complete = lag(complete),
+          prior_resource = lag(resource)
+        )
+      # activity_log$start <- as.character(activity_log$start)
+      # activity_log$complete <- as.character(activity_log$complete)
+      # activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
+      # activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
+      # activity_log$prior_resource <- c(NA, activity_log$resource[-nrow(activity_log)])
+      # activity_log$start <- ymd_hms(activity_log$start)
+      # activity_log$prior_start <- ymd_hms(activity_log$prior_start)
+      # activity_log$complete <- ymd_hms(activity_log$complete)
+      # activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
     }
   } else{
     if(timestamp == "start"){
-      activity_log <- activity_log %>% arrange(case_id, start,complete)
-      activity_log$start <- as.character(activity_log$start)
-      activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
-      activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
-      activity_log$start <- ymd_hms(activity_log$start)
-      activity_log$prior_start <- ymd_hms(activity_log$prior_start)
+      activity_log <- activity_log %>% arrange(case_id, start,complete) %>%
+        mutate(
+          prior_start = lag(start),
+          prior_case = lag(case_id)
+        )
+      # activity_log$start <- as.character(activity_log$start)
+      # activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
+      # activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
+      # activity_log$start <- ymd_hms(activity_log$start)
+      # activity_log$prior_start <- ymd_hms(activity_log$prior_start)
     } else if(timestamp == "complete"){
-      activity_log <- activity_log %>% arrange(case_id, complete, start)
-      activity_log$complete <- as.character(activity_log$complete)
-      activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
-      activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
-      activity_log$complete <- ymd_hms(activity_log$complete)
-      activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
+      activity_log <- activity_log %>% arrange(case_id, complete, start) %>%
+        mutate(
+          prior_complete = lag(complete),
+          prior_case = lag(case_id)
+        )
+      # activity_log$complete <- as.character(activity_log$complete)
+      # activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
+      # activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
+      # activity_log$complete <- ymd_hms(activity_log$complete)
+      # activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
     } else{
-      activity_log <- activity_log %>% arrange(case_id, start,complete)
-      activity_log$start <- as.character(activity_log$start)
-      activity_log$complete <- as.character(activity_log$complete)
-      activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
-      activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
-      activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
-      activity_log$start <- ymd_hms(activity_log$start)
-      activity_log$prior_start <- ymd_hms(activity_log$prior_start)
-      activity_log$complete <- ymd_hms(activity_log$complete)
-      activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
+      activity_log <- activity_log %>% arrange(case_id, start,complete) %>%
+        mutate(
+          prior_start = lag(start),
+          prior_complete = lag(complete),
+          prior_case = lag(case_id)
+        )
+      # activity_log$start <- as.character(activity_log$start)
+      # activity_log$complete <- as.character(activity_log$complete)
+      # activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
+      # activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
+      # activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
+      # activity_log$start <- ymd_hms(activity_log$start)
+      # activity_log$prior_start <- ymd_hms(activity_log$prior_start)
+      # activity_log$complete <- ymd_hms(activity_log$complete)
+      # activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
     }
   }
 

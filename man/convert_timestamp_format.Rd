@@ -8,9 +8,9 @@ convert_timestamp_format(renamed_activity_log,
   timestamp_format = "yyyy-mm-dd hh:mm:ss")
 }
 \arguments{
-\item{timestamp_format}{The format of the timestamps in the original dataset (either "yyyy-mm-dd hh:mm:ss" or "dd-mm-yyyy hh:mm:ss")}
+\item{renamed_activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
 
-\item{activity_log}{The activity log}
+\item{timestamp_format}{The format of the timestamps in the original dataset (either "yyyy-mm-dd hh:mm:ss" or "dd-mm-yyyy hh:mm:ss" or "yyyy/mm/dd hh:mm:ss" or "dd/mm/yyyy hh:mm:ss" or "yyyy-mm-dd" or "dd-mm-yyyy" or "yyyy/mm/dd" or "dd/mm/yyyy")}
 }
 \value{
 Activity log with timestamps in converted timestamp format

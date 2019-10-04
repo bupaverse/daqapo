@@ -7,18 +7,43 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the presence/absence of incomplete cases.
 #' @export
+#'
 incomplete_cases <- function(activity_log, activity_vector, details = TRUE, filter_condition = NULL){
 
+  # Initiate warning variables
+  warning.filtercondition <- FALSE
+
+  # Check if the required columns are present in the log
+  missing_columns <- check_colnames(activity_log, c("case_id", "activity"))
+  if(!is.null(missing_columns)){
+    stop("The following columns, which are required for the test, were not found in the activity log: ",
+         paste(missing_columns, collapse = "\t"), ".", "\n  ",
+         "Please check rename_activity_log.")
+  }
+
   # Apply filter condition when specified
-  if(!is.null(filter_condition)) {
-    activity_log <- activity_log %>% filter_(filter_condition)
+  tryCatch({
+    if(!is.null(filter_condition)) {
+      activity_log <- activity_log %>% filter_(filter_condition)
+    }
+  }, error = function(e) {
+    warning.filtercondition <<- TRUE
+  }
+  )
+
+  if(warning.filtercondition) {
+    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
   }
 
   # Filter out activities which are not part of activity_vector
   activity_log <- activity_log %>% filter(activity %in% activity_vector)
 
   # Determine activities executed for each case
-  activity_log <- activity_log %>% group_by(case_id) %>% arrange(activity) %>% summarize(activity_list = paste(activity, collapse = " - "))
+  #    OBSOLETE - this duplicates repeated activities in the activity_list. For a case to be deemed complete, repetition is not an issue
+  #    activity_log <- activity_log %>% group_by(case_id) %>% arrange(activity) %>% summarize(activity_list = paste(activity, collapse = " - "))
+
+  activity_log <- activity_log %>% distinct(case_id, activity) %>% group_by(case_id) %>% arrange(activity) %>%
+    summarize(activity_list = paste(activity, collapse = " - "))
 
   # Determine deviations between required activities and recorded activities
   req_act_list <- paste(sort(activity_vector), collapse = " - ")
@@ -29,7 +54,7 @@ incomplete_cases <- function(activity_log, activity_vector, details = TRUE, filt
   stat_true <- 100 - stat_false
 
   # Print output
-  if(!is.null(filter_condition)) {
+  if(!is.null(filter_condition) & !warning.filtercondition) {
     cat("Applied filtering condition", filter_condition, "\n", "\n")
   }
 
@@ -38,7 +63,7 @@ incomplete_cases <- function(activity_log, activity_vector, details = TRUE, filt
   cat("These activities are present for",
       nrow(activity_log) - nrow(incomplete), "(", stat_true, "%) of the cases and are not present for",
       nrow(incomplete), "(", stat_false, "%) of the cases.", "\n", "\n")
-  cat("Note: this function only checks the presence of activities for a particular case, not the completness of these entries in the activity log or the order of activities.", "\n", "\n")
+  cat("Note: this function only checks the presence of activities for a particular case, not the completeness of these entries in the activity log or the order of activities.", "\n", "\n")
 
   if(details == TRUE){
     if(stat_false > 0){

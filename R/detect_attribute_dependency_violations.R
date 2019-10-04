@@ -1,6 +1,6 @@
 #' Detect dependency violations between attributes
 #'
-#' Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold)
+#' Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold(s))
 #' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
 #' @param condition_vector1 Vector of condition(s) which serve as an antecedent (if the condition(s) in condition_vector1 hold, then the condition(s) in condition_vector2 should also hold)
 #' @param condition_vector2 Vector of condition(s) which serve as a consequent (if the condition(s) in condition_vector1 hold, then the condition(s) in condition_vector2 should also hold)
@@ -10,9 +10,23 @@
 #' @export
 attribute_dependency <- function(activity_log, condition_vector1, condition_vector2, details = TRUE, filter_condition = NULL){
 
+  # Initiate warning variables
+  warning.filtercondition <- FALSE
+  error.cond1 <- FALSE
+  error.cond2 <- FALSE
+
   # Apply filter condition when specified
-  if(!is.null(filter_condition)) {
-    activity_log <- activity_log %>% filter_(filter_condition)
+  tryCatch({
+    if(!is.null(filter_condition)) {
+      activity_log <- activity_log %>% filter_(filter_condition)
+    }
+  }, error = function(e) {
+    warning.filtercondition <<- TRUE
+  }
+  )
+
+  if(warning.filtercondition) {
+    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
   }
 
   # Concatenate condition_vector1 and condition_vector2
@@ -20,10 +34,26 @@ attribute_dependency <- function(activity_log, condition_vector1, condition_vect
   condition_vector2 <- paste(condition_vector2, collapse = " & ")
 
   # Check rows in activity log for which conditions in condition_vector1 holds
-  activity_log_cond1 <- activity_log %>% filter_(condition_vector1)
+  tryCatch({
+    activity_log_cond1 <- activity_log %>% filter_(condition_vector1)
+  }, error = function(e) {
+    error.cond1 <<- TRUE
+  })
+
+  if(error.cond1) {
+    stop("The first condition vector (", condition_vector1, ") is not valid. Check the syntax and column names.")
+  }
 
   # Check rows for which both condition_vector1 and condition_vector2 holds
-  activity_log_cond12 <- activity_log_cond1 %>% filter_(condition_vector2)
+  tryCatch({
+    activity_log_cond12 <- activity_log_cond1 %>% filter_(condition_vector2)
+  }, error = function(e) {
+    error.cond2 <<- TRUE
+  })
+
+  if(error.cond2) {
+    stop("The second condition vector (", condition_vector2, ") is not valid. Check the syntax and column names.")
+  }
 
   # Prepare output
   stat_true <- nrow(activity_log_cond12) / nrow(activity_log_cond1) * 100

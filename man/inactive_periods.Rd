@@ -5,7 +5,7 @@
 \title{Detect inactive periods}
 \usage{
 inactive_periods(activity_log, threshold_in_minutes, timestamp = "both",
-  only_consider_start_activity = NA, details = TRUE,
+  only_consider_first_activity = NA, details = TRUE,
   filter_condition = NULL)
 }
 \arguments{
@@ -15,7 +15,7 @@ inactive_periods(activity_log, threshold_in_minutes, timestamp = "both",
 
 \item{timestamp}{Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)}
 
-\item{only_consider_start_activity}{When specified, an inactive period only occurs when the time between two consecutive arrivals exceeds the specified threshold (arrival is proxied by the timestamp of the activity/activities specified in this argument)}
+\item{only_consider_first_activity}{List of activity labels marking the first activity in the process. When specified, an inactive period only occurs when the time between two consecutive arrivals exceeds the specified threshold (arrival is proxied by the activity/activities specified in this argument).}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 

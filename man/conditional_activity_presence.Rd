@@ -5,8 +5,8 @@
 \alias{conditional_activity_presence}
 \title{Detect conditional activity presence violations}
 \usage{
-conditional_activity_presence(activity_log, condition_vector, activity_vector,
-  details = TRUE, filter_condition = NULL)
+conditional_activity_presence(activity_log, condition_vector,
+  activity_vector, details = TRUE, filter_condition = NULL)
 }
 \arguments{
 \item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}

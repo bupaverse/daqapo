@@ -7,7 +7,18 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the presence of time anomalies of the specified anomaly type
 #' @export
-time_anomalies <- function(activity_log, anomaly_type = "negative", details = TRUE, filter_condition = NULL){
+time_anomalies <- function(activity_log, anomaly_type = "both", details = TRUE, filter_condition = NULL){
+
+  # Initiate warning variables
+  warning.filtercondition <- FALSE
+
+  # Check if the required columns are present in the log
+  missing_columns <- check_colnames(activity_log, c("activity", "start", "complete"))
+  if(!is.null(missing_columns)){
+    stop("The following columns, which are required for the test, were not found in the activity log: ",
+         paste(missing_columns, collapse = "\t"), ".", "\n  ",
+         "Please check rename_activity_log.")
+  }
 
   # Generate warning if inappropriate anomaly type is selected
   if(!(anomaly_type %in% c("negative", "zero", "both"))){
@@ -16,8 +27,17 @@ time_anomalies <- function(activity_log, anomaly_type = "negative", details = TR
   }
 
   # Apply filter condition when specified
-  if(!is.null(filter_condition)) {
-    activity_log <- activity_log %>% filter_(filter_condition)
+  tryCatch({
+    if(!is.null(filter_condition)) {
+      activity_log <- activity_log %>% filter_(filter_condition)
+    }
+  }, error = function(e) {
+    warning.filtercondition <<- TRUE
+  }
+  )
+
+  if(warning.filtercondition) {
+    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
   }
 
   # Calculate durations

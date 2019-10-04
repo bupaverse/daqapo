@@ -11,9 +11,9 @@ multi_registration(activity_log, level_of_aggregation = "resource",
 \arguments{
 \item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
 
-\item{level_of_aggregation}{Level of aggregation at which multi-registration should be detected (either "resource" or "case)}
+\item{level_of_aggregation}{Level of aggregation at which multi-registration should be detected (either "resource" or "case")}
 
-\item{timestamp}{Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)}
+\item{timestamp}{Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both")}
 
 \item{threshold_in_seconds}{Threshold which is applied to determine whether multi-registration occurs (expressed in seconds) (time gaps smaller than threshold are considered as multi-registration)}
 

@@ -10,9 +10,29 @@
 #' @export
 related_activities <- function(activity_log, activity1, activity2, details = TRUE, filter_condition = NULL){
 
+  # Initiate warning variables
+  warning.filtercondition <- FALSE
+
+  # Check if the required columns are present in the log
+  missing_columns <- check_colnames(activity_log, c("case_id", "activity"))
+  if(!is.null(missing_columns)){
+    stop("The following columns, which are required for the test, were not found in the activity log: ",
+         paste(missing_columns, collapse = "\t"), ".", "\n  ",
+         "Please check rename_activity_log.")
+  }
+
   # Apply filter condition when specified
-  if(!is.null(filter_condition)) {
-    activity_log <- activity_log %>% filter_(filter_condition)
+  tryCatch({
+    if(!is.null(filter_condition)) {
+      activity_log <- activity_log %>% filter_(filter_condition)
+    }
+  }, error = function(e) {
+    warning.filtercondition <<- TRUE
+  }
+  )
+
+  if(warning.filtercondition) {
+    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
   }
 
   # Determine cases for which activity1 is recorded
@@ -34,8 +54,8 @@ related_activities <- function(activity_log, activity1, activity2, details = TRU
   cat("*** OUTPUT ***", "\n")
   cat("The following statement was checked: if", activity1, "is recorded for a case, then", activity2, "should also be recorded.", "\n")
   cat("This statement holds for",
-      length(ac1_cases) - length(only_ac1), "(", stat_true, "%) of the cases and does not hold for",
-      length(only_ac1), "(", stat_false, "%) of the cases.", "\n", "\n")
+      length(ac1_cases) - length(only_ac1), "(", stat_true, "%) of the cases in which", activity1, "was recorded and does not hold for",
+      length(only_ac1), "(", stat_false, "%) of the cases in which", activity1, "was recorded.", "\n", "\n")
 
   if(details == TRUE){
     if(stat_false > 0){

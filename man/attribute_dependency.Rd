@@ -22,5 +22,5 @@ attribute_dependency(activity_log, condition_vector1, condition_vector2,
 Information on the degree to which the specified dependencies are respected/violated.
 }
 \description{
-Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold)
+Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold(s))
 }

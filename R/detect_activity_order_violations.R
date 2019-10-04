@@ -10,6 +10,17 @@
 #' @export
 activity_order <- function(activity_log, activity_order, timestamp = "both", details = TRUE, filter_condition = NULL){
 
+  # Initiate warning variables
+  warning.filtercondition <- FALSE
+
+  # Check if the required columns are present in the log
+  missing_columns <- check_colnames(activity_log, c("case_id", "activity", "start", "complete"))
+  if(!is.null(missing_columns)){
+    stop("The following columns, which are required for the test, were not found in the activity log: ",
+         paste(missing_columns, collapse = "\t"), ".", "\n  ",
+         "Please check rename_activity_log.")
+  }
+
   # Generate warning if inappropriate timestamp value is provided
   if(!(timestamp %in% c("both", "start", "complete"))){
     warning("This timestamp parameter value is not supported. Timestamp parameter should have value: both, start, complete. Default level of aggregation selected: both.")
@@ -17,9 +28,20 @@ activity_order <- function(activity_log, activity_order, timestamp = "both", det
   }
 
   # Apply filter condition when specified
-  if(!is.null(filter_condition)) {
-    activity_log <- activity_log %>% filter_(filter_condition)
+  tryCatch({
+    if(!is.null(filter_condition)) {
+      activity_log <- activity_log %>% filter_(filter_condition)
+    }
+  }, error = function(e) {
+    warning.filtercondition <<- TRUE
   }
+  )
+
+  if(warning.filtercondition) {
+    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
+  }
+
+  n_cases <- activity_log %>% distinct(case_id) %>% nrow()
 
   # Filter activities included in activity_order
   activity_log <- activity_log %>% filter(activity %in% activity_order)
@@ -35,16 +57,24 @@ activity_order <- function(activity_log, activity_order, timestamp = "both", det
     # Sort the activity log
     activity_log <- activity_log %>% arrange(case_id, start,complete, nr)
     # Determine whether activities are overlapping
-    activity_log$start <- as.character(activity_log$start)
-    activity_log$complete <- as.character(activity_log$complete)
-    activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
-    activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
-    activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
-    activity_log$prior_activity <- c(NA, activity_log$activity[-nrow(activity_log)])
-    activity_log$start <- ymd_hms(activity_log$start)
-    activity_log$complete <- ymd_hms(activity_log$complete)
-    activity_log$prior_start <- ymd_hms(activity_log$prior_start)
-    activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
+    #activity_log$start <- as.character(activity_log$start)
+    #activity_log$complete <- as.character(activity_log$complete)
+    #activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
+    #activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
+    #activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
+    #activity_log$prior_activity <- c(NA, activity_log$activity[-nrow(activity_log)])
+    #activity_log$start <- ymd_hms(activity_log$start)
+    #activity_log$complete <- ymd_hms(activity_log$complete)
+    #activity_log$prior_start <- ymd_hms(activity_log$prior_start)
+    #activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
+
+    activity_log <- activity_log %>%
+      mutate(
+        prior_start = lag(start),
+        prior_complete = lag(complete),
+        prior_case = lag(case_id),
+        prior_activity = lag(activity)
+      )
 
     activity_log$time_overlap <- activity_log$case_id == activity_log$prior_case & activity_log$prior_complete > activity_log$start
     activity_log$time_overlap[1] <- FALSE
@@ -74,7 +104,8 @@ activity_order <- function(activity_log, activity_order, timestamp = "both", det
   incorrect_order <- activity_log %>% filter(!(activity_list == req_activity_order))
 
   # Prepare output
-  stat_false <- nrow(incorrect_order) / nrow(activity_log) * 100
+  # stat_false <- nrow(incorrect_order) / nrow(activity_log) * 100
+  stat_false <- nrow(incorrect_order) / n_cases * 100
   stat_true <- 100 - stat_false
 
   # Print output
@@ -86,7 +117,8 @@ activity_order <- function(activity_log, activity_order, timestamp = "both", det
   cat("*** OUTPUT ***", "\n")
   cat("It was checked whether the activity order", req_activity_order, "is respected.", "\n")
   cat("This activity order is respected for",
-      nrow(activity_log) - nrow(incorrect_order), "(", stat_true, "%) of the cases and not for",
+      # nrow(activity_log) - nrow(incorrect_order), "(", stat_true, "%) of the cases and not for",
+      n_cases - nrow(incorrect_order), "(", stat_true, "%) of the cases and not for",
       nrow(incorrect_order), "(", stat_false, "%) of the cases.", "\n", "\n")
 
   cat("Note: cases for which not all activities are recorded, will be considered as cases for which an incorrect order is registered.", "\n", "\n")

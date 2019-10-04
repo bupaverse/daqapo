@@ -4,7 +4,7 @@
 \alias{time_anomalies}
 \title{Detect time anomalies}
 \usage{
-time_anomalies(activity_log, anomaly_type = "negative", details = TRUE,
+time_anomalies(activity_log, anomaly_type = "both", details = TRUE,
   filter_condition = NULL)
 }
 \arguments{

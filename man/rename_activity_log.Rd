@@ -4,8 +4,9 @@
 \alias{rename_activity_log}
 \title{Rename columns in an activity log}
 \usage{
-rename_activity_log(activity_log, case_id_label, activity_label, resource_label,
-  start_time_label, completion_time_label, case_attributes = NULL)
+rename_activity_log(activity_log, case_id_label, activity_label,
+  resource_label, start_time_label, completion_time_label,
+  case_attributes = NULL)
 }
 \arguments{
 \item{activity_log}{The activity log}

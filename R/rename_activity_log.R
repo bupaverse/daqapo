@@ -12,6 +12,18 @@
 #' @export
 rename_activity_log <- function(activity_log, case_id_label, activity_label, resource_label, start_time_label, completion_time_label,
                                 case_attributes = NULL) {
+
+  # Get labels that do not exist in the log
+  missing_columns <- check_colnames(activity_log, case_id_label, activity_label, resource_label, start_time_label, completion_time_label)
+
+  # Send warning message for missing columns and return the raw log if any
+  if(!is.null(missing_columns)){
+    message <- paste(missing_columns, collapse = "\t")
+    warning(paste("The following column labels were not found in the log:", message))
+    return(activity_log)
+  }
+
+  # Rename the columns
   colnames(activity_log)[match(case_id_label, colnames(activity_log))] <- "case_id"
   colnames(activity_log)[match(activity_label, colnames(activity_log))] <- "activity"
   colnames(activity_log)[match(resource_label, colnames(activity_log))] <- "resource"

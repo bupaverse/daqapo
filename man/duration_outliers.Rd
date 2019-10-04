@@ -13,7 +13,7 @@ duration_outliers(activity_log, activity_considered, bound_sd = 3,
 
 \item{activity_considered}{Activity name for which duration outliers should be detected}
 
-\item{bound_sd}{Number of standard deviations from the mean durations which is used to define an outlier in the absence of lower_bound and upper_bound (default value of 3 is used)}
+\item{bound_sd}{Number of standard deviations from the mean duration which is used to define an outlier in the absence of lower_bound and upper_bound (default value of 3 is used)}
 
 \item{lower_bound}{Lower bound for activity duration used during outlier detection (expressed in minutes)}
 

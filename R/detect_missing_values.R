@@ -1,6 +1,6 @@
 #' Detect missing values
 #'
-#' Function detecting missing values at different levels of aggregation:
+#' Function detecting missing values at different levels of aggregation
 #' \itemize{
 #' \item overview: presents an overview of the absolute and relative number of missing values for each column
 #' \item column: presents an overview of the absolute and relative number of missing values for a particular column
@@ -13,7 +13,11 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the absolute and relative number of missing values at the requested level of aggregation
 #' @export
+
 missing_values <- function(activity_log, level_of_aggregation = "overview", colname = NULL, details = TRUE, filter_condition = NULL){
+
+  # Initiate warning variables
+  warning.filtercondition <- FALSE
 
   # Generate warning if inappropriate level of aggregation is requested
   if(!(level_of_aggregation %in% c("overview", "column", "activity"))){
@@ -22,12 +26,21 @@ missing_values <- function(activity_log, level_of_aggregation = "overview", coln
   }
 
   # Apply filter condition when specified
-  if(!is.null(filter_condition)) {
-    activity_log <- activity_log %>% filter_(filter_condition)
+  tryCatch({
+    if(!is.null(filter_condition)) {
+      activity_log <- activity_log %>% filter_(filter_condition)
+    }
+  }, error = function(e) {
+    warning.filtercondition <<- TRUE
+  }
+  )
+
+  if(warning.filtercondition) {
+    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
   }
 
   # Print general output information
-  if(!is.null(filter_condition)) {
+  if(!is.null(filter_condition) & !warning.filtercondition) {
     cat("Applied filtering condition", filter_condition, "\n")
   }
   cat("Selected level of aggregation:", level_of_aggregation, "\n", "\n")
@@ -67,6 +80,13 @@ missing_values <- function(activity_log, level_of_aggregation = "overview", coln
       }
     }
   } else if(level_of_aggregation == "activity"){
+
+    # Check if the required columns are present in the log
+    missing_columns <- check_colnames(activity_log, "activity")
+    if(!is.null(missing_columns)){
+      stop("The following columns, which are required for the test, were not found in the activity log: ", paste(missing_columns, collapse = "\t"), ".", "\n", "Please check rename_activity_log.")
+    }
+
     cat("*** OUTPUT ***", "\n")
     cat("Absolute number of missing values per column (per activity):", "\n")
     print(activity_log %>% group_by(activity) %>% summarise_all(funs(sum(is.na(.)))))

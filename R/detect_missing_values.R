@@ -16,6 +16,9 @@
 
 missing_values <- function(activity_log, level_of_aggregation = "overview", colname = NULL, details = TRUE, filter_condition = NULL){
 
+  # Predefine variables
+  complete.cases <- NULL
+
   # Initiate warning variables
   warning.filtercondition <- FALSE
 

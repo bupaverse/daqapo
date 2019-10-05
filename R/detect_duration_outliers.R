@@ -12,6 +12,9 @@
 #' @export
 duration_outliers <- function(activity_log, activity_considered, bound_sd = 3, lower_bound = NA, upper_bound = NA, details = TRUE, filter_condition = NULL){
 
+  # Predefine variables
+  duration <- NULL
+
   # Initiate warning variables
   warning.filtercondition <- FALSE
 

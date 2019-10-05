@@ -9,6 +9,10 @@
 
 case_id_sequence <- function(activity_log, details = TRUE, filter_condition = NULL) {
 
+  # Predefine variables
+  case <- NULL
+  present <- NULL
+
   # Initiate warning variables
   warning.filtercondition <- FALSE
 

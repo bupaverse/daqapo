@@ -11,6 +11,9 @@
 
 similar_labels <- function(activity_log, column_label, max_edit_distance = 3, show_NA = FALSE, ignore_capitals = FALSE) {
 
+  # Predefine variables
+  similar_to <- NULL
+
   # Check if the log has been renamed
   missing_columns <- check_colnames(activity_log, column_label)
   if(!is.null(missing_columns)){

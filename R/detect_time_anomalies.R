@@ -9,6 +9,10 @@
 #' @export
 time_anomalies <- function(activity_log, anomaly_type = "both", details = TRUE, filter_condition = NULL){
 
+  # Predefine variables
+  type <- NULL
+  duration <- NULL
+
   # Initiate warning variables
   warning.filtercondition <- FALSE
 

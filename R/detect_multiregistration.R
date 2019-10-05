@@ -11,6 +11,18 @@
 #' @export
 multi_registration <- function(activity_log, level_of_aggregation = "resource", timestamp = "complete", threshold_in_seconds, details = TRUE, filter_condition = NULL){
 
+  # Predefine variables
+  less_than_th <- NULL
+  also_include <- NULL
+  prior_start <- NULL
+  prior_resource <- NULL
+  time_gap <- NULL
+  next_less_than_th <- NULL
+  next_resource <- NULL
+  prior_complete <- NULL
+  prior_case <- NULL
+  next_case <- NULL
+
   # Initiate warning variables
   warning.filtercondition <- FALSE
 

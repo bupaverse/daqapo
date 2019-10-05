@@ -10,6 +10,11 @@
 #' @export
 activity_order <- function(activity_log, activity_order, timestamp = "both", details = TRUE, filter_condition = NULL){
 
+  # Predefine variables
+  nr <- NULL
+  overlapping <- NULL
+  activity_list <- NULL
+
   # Initiate warning variables
   warning.filtercondition <- FALSE
 

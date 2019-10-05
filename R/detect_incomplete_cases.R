@@ -10,6 +10,9 @@
 #'
 incomplete_cases <- function(activity_log, activity_vector, details = TRUE, filter_condition = NULL){
 
+  # Predefine variables
+  activity_list <- NULL
+
   # Initiate warning variables
   warning.filtercondition <- FALSE
 

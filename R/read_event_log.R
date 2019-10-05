@@ -21,6 +21,9 @@ read_event_log <- function(file_name, case_id_label = NULL, activity_label = NUL
                            timestamps_label = NULL, case_attributes = NULL, timestamp_format = NULL, event_matching_label = NULL,
                            sep = ",", empty_cells_are_NA = TRUE, zero_values_are_NA = FALSE){
 
+  # Predefine variables
+  str_sub <- NULL
+
   # Check type of file_name input
   if(class(file_name)[1] == "character"){
     extension <- str_sub(file_name, -3)

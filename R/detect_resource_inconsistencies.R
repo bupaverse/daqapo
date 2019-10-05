@@ -17,6 +17,16 @@
 resource_inconsistencies <- function(event_log, case_id_label, activity_label, resource_label, event_lifecycle_label, timestamps_label,
                                      event_matching_label = NULL, details = TRUE, filter_condition = NULL, detect_only = TRUE) {
 
+  # Predefine variables
+  lifecycle <- NULL
+  event_matching <- NULL
+  timestamp <- NULL
+  row_id <- NULL
+  consistent <- NULL
+  row_ids <- NULL
+  new <- NULL
+  gather <- NULL
+
   # Check if the required columns are present in the log
   missing_columns <- check_colnames(event_log, case_id_label, activity_label, resource_label, timestamps_label, event_lifecycle_label, event_matching_label)
   if(!is.null(missing_columns)){

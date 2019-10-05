@@ -11,6 +11,11 @@
 #' @export
 inactive_periods <- function(activity_log, threshold_in_minutes, timestamp = "both", only_consider_first_activity = NA, details = TRUE, filter_condition = NULL){
 
+  # Predefine variables
+  time_gap <- NULL
+  prior_complete <- NULL
+  prior_start <- NULL
+
   # Initiate warning variables
   warning.filtercondition <- FALSE
 

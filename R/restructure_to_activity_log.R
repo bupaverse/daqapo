@@ -17,6 +17,9 @@
 restructure_to_activity_log <- function(event_log, case_id_label, activity_label, resource_label, event_lifecycle_label,
                                         timestamps_label, case_attributes = NULL, event_matching_label = NULL, timestamp_format = "yyyy-mm-dd hh:mm:ss") {
 
+  # Predefine variables
+  str <- NULL
+
   # Check if the provided column labels are correct:
   missing_columns <- check_colnames(event_log, case_id_label, activity_label, resource_label, timestamps_label, case_attributes, event_lifecycle_label, event_matching_label)
   if(!is.null(missing_columns)){

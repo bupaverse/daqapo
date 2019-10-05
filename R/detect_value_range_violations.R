@@ -12,6 +12,9 @@
 #'
 value_range <- function(activity_log, column, domain_range, timestamp_format = "yyyy-mm-dd hh:mm:ss", details = TRUE, filter_condition = NULL){
 
+  # Predefine variables
+  new_ts <- NULL
+
   # Initiate warning variables
   warning.filtercondition <- FALSE
 

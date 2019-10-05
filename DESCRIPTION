@@ -9,9 +9,14 @@ Authors@R: c(
 Description: Package consisting of a collection of functions to assess data quality in process-oriented data.
 License: MIT + file LICENSE
 Encoding: UTF-8
-Depends: R (>= 3.5.0), dplyr, lubridate, stringdist, stringr, tidyr,
-        xesreadR
+Depends:
+  R (>= 3.5.0)
+Imports: 
+  dplyr, 
+  lubridate, 
+  stringdist,
+  stringr,
+  tidyr,
+  xesreadR
+LazyData: true
 RoxygenNote: 6.1.1
-NeedsCompilation: no
-Packaged: 2019-10-04 08:29:22 UTC; lucp10279
-Maintainer: Niels Martin <niels.martin@uhasselt.be>

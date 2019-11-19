@@ -7,6 +7,10 @@
 #' @export
 convert_timestamp_format <- function(renamed_activity_log, timestamp_format = "yyyy-mm-dd hh:mm:ss"){
 
+  # Predefine variables
+  start <- NULL
+  complete <- NULL
+
   if( !("start" %in% colnames(renamed_activity_log)) | !("complete" %in% colnames(renamed_activity_log)) ) {
     warning("Column labels are not converted to standardized values. Please check function rename_activity_log.")
     return(renamed_activity_log)

@@ -23,6 +23,11 @@ read_event_log <- function(file_name, case_id_label = NULL, activity_label = NUL
 
   # Predefine variables
   str_sub <- NULL
+  start <- NULL
+  complete <- NULL
+  case_id <- NULL
+  activity <- NULL
+  resource <- NULL
 
   # Check type of file_name input
   if(class(file_name)[1] == "character"){
@@ -95,18 +100,22 @@ read_event_log <- function(file_name, case_id_label = NULL, activity_label = NUL
       if("data.frame" %in% class(inconsistencies)) {
         if (nrow(inconsistencies) > 0 ) {
           warning.resourceinconsistencies <- TRUE
-          warning("Resource inconsistencies were found in the event log.", "\n  ", "Please check resource_inconsistencies.")
+          warning("Resource inconsistencies were found in the event log.", "\n  ", "Please check resource_inconsistencies.", "\n")
         }
       }
 
       ### Check for duplicate key entries on lifecycle level (i.e. activity duplication)
-      n_duplicates <- raw_event_log %>% count_(c(case_id_label, activity_label, resource_label, event_lifecycle_label, event_matching_label)) %>% filter(n>1)
-      if(n_duplicates %>% nrow() > 0){
+      n_duplicates <- raw_event_log %>% count_(c(case_id_label, activity_label, resource_label, event_lifecycle_label,
+                                                 event_matching_label)) %>% filter(n>1)
+      # n_duplicates <- raw_event_log %>% count(!! rlang::parse_expr(case_id_label), !! rlang::parse_expr(activity_label),
+      #                                          !! rlang::parse_expr(resource_label), !! rlang::parse_expr(event_lifecycle_label),
+      #                                          !! rlang::parse_expr(event_matching_label)) %>% filter(n>1)
+      if(n_duplicates %>% nrow() > 0) {
         warning.duplicatekeys <- TRUE
         warning("Duplicate identifiers are detected in the following case, activity, resource and lifecycle combinations:\n",
                 paste(capture.output(print(n_duplicates)), collapse = "\n"),
                 "\n  ",
-                "Please check restructure_to_activity_log.")
+                "Please check restructure_to_activity_log.", "\n")
       }
 
       if (warning.resourceinconsistencies | warning.duplicatekeys) {
@@ -116,7 +125,7 @@ read_event_log <- function(file_name, case_id_label = NULL, activity_label = NUL
 
       ### Filter on lifecycle states 'start' and 'complete'
       other_events <- raw_event_log %>%
-        filter_(paste0(event_lifecycle_label, " != 'start' & ", event_lifecycle_label, " != 'complete'")) %>%
+        filter(!! rlang::parse_expr(paste0(event_lifecycle_label, " != 'start' & ", event_lifecycle_label, " != 'complete'"))) %>%
         nrow() %>% as.numeric()
       if(other_events > 0) {
         warning("Other event types than 'start' and 'complete' detected. They are filtered out of the event log.")
@@ -124,7 +133,7 @@ read_event_log <- function(file_name, case_id_label = NULL, activity_label = NUL
       rm(other_events)
 
       raw_event_log <- raw_event_log %>%
-        filter_(paste0(event_lifecycle_label, " == 'start' | ", event_lifecycle_label, " == 'complete'"))
+        filter(!! rlang::parse_expr(paste0(event_lifecycle_label, " == 'start' | ", event_lifecycle_label, " == 'complete'")))
 
       ### Go from long to wide format, based on the lifecycles
       raw_event_log <- raw_event_log %>% spread(event_lifecycle_label, timestamps_label)

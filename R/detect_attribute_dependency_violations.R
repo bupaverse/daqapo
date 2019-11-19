@@ -8,7 +8,7 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the degree to which the specified dependencies are respected/violated.
 #' @export
-attribute_dependency <- function(activity_log, condition_vector1, condition_vector2, details = TRUE, filter_condition = NULL){
+detect_attribute_dependencies <- function(activity_log, condition_vector1, condition_vector2, details = TRUE, filter_condition = NULL){
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -18,7 +18,7 @@ attribute_dependency <- function(activity_log, condition_vector1, condition_vect
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE
@@ -35,7 +35,7 @@ attribute_dependency <- function(activity_log, condition_vector1, condition_vect
 
   # Check rows in activity log for which conditions in condition_vector1 holds
   tryCatch({
-    activity_log_cond1 <- activity_log %>% filter_(condition_vector1)
+    activity_log_cond1 <- activity_log %>% filter(!! rlang::parse_expr(condition_vector1))
   }, error = function(e) {
     error.cond1 <<- TRUE
   })
@@ -46,7 +46,7 @@ attribute_dependency <- function(activity_log, condition_vector1, condition_vect
 
   # Check rows for which both condition_vector1 and condition_vector2 holds
   tryCatch({
-    activity_log_cond12 <- activity_log_cond1 %>% filter_(condition_vector2)
+    activity_log_cond12 <- activity_log_cond1 %>% filter(!! rlang::parse_expr(condition_vector2))
   }, error = function(e) {
     error.cond2 <<- TRUE
   })

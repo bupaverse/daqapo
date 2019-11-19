@@ -14,10 +14,11 @@
 #' @return Information on the absolute and relative number of missing values at the requested level of aggregation
 #' @export
 
-missing_values <- function(activity_log, level_of_aggregation = "overview", colname = NULL, details = TRUE, filter_condition = NULL){
+detect_missing_values <- function(activity_log, level_of_aggregation = "overview", colname = NULL, details = TRUE, filter_condition = NULL){
 
   # Predefine variables
   complete.cases <- NULL
+  activity <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -31,7 +32,7 @@ missing_values <- function(activity_log, level_of_aggregation = "overview", coln
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE

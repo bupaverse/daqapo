@@ -7,7 +7,10 @@
 #' @return Information on the incorrect activities in the log
 #' @export
 
-incorrect_activity_names <- function(activity_log, details = TRUE, filter_condition = NULL){
+detect_incorrect_activity_names <- function(activity_log, details = TRUE, filter_condition = NULL){
+
+  # Predefine variables
+  activity <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -23,7 +26,7 @@ incorrect_activity_names <- function(activity_log, details = TRUE, filter_condit
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE

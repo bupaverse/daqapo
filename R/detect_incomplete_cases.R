@@ -8,10 +8,14 @@
 #' @return Information on the presence/absence of incomplete cases.
 #' @export
 #'
-incomplete_cases <- function(activity_log, activity_vector, details = TRUE, filter_condition = NULL){
+
+detect_incomplete_cases <- function(activity_log, activity_vector, details = TRUE, filter_condition = NULL){
 
   # Predefine variables
   activity_list <- NULL
+  case_id <- NULL
+  activity <- NULL
+  complete <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -27,7 +31,7 @@ incomplete_cases <- function(activity_log, activity_vector, details = TRUE, filt
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE
@@ -39,7 +43,7 @@ incomplete_cases <- function(activity_log, activity_vector, details = TRUE, filt
   }
 
   # Filter out activities which are not part of activity_vector
-  activity_log <- activity_log %>% filter(activity %in% activity_vector)
+  # activity_log <- activity_log %>% filter(activity %in% activity_vector)
 
   # Determine activities executed for each case
   #    OBSOLETE - this duplicates repeated activities in the activity_list. For a case to be deemed complete, repetition is not an issue
@@ -49,8 +53,15 @@ incomplete_cases <- function(activity_log, activity_vector, details = TRUE, filt
     summarize(activity_list = paste(activity, collapse = " - "))
 
   # Determine deviations between required activities and recorded activities
-  req_act_list <- paste(sort(activity_vector), collapse = " - ")
-  incomplete <- activity_log %>% filter(!(activity_list == req_act_list))
+  # req_act_list <- paste(sort(activity_vector), collapse = " - ")
+  # incomplete <- activity_log %>% filter(!(activity_list == req_act_list))
+
+  activity_log <- activity_log %>%
+    mutate(
+      complete = str_detect(activity_list, activity_vector)
+    )
+  incomplete <- activity_log %>%
+    filter(complete == FALSE)
 
   # Prepare output
   stat_false <- nrow(incomplete) / nrow(activity_log) * 100
@@ -62,7 +73,7 @@ incomplete_cases <- function(activity_log, activity_vector, details = TRUE, filt
   }
 
   cat("*** OUTPUT ***", "\n")
-  cat("It was checked whether the activities", req_act_list, "are present for cases.", "\n")
+  cat("It was checked whether the activities", paste(sort(activity_vector), collapse = " - "), "are present for cases.", "\n")
   cat("These activities are present for",
       nrow(activity_log) - nrow(incomplete), "(", stat_true, "%) of the cases and are not present for",
       nrow(incomplete), "(", stat_false, "%) of the cases.", "\n", "\n")

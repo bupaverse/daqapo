@@ -9,7 +9,7 @@
 #' @return A data frame containing, for each label in the column, an overview of similar labels.
 #' @export
 
-similar_labels <- function(activity_log, column_label, max_edit_distance = 3, show_NA = FALSE, ignore_capitals = FALSE) {
+detect_similar_labels <- function(activity_log, column_label, max_edit_distance = 3, show_NA = FALSE, ignore_capitals = FALSE) {
 
   # Predefine variables
   similar_to <- NULL
@@ -21,7 +21,7 @@ similar_labels <- function(activity_log, column_label, max_edit_distance = 3, sh
   }
 
   # First extract all unique values of the requested column
-  labels <- activity_log %>% count_(column_label) %>% arrange(-n)
+  labels <- activity_log %>% count(!! rlang::parse_expr(column_label)) %>% arrange(-n)
 
   # Is this a character vector? If not, stop.
   if(class(labels[[column_label]]) != "character"){

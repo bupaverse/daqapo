@@ -17,6 +17,10 @@
 read_activity_log <- function(file_name, case_id_label = NULL, activity_label = NULL, resource_label = NULL, start_label = NULL, complete_label = NULL,
                               case_attributes = NULL, timestamp_format = NULL, sep = ",", empty_cells_are_NA = TRUE, zero_values_are_NA = FALSE){
 
+  # Predefine variables
+  start <- NULL
+  complete <- NULL
+
   if(class(file_name)[1] == "character"){
     if(empty_cells_are_NA == TRUE & zero_values_are_NA == TRUE){
       raw_activity_log <- read.csv(file_name, header = TRUE, sep = sep, stringsAsFactors = FALSE, na.strings = c("NA", "", " ", "\t", 0))

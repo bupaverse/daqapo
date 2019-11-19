@@ -8,7 +8,11 @@
 #' @return An overview of frequencies of activities
 #' @export
 
-activity_frequency <- function(activity_log, ... , details = TRUE, filter_condition = NULL) {
+detect_activity_frequency <- function(activity_log, ... , details = TRUE, filter_condition = NULL) {
+
+  # Predefine variables
+  case_id <- NULL
+  activity <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -24,7 +28,7 @@ activity_frequency <- function(activity_log, ... , details = TRUE, filter_condit
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE
@@ -56,7 +60,7 @@ activity_frequency <- function(activity_log, ... , details = TRUE, filter_condit
 
   frequencies <- activity_log %>% count(case_id, activity) %>% arrange(-n)
   # Case level: interesting activities are those that occur >= threshold times
-  anomalies <- frequencies %>% filter_(anomaly_filter)
+  anomalies <- frequencies %>% filter(!! rlang::parse_expr(anomaly_filter))
 
 
   # Prepare output numbers

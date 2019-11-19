@@ -19,6 +19,11 @@ restructure_to_activity_log <- function(event_log, case_id_label, activity_label
 
   # Predefine variables
   str <- NULL
+  case_id <- NULL
+  activity <- NULL
+  resource <- NULL
+  start <- NULL
+  complete <- NULL
 
   # Check if the provided column labels are correct:
   missing_columns <- check_colnames(event_log, case_id_label, activity_label, resource_label, timestamps_label, case_attributes, event_lifecycle_label, event_matching_label)
@@ -30,11 +35,11 @@ restructure_to_activity_log <- function(event_log, case_id_label, activity_label
 
   # Select only the required columns
   if(is.null(case_attributes) & is.null(event_matching_label)){
-    event_log <- event_log %>% select_(case_id_label, activity_label, resource_label, event_lifecycle_label,
+    event_log <- event_log %>% select(case_id_label, activity_label, resource_label, event_lifecycle_label,
                                        timestamps_label)
   }
   else if(is.null(case_attributes) & !is.null(event_matching_label)){
-    event_log <- event_log %>% select_(case_id_label, activity_label, resource_label, event_lifecycle_label,
+    event_log <- event_log %>% select(case_id_label, activity_label, resource_label, event_lifecycle_label,
                                        timestamps_label, event_matching_label)
   }
   else if(!is.null(case_attributes) & is.null(event_matching_label)){
@@ -51,7 +56,7 @@ restructure_to_activity_log <- function(event_log, case_id_label, activity_label
   event_log[[event_lifecycle_label]] <- str_to_lower(event_log[[event_lifecycle_label]])
 
   other_events <- event_log %>%
-    filter_(paste0(event_lifecycle_label, " != 'start' & ", event_lifecycle_label, " != 'complete'")) %>%
+    filter(!! rlang::parse_expr(paste0(event_lifecycle_label, " != 'start' & ", event_lifecycle_label, " != 'complete'"))) %>%
     nrow() %>% as.numeric()
   if(other_events > 0) {
     warning("Other event types than 'start' and 'complete' detected. They are filtered out of the event log.")
@@ -59,8 +64,8 @@ restructure_to_activity_log <- function(event_log, case_id_label, activity_label
   rm(other_events)
 
   event_log <- event_log %>%
-    filter_(paste0(event_lifecycle_label, " == 'start' | ", event_lifecycle_label, " == 'complete'")) %>%
-    arrange_(timestamps_label)
+    filter(!! rlang::parse_expr(paste0(event_lifecycle_label, " == 'start' | ", event_lifecycle_label, " == 'complete'"))) %>%
+    arrange(!! rlang::parse_expr(timestamps_label))
 
 
   # If there is no event matching column, generate one.
@@ -68,7 +73,8 @@ restructure_to_activity_log <- function(event_log, case_id_label, activity_label
   if(is.null(event_matching_label)){
 
     # Start with checking which events need to be matched via duplicate key entries check:
-    n_duplicates <- event_log %>% count_(c(case_id_label, activity_label, resource_label, event_lifecycle_label)) %>% filter(n>1)
+    n_duplicates <- event_log %>% count(!! rlang::parse_expr(case_id_label), !! rlang::parse_expr(activity_label), !! rlang::parse_expr(resource_label),
+                                          !! rlang::parse_expr(event_lifecycle_label)) %>% filter(n>1)
 
     if(nrow(n_duplicates) > 0){
       ####
@@ -87,7 +93,7 @@ restructure_to_activity_log <- function(event_log, case_id_label, activity_label
 
       # Group and create the row numbers where this is required, then drop the strings for readability
       event_log <- event_log %>%
-        group_by_(case_id_label, activity_label, event_lifecycle_label) %>%
+        group_by(!! rlang::parse_expr(case_id_label), !! rlang::parse_expr(activity_label), !! rlang::parse_expr(event_lifecycle_label)) %>%
         mutate(
           event_matching = if_else(str %in% duplicates, row_number(), NULL)
         ) %>%
@@ -102,10 +108,10 @@ restructure_to_activity_log <- function(event_log, case_id_label, activity_label
   }
 
   ### Restructure
-  event_log <- event_log %>% spread_(event_lifecycle_label, timestamps_label)
+  event_log <- event_log %>% spread(!! rlang::parse_expr(event_lifecycle_label), !! rlang::parse_expr(timestamps_label))
   if (!is.null(event_matching_label)){
     event_log <- event_log %>%
-    select_(paste0("-", event_matching_label))
+    select(- event_matching_label)
   }
 
   ### Check if both start and complete exist in the log. If either is missing, set them to NA

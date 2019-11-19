@@ -8,7 +8,11 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the presence/absence of related activities.
 #' @export
-related_activities <- function(activity_log, activity1, activity2, details = TRUE, filter_condition = NULL){
+
+detect_related_activities <- function(activity_log, activity1, activity2, details = TRUE, filter_condition = NULL){
+
+  # Predefine variables
+  activity <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -24,7 +28,7 @@ related_activities <- function(activity_log, activity1, activity2, details = TRU
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE

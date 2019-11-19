@@ -9,7 +9,11 @@
 #' @return Information on the degree to which the specified conditional activity presence is respected/violated.
 #' @export
 
-conditional_activity_presence <- function(activity_log, condition_vector, activity_vector, details = TRUE, filter_condition = NULL){
+detect_conditional_activity_presence <- function(activity_log, condition_vector, activity_vector, details = TRUE, filter_condition = NULL){
+
+  # Predefine variables
+  case_id <- NULL
+  activity <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -26,7 +30,7 @@ conditional_activity_presence <- function(activity_log, condition_vector, activi
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE
@@ -42,7 +46,7 @@ conditional_activity_presence <- function(activity_log, condition_vector, activi
 
   # Determine cases in activity log for which conditions in condition_vector holds
   tryCatch({
-    cases_cond_satisfied <- unique((activity_log %>% filter_(condition_vector))$case_id)
+    cases_cond_satisfied <- unique((activity_log %>% filter(!! rlang::parse_expr(condition_vector)))$case_id)
   }, error = function(e) {
     error.conditionfilter <<- TRUE
   })

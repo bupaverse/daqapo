@@ -10,10 +10,12 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the presence of activity duration outliers
 #' @export
-duration_outliers <- function(activity_log, activity_considered, bound_sd = 3, lower_bound = NA, upper_bound = NA, details = TRUE, filter_condition = NULL){
+
+detect_duration_outliers <- function(activity_log, activity_considered, bound_sd = 3, lower_bound = NA, upper_bound = NA, details = TRUE, filter_condition = NULL){
 
   # Predefine variables
   duration <- NULL
+  activity <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -29,7 +31,7 @@ duration_outliers <- function(activity_log, activity_considered, bound_sd = 3, l
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE
@@ -59,11 +61,11 @@ duration_outliers <- function(activity_log, activity_considered, bound_sd = 3, l
 
   # Determine upper and lower bounds in case they are not specified
   if(is.na(lower_bound) & is.na(upper_bound)){
-    lower_bound <- mean(activity_log$duration) - bound_sd * sd(activity_log$duration)
+    lower_bound <- mean(activity_log$duration, na.rm = T) - bound_sd * sd(activity_log$duration, na.rm = T)
     if(lower_bound < 0){ # Correction in case a negative value is obtained
       lower_bound <- 0
     }
-    upper_bound <- mean(activity_log$duration) + bound_sd * sd(activity_log$duration)
+    upper_bound <- mean(activity_log$duration, na.rm = T) + bound_sd * sd(activity_log$duration, na.rm = T)
   }
 
   # Outlier determination

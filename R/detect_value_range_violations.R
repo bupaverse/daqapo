@@ -10,7 +10,8 @@
 #' @return Information on the presence of attribute range violations in the specified column
 #' @export
 #'
-value_range <- function(activity_log, column, domain_range, timestamp_format = "yyyy-mm-dd hh:mm:ss", details = TRUE, filter_condition = NULL){
+
+detect_value_range_violations <- function(activity_log, column, domain_range, timestamp_format = "yyyy-mm-dd hh:mm:ss", details = TRUE, filter_condition = NULL){
 
   # Predefine variables
   new_ts <- NULL
@@ -27,7 +28,7 @@ value_range <- function(activity_log, column, domain_range, timestamp_format = "
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE

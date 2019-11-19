@@ -7,11 +7,13 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the presence of time anomalies of the specified anomaly type
 #' @export
-time_anomalies <- function(activity_log, anomaly_type = "both", details = TRUE, filter_condition = NULL){
+
+detect_time_anomalies <- function(activity_log, anomaly_type = "both", details = TRUE, filter_condition = NULL){
 
   # Predefine variables
   type <- NULL
   duration <- NULL
+  activity <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -33,7 +35,7 @@ time_anomalies <- function(activity_log, anomaly_type = "both", details = TRUE, 
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE

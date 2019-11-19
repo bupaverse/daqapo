@@ -12,6 +12,7 @@
 #' @importFrom lubridate dmy
 #' @importFrom lubridate is.POSIXct
 #' @importFrom stringdist ain
+#' @importFrom stringr str_length
 #' @importFrom stringr str_to_lower
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace_all
@@ -24,7 +25,8 @@
 #' @importFrom utils read.csv
 #' @importFrom utils capture.output
 #' @importFrom xesreadR read_xes
+#' @importFrom rlang parse_expr
 #'
 
-utils::globalVariables(c(".","case_id","activity","start","complete","resource"))
+utils::globalVariables(c("."))
 NULL

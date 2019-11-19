@@ -9,7 +9,8 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the occurrence of multi-registration at the selected level of aggregation
 #' @export
-multi_registration <- function(activity_log, level_of_aggregation = "resource", timestamp = "complete", threshold_in_seconds, details = TRUE, filter_condition = NULL){
+
+detect_multiregistration <- function(activity_log, level_of_aggregation = "resource", timestamp = "complete", threshold_in_seconds, details = TRUE, filter_condition = NULL){
 
   # Predefine variables
   less_than_th <- NULL
@@ -22,6 +23,10 @@ multi_registration <- function(activity_log, level_of_aggregation = "resource", 
   prior_complete <- NULL
   prior_case <- NULL
   next_case <- NULL
+  resource <- NULL
+  start <- NULL
+  complete <- NULL
+  case_id <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -49,7 +54,7 @@ multi_registration <- function(activity_log, level_of_aggregation = "resource", 
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE

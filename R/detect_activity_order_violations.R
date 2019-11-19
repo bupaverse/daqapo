@@ -8,12 +8,16 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the degree to which the specified activity order is respected/violated.
 #' @export
-activity_order <- function(activity_log, activity_order, timestamp = "both", details = TRUE, filter_condition = NULL){
+detect_activity_order <- function(activity_log, activity_order, timestamp = "both", details = TRUE, filter_condition = NULL){
 
   # Predefine variables
   nr <- NULL
   overlapping <- NULL
   activity_list <- NULL
+  case_id <- NULL
+  activity <- NULL
+  start <- NULL
+  complete <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -35,7 +39,7 @@ activity_order <- function(activity_log, activity_order, timestamp = "both", det
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE
@@ -84,6 +88,11 @@ activity_order <- function(activity_log, activity_order, timestamp = "both", det
     activity_log$time_overlap <- activity_log$case_id == activity_log$prior_case & activity_log$prior_complete > activity_log$start
     activity_log$time_overlap[1] <- FALSE
     activity_log$overlapping <- NA
+
+    index <- is.na(activity_log$time_overlap)  # NA values are generated when there are missing timestamps. In that case, no overlaps can be detected.
+    activity_log$time_overlap[index] <- FALSE
+    remove(index)
+
     index <- activity_log$time_overlap == TRUE
     activity_log$overlapping[index] <- paste(activity_log$prior_activity[index], "and", activity_log$activity[index])
     remove(index)

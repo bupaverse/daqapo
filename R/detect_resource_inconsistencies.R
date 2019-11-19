@@ -26,6 +26,11 @@ resource_inconsistencies <- function(event_log, case_id_label, activity_label, r
   row_ids <- NULL
   new <- NULL
   gather <- NULL
+  case_id <- NULL
+  activity <- NULL
+  resource <- NULL
+  start <- NULL
+  complete <- NULL
 
   # Check if the required columns are present in the log
   missing_columns <- check_colnames(event_log, case_id_label, activity_label, resource_label, timestamps_label, event_lifecycle_label, event_matching_label)
@@ -55,7 +60,7 @@ resource_inconsistencies <- function(event_log, case_id_label, activity_label, r
 
   # Apply filter condition when specified
   if(!is.null(filter_condition)) {
-    event_log <- event_log %>% filter_(filter_condition)
+    event_log <- event_log %>% filter(!! rlang::parse_expr(filter_condition))
   }
 
   # Prepare the data: make sure the lifecycle column values are all lowercase
@@ -86,16 +91,7 @@ resource_inconsistencies <- function(event_log, case_id_label, activity_label, r
   if(!is.null(event_matching_label)){
     inconsistencies <- event_log %>%
       select(case_id, activity, resource, lifecycle, event_matching) %>% # Only select the essential columns to ensure a good spread. Timestamps
-      spread(lifecycle, resource) #
-
-    # If either start or complete events are missing, there cannot be a resource inconsistency
-    # if(!("start" %in% colnames(inconsistencies)) & !("complete" %in% colnames(inconsistencies))) {
-    #   return("No start events and no complete were found in the event log. Thus there are no resource inconsistencies.")
-    # } else if (("start" %in% colnames(inconsistencies)) & !("complete" %in% colnames(inconsistencies))) {
-    #   return("Only start events were found in the event log. Thus there are no resource inconsistencies.")
-    # } else if (!("start" %in% colnames(inconsistencies)) & ("complete" %in% colnames(inconsistencies))) {
-    #   return("Only complete events were found in the event log. Thus there are no resource inconsistencies.")
-    # }
+      spread(lifecycle, resource)
 
     # Prepare the inconsistencies table for output:
     #   Those activities with different resources or where one of the two is missing
@@ -185,89 +181,6 @@ resource_inconsistencies <- function(event_log, case_id_label, activity_label, r
       select(case_id, activity, start, complete) %>%
       filter(start != complete)
 
-    ### The original code, written by Greg
-    {
-  #   # Start with counting the number of events per case, activity, resource and lifecycle
-  #   inconsistencies <- event_log %>%
-  #     count(case_id, activity, resource, lifecycle) %>%
-  #     spread(lifecycle, n, fill = 0)
-  #
-  #   # If either start or complete events are missing, there cannot be a resource inconsistency
-  #   if(!("start" %in% colnames(inconsistencies)) & !("complete" %in% colnames(inconsistencies))) {
-  #     return("No start events and no complete were found in the event log. Thus there are no resource inconsistencies.")
-  #   } else if (("start" %in% colnames(inconsistencies)) & !("complete" %in% colnames(inconsistencies))) {
-  #     return("Only start events were found in the event log. Thus there are no resource inconsistencies.")
-  #   } else if (!("start" %in% colnames(inconsistencies)) & ("complete" %in% colnames(inconsistencies))) {
-  #     return("Only complete events were found in the event log. Thus there are no resource inconsistencies.")
-  #   }
-  #
-  #   # If both start and complete events are present, continue:
-  #   inconsistencies <- inconsistencies %>%
-  #     filter(start != complete | is.na(start) | is.na(complete)) %>%
-  #     filter(!(is.na(start) & is.na(complete)))
-  #
-  #   # We now have the events with inconsistent resources.
-  #   # For clarity in the output, transform the data so that the two different resources are shown next to each other instead of the counts per lifecycle state.
-  #
-  #   # Keep track of the event to keep in the table to spread later. This is important in case of activity duplication, for example
-  #   inconsistencies <- inconsistencies %>%
-  #     mutate(keep = if_else(start > complete, "start", "complete")) %>%
-  #     gather(lifecycle, n, start, complete) %>%
-  #     filter(keep == lifecycle & n > 0) %>%
-  #     select(-n, -keep)
-  #
-  #   # Sort the rows on timestamps
-  #
-  #   # inconsistencies <- inconsistencies %>%
-  #   #   left_join(log_copy) %>%
-  #   #   arrange(timestamp) %>%
-  #   #   select(-timestamp)
-  #
-  #   # THE JOIN WILL CREATE NEW ROWS IN 'INCONSISTENCIES' WHEN MULTIPLE EVENTS SHARE THE SAME CASE, ACTIVITY, RESOURCE AND LIFECYCLE EVEN THOUGH THEIR TIMESTAMP IS DIFFERENT.
-  #   # BASICALLY, THE INCONSISTENCY LINE IS JOINED WITH ALL THESE TIMESTAMP ENTRIES...
-  #
-  #
-  #   # Row numbers will ensure that the final spread will always work
-  #   # However, only do this when required!
-  #   tryCatch(
-  #     {
-  #       if(nrow(inconsistencies) > 0) {
-  #         inconsistencies <- inconsistencies %>%
-  #           spread(lifecycle, resource) %>% select(case_id, activity, start, complete)
-  #       } else {
-  #         return("No resource inconsistencies were found in the log.")
-  #       }
-  #     },
-  #     # An error indicates that duplicate entries were found: add row numbers and try again
-  #     error = function(e) {
-  #       inconsistencies <<- inconsistencies %>%
-  #         group_by(case_id, activity, lifecycle) %>%
-  #         mutate(r = row_number()) %>%
-  #         ungroup()
-  #
-  #       if(nrow(inconsistencies) > 0) {
-  #         inconsistencies <<- inconsistencies %>%
-  #           spread(lifecycle, resource) %>% select(case_id, activity, start, complete)
-  #       } else {
-  #         return("No resource inconsistencies were found in the log.")
-  #       }
-  #
-  #       warning("At least two start events were linked with two complete events because of duplicate identifiers.\n")
-  #     }
-  #   )
-  #   # inconsistencies <- inconsistencies %>%
-  #   #   group_by(case_id, activity, lifecycle) %>%
-  #   #   mutate(r = row_number()) %>%
-  #   #   ungroup()
-  #   #
-  #   # # If we still have rows in the data frame, we have found inconsistencies to show:
-  #   # if(nrow(inconsistencies) > 0) {
-  #   #   inconsistencies <- inconsistencies %>%
-  #   #   spread(lifecycle, resource) %>% select(case_id, activity, start, complete)
-  #   # } else {
-  #   #   return("No resource inconsistencies were found in the log.")
-  #   # }
-      }
   }
 
   #####                           #####
@@ -283,17 +196,17 @@ resource_inconsistencies <- function(event_log, case_id_label, activity_label, r
   }
 
   # Print output
-  if(!is.null(filter_condition)) {
-    cat("\n\nApplied filtering condition", filter_condition, "\n", "\n")
-  }
-
-  cat("*** OUTPUT ***", "\n")
-  cat("A total of", n_anomalies, "activity executions in the event log are classified as inconsistencies.", "\n", "\n")
-  cat("They are spread over the following cases and activities:", "\n")
 
   if (detect_only) {
     return(inconsistencies)
   } else {
+    if(!is.null(filter_condition)) {
+      cat("\n\nApplied filtering condition", filter_condition, "\n", "\n")
+    }
+
+    cat("*** OUTPUT ***", "\n")
+    cat("A total of", n_anomalies, "activity executions in the event log are classified as inconsistencies.", "\n", "\n")
+    cat("They are spread over the following cases and activities:", "\n")
     print.data.frame(inconsistencies)
   }
 
@@ -307,7 +220,7 @@ resource_inconsistencies <- function(event_log, case_id_label, activity_label, r
     response <- "Y"
   }
 
-  if (str_to_lower(response) == "y") {
+  if (str_to_lower(response) == "y" | stringr::str_length(response) == 0) {
 
     # Get back to custom col names to make mutations easier
     colnames(inconsistencies)[1] <- "case_id"

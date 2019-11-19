@@ -7,7 +7,7 @@
 #' @return A data frame containing the unique (distinct) values (combinations) in the requested column(s).
 #' @export
 
-unique_values <- function(activity_log, ..., filter_condition = NULL) {
+detect_unique_values <- function(activity_log, ..., filter_condition = NULL) {
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -26,7 +26,7 @@ unique_values <- function(activity_log, ..., filter_condition = NULL) {
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE
@@ -38,7 +38,8 @@ unique_values <- function(activity_log, ..., filter_condition = NULL) {
   }
 
   # Take the columns under investigation, compute their distinct values and arrange alphabetically
-  output <- activity_log %>% distinct_(...) %>% arrange_(...)
+  params <- list(...) %>% unlist()
+  output <- activity_log %>% distinct(!! rlang::parse_expr(params)) %>% arrange(!! rlang::parse_expr(params))
 
   # Prepare output
   if(!is.null(filter_condition) & !warning.filtercondition) {

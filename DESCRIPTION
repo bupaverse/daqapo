@@ -2,12 +2,15 @@ Package: daqapo
 Type: Package
 Title: Data Quality Assessment for Process-oriented Data
 Version: 0.2.0
-Author: Niels Martin <niels.martin@uhasselt.be>
 Authors@R: c(
             person("Niels", "Martin", email = "niels.martin@uhasselt.be", role = c("aut", "cre")),
             person("Greg", "Van Houdt", email = "greg.vanhoudt@uhasselt.be", role = "ctb"))
-Description: Package consisting of a collection of functions to assess data quality in process-oriented data.
+Description: Data quality assessment toolkit for process-oriented data.
 License: MIT + file LICENSE
+URL: https://github.com/nielsmartin
+BugReports: https://github.com/nielsmartin/daqapo/issues
+LazyData: true
+RoxygenNote: 6.1.1
 Encoding: UTF-8
 Depends:
   R (>= 3.5.0)
@@ -17,6 +20,9 @@ Imports:
   stringdist,
   stringr,
   tidyr,
-  xesreadR
-LazyData: true
-RoxygenNote: 6.1.1
+  xesreadR,
+  rlang
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

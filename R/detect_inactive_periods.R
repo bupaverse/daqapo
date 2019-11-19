@@ -9,12 +9,17 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the presence of inactive periods.
 #' @export
-inactive_periods <- function(activity_log, threshold_in_minutes, timestamp = "both", only_consider_first_activity = NA, details = TRUE, filter_condition = NULL){
+
+detect_inactive_periods <- function(activity_log, threshold_in_minutes, timestamp = "both", only_consider_first_activity = NA, details = TRUE, filter_condition = NULL){
 
   # Predefine variables
   time_gap <- NULL
   prior_complete <- NULL
   prior_start <- NULL
+  case_id <- NULL
+  activity <- NULL
+  start <- NULL
+  complete <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -36,7 +41,7 @@ inactive_periods <- function(activity_log, threshold_in_minutes, timestamp = "bo
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE

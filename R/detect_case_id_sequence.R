@@ -7,11 +7,12 @@
 #' @return The case IDs that are missing in the sequence.
 #' @export
 
-case_id_sequence <- function(activity_log, details = TRUE, filter_condition = NULL) {
+detect_case_id_sequence_gaps <- function(activity_log, details = TRUE, filter_condition = NULL) {
 
   # Predefine variables
   case <- NULL
   present <- NULL
+  case_id <- NULL
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
@@ -32,7 +33,7 @@ case_id_sequence <- function(activity_log, details = TRUE, filter_condition = NU
   # Apply filter condition when specified
   tryCatch({
     if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter_(filter_condition)
+      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
     }
   }, error = function(e) {
     warning.filtercondition <<- TRUE

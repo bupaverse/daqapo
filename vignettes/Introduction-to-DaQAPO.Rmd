@@ -171,9 +171,9 @@ Table: An overview of data quality tests in DaQAPO.
 
 To illustrate the use of these assessment functions, four functions outlined in the table above are demonstrated in the remainder of this vignette. 
 
-### `value_range()`
+### `detect_value_range_violations()`
 
-The `value_range()` function checks whether the values of a passed attribute are within certain bounds for numeric attributes, or in a list of values for a character or factor attribute. For example, the triage code is typically a number between 1 and 5. We can easily test whether all cases abide to this rule.
+The `detect_value_range_violations()` function checks whether the values of a passed attribute are within certain bounds for numeric attributes, or in a list of values for a character or factor attribute. For example, the triage code is typically a number between 1 and 5. We can easily test whether all cases abide to this rule.
 
 ```{r}
 detect_value_range_violations(hospital, "cattr_triagecode", c(1,5))
@@ -188,7 +188,7 @@ detect_value_range_violations(hospital, "cattr_triagecode", c(1,5)) %>%
 
 Note that the test will always print output statistics.
 
-### `duration_outliers()`
+### `detect_duration_outliers()`
 
 This test checks if there are any activities with a deviating duration compared to the average. The bounds of when a duration is considered to be an outlier can be customized by the user.
 
@@ -212,7 +212,7 @@ detect_duration_outliers(hospital, activity_considered = "Clinical exam", bound_
 ```
 
 
-### `case_id_sequence()`
+### `detect_case_id_sequence_gaps()`
 
 In our toy dataset, the case identifier is a numeric attribute. Therefore, we can check if there are any cases missing in the sequence.
 
@@ -222,9 +222,9 @@ detect_case_id_sequence_gaps(hospital)
 
 Note that this function can only be applied if the case numbering is unique to the business process under investigation.
 
-### `related_activities()`
+### `detect_related_activities()`
 
-Finally, we will demonstrate `related_activities()`, where you can check if an activity is recorded for a case if another is present. This link is very clear between a treatment and its evaluation: a treatment can only be evaluated if a treatment was recorded in the first place.
+Finally, we will demonstrate `detect_related_activities()`, where you can check if an activity is recorded for a case if another is present. This link is very clear between a treatment and its evaluation: a treatment can only be evaluated if a treatment was recorded in the first place.
 
 ```{r}
 detect_related_activities(hospital, "Treatment evaluation", "Treatment")

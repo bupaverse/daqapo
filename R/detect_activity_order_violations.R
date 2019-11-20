@@ -8,7 +8,7 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the degree to which the specified activity order is respected/violated.
 #' @export
-detect_activity_order <- function(activity_log, activity_order, timestamp = "both", details = TRUE, filter_condition = NULL){
+detect_activity_order_violations <- function(activity_log, activity_order, timestamp = "both", details = TRUE, filter_condition = NULL){
 
   # Predefine variables
   nr <- NULL

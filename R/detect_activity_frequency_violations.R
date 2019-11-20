@@ -8,7 +8,7 @@
 #' @return An overview of frequencies of activities
 #' @export
 
-detect_activity_frequency <- function(activity_log, ... , details = TRUE, filter_condition = NULL) {
+detect_activity_frequency_violations <- function(activity_log, ... , details = TRUE, filter_condition = NULL) {
 
   # Predefine variables
   case_id <- NULL

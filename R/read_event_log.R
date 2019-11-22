@@ -17,9 +17,18 @@
 #' @export
 #'
 
-read_event_log <- function(file_name, case_id_label = NULL, activity_label = NULL, resource_label = NULL, event_lifecycle_label = NULL,
-                           timestamps_label = NULL, case_attributes = NULL, timestamp_format = NULL, event_matching_label = NULL,
-                           sep = ",", empty_cells_are_NA = TRUE, zero_values_are_NA = FALSE){
+read_event_log <- function(file_name,
+                           case_id_label = NULL,
+                           activity_label = NULL,
+                           resource_label = NULL,
+                           event_lifecycle_label = NULL,
+                           timestamps_label = NULL,
+                           case_attributes = NULL,
+                           timestamp_format = NULL,
+                           event_matching_label = NULL,
+                           sep = ",",
+                           empty_cells_are_NA = TRUE,
+                           zero_values_are_NA = FALSE){
 
   # Predefine variables
   str_sub <- NULL

@@ -10,7 +10,10 @@
 #' @param case_attributes A vector containing the name(s) of the column(s) in the original dataset reflecting case attributes
 #' @return Activity log with renamed columns
 #' @export
-rename_activity_log <- function(activity_log, case_id_label, activity_label, resource_label, start_time_label, completion_time_label,
+rename_activity_log <- function(activity_log,
+                                case_id_label,
+                                activity_label,
+                                resource_label, start_time_label, completion_time_label,
                                 case_attributes = NULL) {
 
   # Get labels that do not exist in the log

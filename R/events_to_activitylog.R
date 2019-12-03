@@ -23,7 +23,12 @@ events_to_activitylog <- function(eventlog) {
 events_to_activitylog.eventlog <- function(eventlog) {
 
 
+  if(nrow(detect_resource_inconsistencies(eventlog) > 0)) {
+    stop("Eventlog contains resource inconsistencies. First use fix_resource_inconsistencies to fix problem")
+  }
+
   eventlog <- standardize_lifecycle(eventlog)
+
 
   #remove events which are not start or complete
   # if(any(!(lifecycle_labels(eventlog) %in% c("start", "complete")))) {

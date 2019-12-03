@@ -16,6 +16,8 @@
 \alias{mdy_hm}
 \alias{mdy_h}
 \alias{mdy}
+\alias{read_csv}
+\alias{read_csv2}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -26,5 +28,7 @@ below to see their documentation.
   \item{lubridate}{\code{\link[lubridate]{ymd_hms}}, \code{\link[lubridate]{ymd_hm}}, \code{\link[lubridate]{ymd_h}}, \code{\link[lubridate]{ymd}}, \code{\link[lubridate]{dmy_hms}}, \code{\link[lubridate]{dmy_hm}}, \code{\link[lubridate]{dmy_h}}, \code{\link[lubridate]{dmy}}, \code{\link[lubridate]{mdy_hms}}, \code{\link[lubridate]{mdy_hm}}, \code{\link[lubridate]{mdy_h}}, \code{\link[lubridate]{mdy}}}
 
   \item{magrittr}{\code{\link[magrittr]{\%>\%}}}
+
+  \item{readr}{\code{\link[readr]{read_csv}}, \code{\link[readr]{read_csv2}}}
 }}
 

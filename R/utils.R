@@ -40,6 +40,14 @@ lubridate::mdy_h
 #' @export
 lubridate::mdy
 
+
+#' @importFrom readr read_csv
+#' @export
+readr::read_csv
+#' @importFrom readr read_csv2
+#' @export
+readr::read_csv2
+
 #' @importFrom rlang sym
 #'
 case_id_ <- function(eventlog) sym(case_id(eventlog))

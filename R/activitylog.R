@@ -19,7 +19,7 @@ activitylog <- function(activitylog, case_id, activity_id, resource_id, lifecycl
 }
 
 
-#' @describeIn eventlog Create activity log from data.frame
+#' @describeIn activitylog Create activity log from data.frame
 #' @export
 
 activitylog.data.frame <- function(activitylog,

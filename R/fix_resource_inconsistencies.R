@@ -5,10 +5,12 @@
 
 #' Fix resource inconsistencies
 #'
-#' @param eventlog
-#' @param filter_condition
 #'
-#' @return
+#'
+#' @param eventlog Event log object
+#' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
+#' @param overwrite_missings If events are missing, overwrite the resource if other events within activity instance are performed by single resource. Default FALSE.
+#'
 #' @export
 #'
 fix_resource_inconsistencies <- function(eventlog, filter_condition, overwrite_missings, ...) {

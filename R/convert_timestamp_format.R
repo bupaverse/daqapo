@@ -1,48 +1,34 @@
 #' Convert timestamp format
 #'
-#' Function converting the timestamps in the activity log to the appropriate format, required for the application of quality assessment functions
-#' @param renamed_activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
-#' @param timestamp_format The format of the timestamps in the original dataset (either "yyyy-mm-dd hh:mm:ss" or "dd-mm-yyyy hh:mm:ss" or "yyyy/mm/dd hh:mm:ss" or "dd/mm/yyyy hh:mm:ss" or "yyyy-mm-dd" or "dd-mm-yyyy" or "yyyy/mm/dd" or "dd/mm/yyyy")
-#' @return Activity log with timestamps in converted timestamp format
+#' Function converting the timestamps in the data frame to the appropriate format.
+#'
+#' @param x Data.frame containing events or activities.
+#' @param columns A character vector with one or more names of columns to convert
+#' @param format The format of the timestamps in the original dataset (either ymd_hms, dmy_hms, ymd_hm, ymd, dmy, dmy, ...). To be provided without quotation marks!
+#' @return Data.frame with converted timestamps
 #' @export
-convert_timestamp_format <- function(renamed_activity_log, timestamp_format = "yyyy-mm-dd hh:mm:ss"){
+convert_timestamps <- function(x, columns,  format = ymd_hms){
 
-  # Predefine variables
-  start <- NULL
-  complete <- NULL
 
-  if( !("start" %in% colnames(renamed_activity_log)) | !("complete" %in% colnames(renamed_activity_log)) ) {
-    warning("Column labels are not converted to standardized values. Please check function rename_activity_log.")
-    return(renamed_activity_log)
+  stopifnot("data.frame" %in% class(x))
+
+  if(!("character" %in% class(columns) | length(columns) < 1)) {
+    stop("columns should be a character vector with one or more elements.")
+  }
+  if(any(!(columns %in% names(x)))) {
+    warning(glue::glue("The following columns are not found and ignored: {str_c(columns[!(columns %in% names(x))], collapse = ', ')}.Did you spelled them wrong?"))
+    columns <- columns[(columns %in% names(x))]
+  }
+  if(!(deparse(substitute(format))  %in% c("ymd_hms", "ymd_hm", "ymd_h","ymd",
+                                           "dmy_hms", "dmy_hm", "dmy_h", "dmy",
+                                           "mdy_hms", "mdy_hm", "mdy_h", "mdy")) | length(format) > 1) {
+    stop("format should be one of the following: ymd_hms, ymd_hm, ymd_h, ymd, dmy_hms, dmy_hm, dmy_h, dmy, mdy_hms, mdy_hm, mdy_h, md")
+  }
+  if(!(deparse(substitute(format)) %in% c("ymd_hms", "dmy_hms", "mdy_hms"))) {
+    warning("No seconds available? Timestamps will probably too coarse for reliable analyses.")
   }
 
-  if(str_detect(timestamp_format, "/")){
-    timestamp_format <- str_replace_all(timestamp_format, "/", "-")
+  x <- mutate_at(x, columns, format)
 
-    renamed_activity_log <- renamed_activity_log %>%
-      mutate(
-        start = str_replace_all(start, "/", "-"),
-        complete = str_replace_all(complete, "/", "-")
-      )
-  }
-
-  if(timestamp_format == "yyyy-mm-dd hh:mm:ss"){
-    renamed_activity_log$start <- ymd_hms(renamed_activity_log$start)
-    renamed_activity_log$complete <- ymd_hms(renamed_activity_log$complete)
-  } else if(timestamp_format == "dd-mm-yyyy hh:mm:ss"){
-    renamed_activity_log$start <- dmy_hms(renamed_activity_log$start)
-    renamed_activity_log$complete <- dmy_hms(renamed_activity_log$complete)
-  } else if(timestamp_format == "yyyy-mm-dd") {
-    renamed_activity_log$start <- ymd(renamed_activity_log$start)
-    renamed_activity_log$complete <- ymd(renamed_activity_log$complete)
-    warning("The timestamps are too coarse: only dates available.")
-  } else if(timestamp_format == "dd-mm-yyyy") {
-    renamed_activity_log$start <- dmy(renamed_activity_log$start)
-    renamed_activity_log$complete <- dmy(renamed_activity_log$complete)
-    warning("The timestamps are too coarse: only dates available.")
-  } else {
-    warning("Timestamp format not supported. Convert timestamps to POSICXct format manually.")
-  }
-
-  return(renamed_activity_log)
+  return(x)
 }

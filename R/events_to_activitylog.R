@@ -13,14 +13,14 @@
 #'
 #'
 
-events_to_activities <- function(eventlog) {
-  UseMethod("events_to_activities")
+events_to_activitylog <- function(eventlog) {
+  UseMethod("events_to_activitylog")
 }
 
-#' @describeIn events_to_activities Create activity log from event log
+#' @describeIn events_to_activitylog Create activity log from event log
 #' @export
 
-events_to_activities.eventlog <- function(eventlog) {
+events_to_activitylog.eventlog <- function(eventlog) {
 
 
   eventlog <- standardize_lifecycle(eventlog)

@@ -11,7 +11,7 @@
 #' @param lifecycle_ids The columns with timestamps refering to different lifecycle events. A character vector of 1 or more.
 #' These should have one of the folliwing names: "schedule","assign","reassign","start","suspend","resume","abort_activity","abort_case","complete","manualskip","autoskip".
 #' These colomns should be of the Date or POSIXct class.
-#'
+#' @importFrom purrr pmap
 #' @export
 #'
 activitylog <- function(activitylog, case_id, activity_id, resource_id, lifecycle_ids) {

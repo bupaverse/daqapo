@@ -25,6 +25,8 @@
 #' @importFrom utils capture.output
 #' @importFrom xesreadR read_xes
 #' @importFrom rlang parse_expr
+#' @import bupaR
+#' @import edeaR
 #'
 
 utils::globalVariables(c("."))

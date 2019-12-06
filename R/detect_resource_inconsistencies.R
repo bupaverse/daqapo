@@ -31,7 +31,6 @@ detect_resource_inconsistencies.eventlog <- function(eventlog, filter_condition 
          \nTry function 'standardize_lifecycle' to fix."))
   }
   # Store the number of cases for output
-  n_cases <- n_cases(eventlog)
 
   if(length(lifecycle_labels(eventlog)) == 1) {
     message(glue::glue("Only {lifecycle_labels(eventlog)} events were found in the event log. Thus there are no resource inconsistencies."))

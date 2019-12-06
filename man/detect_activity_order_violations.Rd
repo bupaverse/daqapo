@@ -2,13 +2,18 @@
 % Please edit documentation in R/detect_activity_order_violations.R
 \name{detect_activity_order_violations}
 \alias{detect_activity_order_violations}
+\alias{detect_activity_order_violations.activitylog}
 \title{Detect activity order violations}
 \usage{
-detect_activity_order_violations(activity_log, activity_order,
-  timestamp = "both", details = TRUE, filter_condition = NULL)
+detect_activity_order_violations(activity_log, activity_order, timestamp,
+  details, filter_condition)
+
+\method{detect_activity_order_violations}{activitylog}(activity_log,
+  activity_order, timestamp = c("both", "start", "complete"),
+  details = TRUE, filter_condition = NULL)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+\item{activity_log}{The activity log}
 
 \item{activity_order}{Vector expressing the activity order that needs to be checked (using activity names)}
 
@@ -24,3 +29,8 @@ Information on the degree to which the specified activity order is respected/vio
 \description{
 Function detecting violations in activity order
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{activitylog}: Detect activity order_violations in activity log.
+}}
+

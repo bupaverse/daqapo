@@ -4,15 +4,15 @@
 \alias{detect_attribute_dependencies}
 \title{Detect dependency violations between attributes}
 \usage{
-detect_attribute_dependencies(activity_log, condition_vector1,
-  condition_vector2, details = TRUE, filter_condition = NULL)
+detect_attribute_dependencies(activity_log, antecedent, consequence,
+  details = TRUE, filter_condition = NULL, ...)
 }
 \arguments{
 \item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
 
-\item{condition_vector1}{Vector of condition(s) which serve as an antecedent (if the condition(s) in condition_vector1 hold, then the condition(s) in condition_vector2 should also hold)}
+\item{antecedent}{(Vector of) condition(s) which serve as an antecedent (if the condition(s) in antecedent hold, then the condition(s) in consequence should also hold)}
 
-\item{condition_vector2}{Vector of condition(s) which serve as a consequent (if the condition(s) in condition_vector1 hold, then the condition(s) in condition_vector2 should also hold)}
+\item{consequence}{(Vector of) condition(s) which serve as a consequent (if the condition(s) in antecedent hold, then the condition(s) in consequence should also hold)}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 

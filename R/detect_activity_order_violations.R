@@ -1,15 +1,32 @@
 #' Detect activity order violations
 #'
 #' Function detecting violations in activity order
-#' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
+#' @param activity_log The activity log
 #' @param activity_order Vector expressing the activity order that needs to be checked (using activity names)
 #' @param timestamp Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)
 #' @param details Boolean indicating wheter details of the results need to be shown
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the degree to which the specified activity order is respected/violated.
 #' @export
-detect_activity_order_violations <- function(activity_log, activity_order, timestamp = "both", details = TRUE, filter_condition = NULL){
+#'
 
+detect_activity_order_violations <- function(activity_log,
+                                             activity_order,
+                                             timestamp, details, filter_condition) {
+  UseMethod("detect_activity_order_violations")
+}
+
+#' @describeIn detect_activity_order_violations Detect activity order_violations in activity log.
+#' @export
+
+detect_activity_order_violations.activitylog <- function(activity_log,
+                                                         activity_order,
+                                                         timestamp = c("both", "start","complete"),
+                                                         details = TRUE,
+                                                         filter_condition = NULL){
+
+
+  timestamp <- match.arg(timestamp)
   # Predefine variables
   nr <- NULL
   overlapping <- NULL
@@ -21,20 +38,6 @@ detect_activity_order_violations <- function(activity_log, activity_order, times
 
   # Initiate warning variables
   warning.filtercondition <- FALSE
-
-  # Check if the required columns are present in the log
-  missing_columns <- check_colnames(activity_log, c("case_id", "activity", "start", "complete"))
-  if(!is.null(missing_columns)){
-    stop("The following columns, which are required for the test, were not found in the activity log: ",
-         paste(missing_columns, collapse = "\t"), ".", "\n  ",
-         "Please check rename_activity_log.")
-  }
-
-  # Generate warning if inappropriate timestamp value is provided
-  if(!(timestamp %in% c("both", "start", "complete"))){
-    warning("This timestamp parameter value is not supported. Timestamp parameter should have value: both, start, complete. Default level of aggregation selected: both.")
-    timestamp <- "both"
-  }
 
   # Apply filter condition when specified
   tryCatch({
@@ -48,18 +51,20 @@ detect_activity_order_violations <- function(activity_log, activity_order, times
 
   if(warning.filtercondition) {
     warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
+    #Make sure we don't pretend as if it is filtered later
+    filter_condition <- NULL
   }
 
-  n_cases <- activity_log %>% distinct(case_id) %>% nrow()
+  n_cases <- n_cases(activity_log)
 
   # Filter activities included in activity_order
-  activity_log <- activity_log %>% filter(activity %in% activity_order)
+  activity_log <- activity_log %>% filter_activity(activities = activity_order)
 
   # Add number to ordered activities (used for ordering when multiple activities have the same timestamp for a particular case)
   activity_order <- as.data.frame(activity_order)
   activity_order$nr <- seq(1, nrow(activity_order))
-  colnames(activity_order)[1] <- "activity"
-  activity_log <- merge(activity_log,activity_order, by  = "activity")
+  colnames(activity_order)[1] <- activity_id(activity_log)
+  activity_log <- merge(activity_log,activity_order, by  = activity_id(activity_log))
 
   # Detect time overlap between consecutive activities in case both timestamps are used
   if(timestamp == "both" & details == TRUE){

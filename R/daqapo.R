@@ -5,7 +5,7 @@
 #' @docType package
 #' @name daqapo
 #'
-#' @import dplyr
+
 
 #' @importFrom lubridate is.POSIXct
 #' @importFrom stringdist ain
@@ -24,9 +24,12 @@
 #' @importFrom utils read.csv
 #' @importFrom utils capture.output
 #' @importFrom xesreadR read_xes
-#' @importFrom rlang parse_expr
 #' @import bupaR
 #' @import edeaR
+#' @import dplyr
+#' @importFrom rlang expr_text
+#' @importFrom rlang enquo
+#'
 #'
 
 utils::globalVariables(c("."))

@@ -56,3 +56,27 @@ activity_instance_id_ <- function(eventlog) sym(activity_instance_id(eventlog))
 resource_id_ <- function(eventlog) sym(resource_id(eventlog))
 timestamp_ <- function(eventlog) sym(timestamp(eventlog))
 lifecycle_id_ <- function(eventlog) sym(lifecycle_id(eventlog))
+
+
+APPLY_FILTER <- function(activity_log, filter_condition_q) {
+  warning.filtercondition <- FALSE
+
+  tryCatch({
+    activity_log <- activity_log %>% filter(!!filter_condition_q)
+  }, error = function(e) {
+    warning.filtercondition <<- TRUE
+  }
+  )
+
+
+  if(warning.filtercondition) {
+    warning("The condition '", expr_text(filter_condition_q), "'  is invalid. No filtering performed on the dataset.")
+    #Make sure we don't pretend as if it is filtered later
+    filter_specified <- F
+  }
+
+  if(filter_specified) {
+    cat("Applied filtering condition:", expr_text(filter_condition_q), "\n", "\n")
+  }
+  return(activity_log)
+}

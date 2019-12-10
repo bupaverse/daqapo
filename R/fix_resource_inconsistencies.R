@@ -1,8 +1,4 @@
 
-
-
-
-
 #' Fix resource inconsistencies
 #'
 #'
@@ -34,7 +30,7 @@ fix_resource_inconsistencies.eventlog <- function(eventlog, filter_condition = N
     inconsistencies <- detect_resource_inconsistencies(eventlog, filter_condition = filter_condition)
   } else if("detected_problems" %in% class(detected_problems)) {
     if(attr(detected_problems, "type") == "resource_inconsistencies") {
-     inconsistencies <- detected_problemsµ
+     inconsistencies <- detected_problems
     } else {
       warning("Problems passed to 'detected_problems' are not about resource inconsistencies. Recomputing resource inconsistencies.")
       inconsistencies <- detect_resource_inconsistencies(eventlog, filter_condition = filter_condition)

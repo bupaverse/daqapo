@@ -17,23 +17,22 @@ detect_activity_frequency_violations <- function(activitylog, ..., details, filt
 
 detect_activity_frequency_violations.activitylog <- function(activitylog, ... , details = TRUE, filter_condition = NULL) {
 
-  # Initiate warning variables
-  warning.filtercondition <- FALSE
-
   # Apply filter condition when specified
+  filter_specified <- FALSE
   tryCatch({
-    if(!is.null(filter_condition)) {
-      activitylog <- activitylog %>% filter(!!rlang::parse_expr(filter_condition))
-    }
+    is.null(filter_condition)
   }, error = function(e) {
-    warning.filtercondition <<- TRUE
+    filter_specified <<- TRUE
   }
   )
 
-  if(warning.filtercondition) {
-     warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
-    #Make sure we don't pretend as if it is filtered later
-    filter_condition <- NULL
+  if(!filter_specified) {
+    # geen filter gespecifieerd.
+
+  } else {
+    filter_condition_q <- enquo(filter_condition)
+    activitylog <- APPLY_FILTER(activitylog, filter_condition_q = filter_condition_q)
+
   }
 
   # Unpack the parameters in the ellipsis
@@ -54,11 +53,6 @@ detect_activity_frequency_violations.activitylog <- function(activitylog, ... , 
   # Prepare output numbers
   n_anomalies <- anomalies %>% pull(!!case_id_(activitylog)) %>% unique() %>% length()
   n_anomalies_relative <- n_anomalies / n_cases * 100
-
-  # Print output
-  if(!is.null(filter_condition)) {
-    message(glue::glue("Applied filtering condition: {filter_condition}"))
-  }
 
   message("*** OUTPUT ***")
   message(glue::glue("For {n_anomalies} cases in the activity log ({n_anomalies_relative}%) an anomaly is detected."))

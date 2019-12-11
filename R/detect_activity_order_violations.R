@@ -34,23 +34,22 @@ detect_activity_order_violations.activitylog <- function(activitylog,
   start <- NULL
   complete <- NULL
 
-  # Initiate warning variables
-  warning.filtercondition <- FALSE
-
   # Apply filter condition when specified
+  filter_specified <- FALSE
   tryCatch({
-    if(!is.null(filter_condition)) {
-      activitylog <- activitylog %>% filter(!! rlang::parse_expr(filter_condition))
-    }
+    is.null(filter_condition)
   }, error = function(e) {
-    warning.filtercondition <<- TRUE
+    filter_specified <<- TRUE
   }
   )
 
-  if(warning.filtercondition) {
-    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
-    #Make sure we don't pretend as if it is filtered later
-    filter_condition <- NULL
+  if(!filter_specified) {
+    # geen filter gespecifieerd.
+
+  } else {
+    filter_condition_q <- enquo(filter_condition)
+    activitylog <- APPLY_FILTER(activitylog, filter_condition_q = filter_condition_q)
+
   }
 
   n_cases <- n_cases(activitylog)
@@ -126,9 +125,7 @@ detect_activity_order_violations.activitylog <- function(activitylog,
   stat_true <- 100 - stat_false
 
   # Print output
-  if(!is.null(filter_condition)) {
-    cat("Applied filtering condition", filter_condition, "\n")
-  }
+
   cat("Selected timestamp parameter value:", timestamp, "\n", "\n")
 
   cat("*** OUTPUT ***", "\n")

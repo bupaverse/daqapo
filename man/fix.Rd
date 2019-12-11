@@ -2,21 +2,13 @@
 % Please edit documentation in R/fix.R
 \name{fix}
 \alias{fix}
-\alias{fix.detected_problems}
 \title{Fix problems}
 \usage{
 fix(detected_problems, ...)
-
-\method{fix}{detected_problems}(detected_problems, ...)
 }
 \arguments{
-\item{detected_problems}{}
+\item{detected_problems}{Output of a detect_ function. Currently supported: detect_resource_inconsistencies.}
 }
 \description{
 Fix problems
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{detected_problems}: Fix detected problems
-}}
-

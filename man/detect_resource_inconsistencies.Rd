@@ -2,30 +2,15 @@
 % Please edit documentation in R/detect_resource_inconsistencies.R
 \name{detect_resource_inconsistencies}
 \alias{detect_resource_inconsistencies}
-\alias{detect_resource_inconsistencies.eventlog}
-\alias{detect_resource_inconsistencies.activitylog}
 \title{Detect resource inconsistencies}
 \usage{
 detect_resource_inconsistencies(eventlog, filter_condition)
-
-\method{detect_resource_inconsistencies}{eventlog}(eventlog,
-  filter_condition = NULL)
-
-\method{detect_resource_inconsistencies}{activitylog}(eventlog,
-  filter_condition = NULL)
 }
 \arguments{
-\item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
+\item{eventlog}{Event log object}
 
-\item{event_log}{Event log object}
+\item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \description{
 Function to detect inconsistencies in resource information between related events.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{eventlog}: Detect for eventlog
-
-\item \code{activitylog}: Detect for activitylog
-}}
-

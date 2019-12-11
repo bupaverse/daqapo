@@ -3,18 +3,17 @@
 
 #' Fix problems
 #'
-#' @param detected_problems
+#' @param detected_problems Output of a detect_ function. Currently supported: detect_resource_inconsistencies.
 #'
 #'
 #' @export
-fix <- function(detected_problems, ...) {
+fix <- function(detected_problems) {
   UseMethod("fix")
 }
 
-#' @describeIn fix Fix detected problems
 #' @export
 
-fix.detected_problems <- function(detected_problems, ...) {
+fix.detected_problems <- function(detected_problems) {
   type <- attr(detected_problems, "type")
 
   FUN <- switch(type,

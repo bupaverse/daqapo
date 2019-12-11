@@ -3,7 +3,7 @@
 #'
 #' Function to detect inconsistencies in resource information between related events.
 #'
-#' @param event_log Event log object
+#' @param eventlog Event log object
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #'
 #' @export
@@ -13,7 +13,6 @@ detect_resource_inconsistencies <- function(eventlog,
   UseMethod("detect_resource_inconsistencies")
 }
 
-#' @describeIn detect_resource_inconsistencies Detect for eventlog
 #' @export
 
 
@@ -67,7 +66,6 @@ detect_resource_inconsistencies.eventlog <- function(eventlog, filter_condition 
 
 }
 
-#' @describeIn detect_resource_inconsistencies Detect for activitylog
 #' @export
 #'
 detect_resource_inconsistencies.activitylog <- function(eventlog,

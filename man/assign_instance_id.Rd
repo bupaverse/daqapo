@@ -20,4 +20,7 @@ assign_instance_id(eventlog, case_id, activity_id, timestamp, lifecycle_id)
 \description{
 Apply heuristics to create an activity instance identifier, so that eventlog can be made.
 }
+\seealso{
+Other Eventlog construction helpers: \code{\link{convert_timestamps}}
+}
 \concept{Eventlog construction helpers}

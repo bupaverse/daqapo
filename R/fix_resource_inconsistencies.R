@@ -16,14 +16,14 @@ fix_resource_inconsistencies <- function(eventlog, filter_condition, overwrite_m
 #' @describeIn fix_resource_inconsistencies activitylog Fix activitylog
 #' @export
 
-fix_resource_inconsistencies.activitylog <- function(eventlog, filter_condition = NULL, overwrite_missings = FALSE) {
+fix_resource_inconsistencies.activitylog <- function(eventlog, filter_condition = NULL, overwrite_missings = FALSE,...) {
   stop("Object is activitylog. No resource inconsistencies to be fixed by definition.")
 }
 
 #' @describeIn fix_resource_inconsistencies eventlog Fix eventlog
 #' @export
 
-fix_resource_inconsistencies.eventlog <- function(eventlog, filter_condition = NULL, overwrite_missings = FALSE, detected_problems = NULL ) {
+fix_resource_inconsistencies.eventlog <- function(eventlog, filter_condition = NULL, overwrite_missings = FALSE, detected_problems = NULL,... ) {
 
 
   if(is.null(detected_problems)) {

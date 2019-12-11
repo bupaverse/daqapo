@@ -10,11 +10,11 @@ fix_resource_inconsistencies(eventlog, filter_condition,
   overwrite_missings, ...)
 
 \method{fix_resource_inconsistencies}{activitylog}(eventlog,
-  filter_condition = NULL, overwrite_missings = FALSE)
+  filter_condition = NULL, overwrite_missings = FALSE, ...)
 
 \method{fix_resource_inconsistencies}{eventlog}(eventlog,
   filter_condition = NULL, overwrite_missings = FALSE,
-  detected_problems = NULL)
+  detected_problems = NULL, ...)
 }
 \arguments{
 \item{eventlog}{Event log object}

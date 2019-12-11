@@ -1,11 +1,9 @@
 #' Detect conditional activity presence violations
 #'
 #' Function detecting violations of conditional activity presence (i.e. an activity/activities that should be present when (a) particular condition(s) hold(s))
-#' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
 #' @param condition_vector Vector of condition(s) which serve as an antecedent (if the condition(s) in condition_vector hold, then the activity/activities in activity_vector should be recorded)
 #' @param activity_vector Vector of activity/activities which serve as a consequent (if the condition(s) in condition_vector hold, then the activity/activities in activity_vector should be recorded)
-#' @param details Boolean indicating wheter details of the results need to be shown
-#' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
+#' @inheritParams detect_activity_frequency_violations
 #' @return Information on the degree to which the specified conditional activity presence is respected/violated.
 #' @export
 

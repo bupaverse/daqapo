@@ -4,11 +4,10 @@
 \alias{detect_case_id_sequence_gaps}
 \title{Detect gaps in case_id}
 \usage{
-detect_case_id_sequence_gaps(activity_log, details = TRUE,
-  filter_condition = NULL)
+detect_case_id_sequence_gaps(activitylog, details, filter_condition)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+\item{activitylog}{The activity log}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 

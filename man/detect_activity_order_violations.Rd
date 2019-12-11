@@ -5,15 +5,15 @@
 \alias{detect_activity_order_violations.activitylog}
 \title{Detect activity order violations}
 \usage{
-detect_activity_order_violations(activity_log, activity_order, timestamp,
+detect_activity_order_violations(activitylog, activity_order, timestamp,
   details, filter_condition)
 
-\method{detect_activity_order_violations}{activitylog}(activity_log,
+\method{detect_activity_order_violations}{activitylog}(activitylog,
   activity_order, timestamp = c("both", "start", "complete"),
   details = TRUE, filter_condition = NULL)
 }
 \arguments{
-\item{activity_log}{The activity log}
+\item{activitylog}{The activity log}
 
 \item{activity_order}{Vector expressing the activity order that needs to be checked (using activity names)}
 

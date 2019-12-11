@@ -73,10 +73,12 @@ APPLY_FILTER <- function(activity_log, filter_condition_q) {
     warning("The condition '", expr_text(filter_condition_q), "'  is invalid. No filtering performed on the dataset.")
     #Make sure we don't pretend as if it is filtered later
     filter_specified <- F
-  }
+  } else {
+    filter_specified <- T
+    }
 
   if(filter_specified) {
-    cat("Applied filtering condition:", expr_text(filter_condition_q), "\n", "\n")
+    message("Applied filtering condition:", expr_text(filter_condition_q), "\n", "\n")
   }
   return(activity_log)
 }

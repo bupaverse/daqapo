@@ -19,6 +19,7 @@
 #' @importFrom stringr str_subset
 #' @importFrom stringr str_c
 #' @importFrom stats sd
+#' @importFrom stats na.omit
 #' @importFrom tidyr spread
 #' @importFrom tidyr gather
 #' @importFrom utils read.csv
@@ -29,7 +30,7 @@
 #' @import dplyr
 #' @importFrom rlang expr_text
 #' @importFrom rlang enquo
-#'
+#' @importFrom rlang :=
 #'
 
 utils::globalVariables(c("."))

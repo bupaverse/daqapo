@@ -1,19 +1,19 @@
 #' Detect dependency violations between attributes
 #'
 #' Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold(s))
-#' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
+#' @inheritParams detect_activity_frequency_violations
 #' @param antecedent (Vector of) condition(s) which serve as an antecedent (if the condition(s) in antecedent hold, then the condition(s) in consequent should also hold)
-#' @param consequence (Vector of) condition(s) which serve as a consequent (if the condition(s) in antecedent hold, then the condition(s) in consequent should also hold)
-#' @param details Boolean indicating wheter details of the results need to be shown
-#' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
+#' @param consequent (Vector of) condition(s) which serve as a consequent (if the condition(s) in antecedent hold, then the condition(s) in consequent should also hold)
 #' @return Information on the degree to which the specified dependencies are respected/violated.
 #' @export
-detect_attribute_dependencies <- function(activity_log, antecedent, consequent, details = TRUE, filter_condition = NULL, ...){
+detect_attribute_dependencies <- function(activitylog, antecedent, consequent, details = TRUE, filter_condition = NULL, ...){
 
   # Initiate warning variables
   filter_specified <- FALSE
   error.cond1 <- FALSE
   error.cond2 <- FALSE
+
+  filter_specified <- FALSE
 
   tryCatch({
     is.null(filter_condition)
@@ -27,7 +27,7 @@ detect_attribute_dependencies <- function(activity_log, antecedent, consequent, 
 
   } else {
     filter_condition_q <- enquo(filter_condition)
-    activity_log <- APPLY_FILTER(activity_log, filter_condition_q = filter_condition_q)
+    activitylog <- APPLY_FILTER(activitylog, filter_condition_q = filter_condition_q)
 
   }
   # Quote antecedent and consequent
@@ -36,7 +36,7 @@ detect_attribute_dependencies <- function(activity_log, antecedent, consequent, 
 
   # Check rows in activity log for which conditions in condition_vector1 holds
   tryCatch({
-    activity_log_cond1 <- activity_log %>% filter(!!(antecedent))
+    activity_log_cond1 <- activitylog %>% filter(!!(antecedent))
   }, error = function(e) {
     error.cond1 <<- TRUE
   })
@@ -61,15 +61,15 @@ detect_attribute_dependencies <- function(activity_log, antecedent, consequent, 
   stat_false <- 100 - stat_true
 
   # Print output
-  cat("*** OUTPUT ***", "\n")
-  cat("The following statement was checked: if condition(s)", expr_text(antecedent), "hold(s), then", expr_text(consequent), "should also hold", "\n", "\n")
-  cat("This statement holds for",
-      nrow(activity_log_cond12), "(", stat_true, "%) of the rows in the activity log for which the first condition(s) hold and does not hold for",
-      nrow(activity_log_cond1) - nrow(activity_log_cond12), "(", stat_false, "%) of these rows.", "\n", "\n")
+  message("*** OUTPUT ***")
+  message("The following statement was checked: if condition(s) ", expr_text(antecedent), " hold(s), then ", expr_text(consequent), " should also hold.")
+  message("This statement holds for ",
+      nrow(activity_log_cond12), " (", round(stat_true, 2), "%) of the rows in the activity log for which the first condition(s) hold and does not hold for ",
+      nrow(activity_log_cond1) - nrow(activity_log_cond12), " (", round(stat_false, 2), "%) of these rows.", "\n")
 
   if(details == TRUE){
     if(stat_false > 0){
-      cat("For the following rows, the first condition(s) hold(s), but the second condition does not:", "\n")
+      message("For the following rows, the first condition(s) hold(s), but the second condition does not:")
       return(dplyr::setdiff(activity_log_cond1,activity_log_cond12))
     }
   }

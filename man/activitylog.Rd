@@ -2,14 +2,9 @@
 % Please edit documentation in R/activitylog.R
 \name{activitylog}
 \alias{activitylog}
-\alias{activitylog.data.frame}
 \title{Create activity log}
 \usage{
 activitylog(activitylog, case_id, activity_id, resource_id, lifecycle_ids)
-
-\method{activitylog}{data.frame}(activitylog, case_id = NULL,
-  activity_id = NULL, resource_id = NULL, lifecycle_ids = c("start",
-  "complete"))
 }
 \arguments{
 \item{activitylog}{The data object to be used as activity log. This can be a
@@ -28,8 +23,3 @@ These colomns should be of the Date or POSIXct class.}
 \description{
 Create activity log
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{data.frame}: Create activity log from data.frame
-}}
-

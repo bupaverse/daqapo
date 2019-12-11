@@ -9,16 +9,19 @@
 #' @param lifecycle_id Lifecycle identifier
 #'
 #' @family Eventlog construction helpers
-#'
+#' @importFrom purrr accumulate
+#' @importFrom purrr map_dbl
 #' @export
 #'
 assign_instance_id <- function(eventlog, case_id, activity_id, timestamp, lifecycle_id) {
+
+  current_instance <- NULL
 
   status <- list(open_instances = c(), last_instance = 0)
 
   eventlog %>%
     group_by(!!sym(case_id), !!sym(activity_id)) %>%
-    arrange(time) %>%
+    arrange(!!sym(timestamp)) %>%
     mutate(status = accumulate(!!sym(lifecycle_id), assign_instance_id_EVENT, .init = status)[-1]) %>%
     mutate(current_instance = map_dbl(status, ~.x$current_instance)) %>%
     select(-status) %>%
@@ -30,6 +33,10 @@ assign_instance_id <- function(eventlog, case_id, activity_id, timestamp, lifecy
 
 
 assign_instance_id_EVENT <- function(status, lifecycle) {
+
+  start_lifecycles <- c("start")
+  end_lifecycles <- c("complete")
+
   if(lifecycle %in% start_lifecycles) {
 
     #nieuwe gestart

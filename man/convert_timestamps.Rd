@@ -19,3 +19,7 @@ Data.frame with converted timestamps
 \description{
 Function converting the timestamps in the data frame to the appropriate format.
 }
+\seealso{
+Other Eventlog construction helpers: \code{\link{assign_instance_id}}
+}
+\concept{Eventlog construction helpers}

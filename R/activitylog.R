@@ -1,6 +1,3 @@
-
-
-
 #' Create activity log
 #'
 #' @param activitylog The data object to be used as activity log. This can be a
@@ -19,7 +16,6 @@ activitylog <- function(activitylog, case_id, activity_id, resource_id, lifecycl
 }
 
 
-#' @describeIn activitylog Create activity log from data.frame
 #' @export
 
 activitylog.data.frame <- function(activitylog,
@@ -66,7 +62,6 @@ activitylog.data.frame <- function(activitylog,
   activitylog
 
 }
-
 
 check_wrapper_activitylog  <- function(activitylog, attributes) {
   check_attributes_activitylog(activitylog, attributes$attribute_name, attributes$attribute_values)

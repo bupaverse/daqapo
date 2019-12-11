@@ -2,17 +2,13 @@
 % Please edit documentation in R/detect_activity_frequency_violations.R
 \name{detect_activity_frequency_violations}
 \alias{detect_activity_frequency_violations}
-\alias{detect_activity_frequency_violations.activitylog}
 \title{Check activity frequencies}
 \usage{
-detect_activity_frequency_violations(activity_log, ..., details,
+detect_activity_frequency_violations(activitylog, ..., details,
   filter_condition)
-
-\method{detect_activity_frequency_violations}{activitylog}(activity_log,
-  ..., details = TRUE, filter_condition = NULL)
 }
 \arguments{
-\item{activity_log}{The activity log}
+\item{activitylog}{The activity log}
 
 \item{...}{Named vectors with name of the activity, and value of the threshold.}
 
@@ -26,8 +22,3 @@ An overview of frequencies of activities
 \description{
 Function that detects activity frequency anomalies per case
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{activitylog}: Detect activity frequency voilations in activity log
-}}
-

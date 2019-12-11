@@ -6,6 +6,7 @@
 #' @param columns A character vector with one or more names of columns to convert
 #' @param format The format of the timestamps in the original dataset (either ymd_hms, dmy_hms, ymd_hm, ymd, dmy, dmy, ...). To be provided without quotation marks!
 #' @return Data.frame with converted timestamps
+#' @family Eventlog construction helpers
 #' @export
 convert_timestamps <- function(x, columns,  format = ymd_hms){
 

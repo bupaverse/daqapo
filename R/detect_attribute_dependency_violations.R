@@ -13,15 +13,16 @@ detect_attribute_dependencies <- function(activitylog, antecedent, consequent, d
   error.cond1 <- FALSE
   error.cond2 <- FALSE
 
-  filter_specified <- FALSE
 
+  # Apply filter condition when specified
+  filter_specified <- FALSE
   tryCatch({
     is.null(filter_condition)
   }, error = function(e) {
     filter_specified <<- TRUE
   }
   )
-  # Apply filter condition when specified
+
   if(!filter_specified) {
     # geen filter gespecifieerd.
 

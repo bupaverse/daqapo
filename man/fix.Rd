@@ -4,7 +4,7 @@
 \alias{fix}
 \title{Fix problems}
 \usage{
-fix(detected_problems, ...)
+fix(detected_problems)
 }
 \arguments{
 \item{detected_problems}{Output of a detect_ function. Currently supported: detect_resource_inconsistencies.}

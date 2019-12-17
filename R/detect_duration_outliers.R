@@ -2,21 +2,11 @@
 #'
 #' Function detecting duration outliers for a particular activity
 #' @inheritParams detect_activity_frequency_violations
-#' @param activity_considered Activity name for which duration outliers should be detected
-#' @param bound_sd Number of standard deviations from the mean duration which is used to define an outlier in the absence of lower_bound and upper_bound (default value of 3 is used)
-#' @param lower_bound Lower bound for activity duration used during outlier detection (expressed in minutes)
-#' @param upper_bound Upper bound for activity duration used during outlier detection (expressed in minutes)
+#' @param ... for each activity to be checked, an argument "activity_name" = duration_within(...) to define bounds. See ?duration_within
 #' @return Information on the presence of activity duration outliers
-#' @export
-
-
-
-duration_within <- function(bound_sd = 3, lower_bound = NA, upper_bound = NA) {
-  list(bound_sd = bound_sd,
-       lower_bound = lower_bound,
-       upper_bound = upper_bound)
-}
-
+#' @seealso \code{\link{duration_within}}
+#' @importFrom purrr map
+#' @importFrom tidyr unnest
 #' @export
 
 detect_duration_outliers <- function(activitylog,
@@ -34,6 +24,14 @@ detect_duration_outliers.activitylog <- function(activitylog,
   # Predefine variables
   duration <- NULL
   activity <- NULL
+  `<list>` <- NULL
+  value <- NULL
+  act <- NULL
+  complete <- NULL
+  start <- NULL
+  bound_sd <- NULL
+  lower_bound <- NULL
+  upper_bound <- NULL
 
   # Apply filter condition when specified
   filter_specified <- FALSE

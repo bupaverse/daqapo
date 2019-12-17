@@ -22,6 +22,7 @@ events_to_activitylog <- function(eventlog) {
 
 events_to_activitylog.eventlog <- function(eventlog) {
 
+  .order <- NULL
 
   if(!is.null(suppressMessages(detect_resource_inconsistencies(eventlog)))) {
     stop("Eventlog contains resource inconsistencies. First use fix_resource_inconsistencies to fix problem")

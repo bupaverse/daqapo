@@ -5,6 +5,7 @@
 #' @param activities Vector of activity/activities which serve as a consequent (if the condition(s) in condition_vector hold, then the activity/activities in activity_vector should be recorded)
 #' @inheritParams detect_activity_frequency_violations
 #' @return Information on the degree to which the specified conditional activity presence is respected/violated.
+#'
 #' @export
 
 

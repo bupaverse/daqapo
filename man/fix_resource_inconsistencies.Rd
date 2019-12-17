@@ -7,14 +7,15 @@
 \title{Fix resource inconsistencies}
 \usage{
 fix_resource_inconsistencies(eventlog, filter_condition,
-  overwrite_missings, ...)
+  overwrite_missings, detected_problems)
 
 \method{fix_resource_inconsistencies}{activitylog}(eventlog,
-  filter_condition = NULL, overwrite_missings = FALSE, ...)
+  filter_condition = NULL, overwrite_missings = FALSE,
+  detected_problems = NULL)
 
 \method{fix_resource_inconsistencies}{eventlog}(eventlog,
   filter_condition = NULL, overwrite_missings = FALSE,
-  detected_problems = NULL, ...)
+  detected_problems = NULL)
 }
 \arguments{
 \item{eventlog}{Event log object}
@@ -22,6 +23,8 @@ fix_resource_inconsistencies(eventlog, filter_condition,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 
 \item{overwrite_missings}{If events are missing, overwrite the resource if other events within activity instance are performed by single resource. Default FALSE.}
+
+\item{detected_problems}{If available, the problems detected that need to be fixed. If not available, the function detect_resource_inconsistenties will be called.}
 }
 \description{
 Fix resource inconsistencies

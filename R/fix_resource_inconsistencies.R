@@ -6,25 +6,31 @@
 #' @param eventlog Event log object
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @param overwrite_missings If events are missing, overwrite the resource if other events within activity instance are performed by single resource. Default FALSE.
-#'
+#' @param detected_problems If available, the problems detected that need to be fixed. If not available, the function detect_resource_inconsistenties will be called.
 #' @export
 #'
-fix_resource_inconsistencies <- function(eventlog, filter_condition, overwrite_missings, ...) {
+fix_resource_inconsistencies <- function(eventlog, filter_condition, overwrite_missings, detected_problems) {
   UseMethod("fix_resource_inconsistencies")
 }
 
 #' @describeIn fix_resource_inconsistencies activitylog Fix activitylog
 #' @export
 
-fix_resource_inconsistencies.activitylog <- function(eventlog, filter_condition = NULL, overwrite_missings = FALSE,...) {
+fix_resource_inconsistencies.activitylog <- function(eventlog, filter_condition = NULL, overwrite_missings = FALSE, detected_problems = NULL) {
   stop("Object is activitylog. No resource inconsistencies to be fixed by definition.")
 }
 
 #' @describeIn fix_resource_inconsistencies eventlog Fix eventlog
 #' @export
 
-fix_resource_inconsistencies.eventlog <- function(eventlog, filter_condition = NULL, overwrite_missings = FALSE, detected_problems = NULL,... ) {
+fix_resource_inconsistencies.eventlog <- function(eventlog, filter_condition = NULL, overwrite_missings = FALSE, detected_problems = NULL) {
 
+  key <- NULL
+  value <- NULL
+  contains_na <- NULL
+  n_resource_labels <- NULL
+  new_resource <- NULL
+  single_resource <- NULL
 
   if(is.null(detected_problems)) {
     inconsistencies <- detect_resource_inconsistencies(eventlog, filter_condition = filter_condition)

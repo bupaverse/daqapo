@@ -2,21 +2,26 @@
 #'
 #' Function detecting inactive periods, i.e. periods of time in which no activity executions/arrivals are recorded in the activity log
 #' @inheritParams detect_activity_frequency_violations
-#' @param threshold_in_minutes Threshold after which a period without activity executions/arrivals is considered as an inactive period (expressed in minutes)
+#' @param threshold Threshold after which a period without activity executions/arrivals is considered as an inactive period (expressed in minutes)
 #' @param timestamp Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)
-#' @param only_consider_first_activity List of activity labels marking the first activity in the process. When specified, an inactive period only occurs when the time between two consecutive arrivals exceeds the specified threshold (arrival is proxied by the activity/activities specified in this argument).
+#' @param only_first List of activity labels marking the first activity in the process. When specified, an inactive period only occurs when the time between two consecutive arrivals exceeds the specified threshold (arrival is proxied by the activity/activities specified in this argument).
 #' @return Information on the presence of inactive periods.
 #' @export
 #'
-detect_inactive_periods <- function(activitylog, threshold, timestamp, only_first, details, filter_condition) {
+detect_inactive_periods <- function(activitylog,
+                                    threshold,
+                                    timestamp,
+                                    only_first,
+                                    details,
+                                    filter_condition) {
   UseMethod("detect_inactive_periods")
 }
 #' @export
 
 detect_inactive_periods.activitylog <- function(activitylog,
-                                    threshold_in_minutes,
+                                                threshold,
                                     timestamp = c("both", "start","complete"),
-                                    only_consider_first_activity = NA,
+                                    only_first = NA,
                                     details = TRUE,
                                     filter_condition = NULL){
 

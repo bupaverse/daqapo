@@ -23,6 +23,8 @@ standardize_lifecycle <- function(eventlog) {
 
 standardize_lifecycle.eventlog <- function(eventlog) {
 
+  NEW_LC <- NULL
+
   if(all(lifecycle_labels(eventlog) %in% c("start","complete")))
     eventlog
   else {

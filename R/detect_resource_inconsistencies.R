@@ -17,7 +17,10 @@ detect_resource_inconsistencies <- function(eventlog,
 
 
 detect_resource_inconsistencies.eventlog <- function(eventlog, filter_condition = NULL) {
-  if(!is.null(filter_condition)) {
+
+  inconsistency <- NULL
+
+   if(!is.null(filter_condition)) {
     eventlog <- eventlog %>%
       filter(!! rlang::parse_expr(filter_condition))
   }

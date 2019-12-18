@@ -20,6 +20,7 @@ detect_similar_labels <- function(activitylog, column_labels, max_edit_distance 
 
   # Predefine variables
   similar_to <- NULL
+  data <- NULL
 
   if(class(column_labels) != "character") {
     stop("column_labels must be a character vector")

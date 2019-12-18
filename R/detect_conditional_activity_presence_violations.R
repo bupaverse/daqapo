@@ -20,7 +20,6 @@ detect_conditional_activity_presence.activitylog <- function(activitylog, condit
   activity <- NULL
 
   # Initiate warning variables
-  warning.filtercondition <- FALSE
   error.conditionfilter <- FALSE
 
   if(any(!(activities %in% activity_labels(activitylog)))) {

@@ -4,22 +4,21 @@
 \alias{detect_inactive_periods}
 \title{Detect inactive periods}
 \usage{
-detect_inactive_periods(activity_log, threshold_in_minutes,
-  timestamp = "both", only_consider_first_activity = NA,
-  details = TRUE, filter_condition = NULL)
+detect_inactive_periods(activitylog, threshold, timestamp, only_first,
+  details, filter_condition)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
-
-\item{threshold_in_minutes}{Threshold after which a period without activity executions/arrivals is considered as an inactive period (expressed in minutes)}
+\item{activitylog}{The activity log}
 
 \item{timestamp}{Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)}
-
-\item{only_consider_first_activity}{List of activity labels marking the first activity in the process. When specified, an inactive period only occurs when the time between two consecutive arrivals exceeds the specified threshold (arrival is proxied by the activity/activities specified in this argument).}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
+
+\item{threshold_in_minutes}{Threshold after which a period without activity executions/arrivals is considered as an inactive period (expressed in minutes)}
+
+\item{only_consider_first_activity}{List of activity labels marking the first activity in the process. When specified, an inactive period only occurs when the time between two consecutive arrivals exceeds the specified threshold (arrival is proxied by the activity/activities specified in this argument).}
 }
 \value{
 Information on the presence of inactive periods.

@@ -55,16 +55,16 @@ detect_inactive_periods.activitylog <- function(activitylog,
   # Select specified start activity for each case when specified
   if(!is.na(only_first)){
     if(timestamp %in% c("both", "start")){
-      activity_log <- as.data.frame(activity_log %>% group_by(case_id) %>%
+      activitylog <- as.data.frame(activitylog %>% group_by(case_id) %>%
                                       filter(activity %in% only_first) %>% filter(start == min(start)))
     } else{
-      activity_log <- as.data.frame(activity_log %>% group_by(case_id) %>%
+      activitylog <- as.data.frame(activitylog %>% group_by(case_id) %>%
                                       filter(activity %in% only_first) %>% filter(complete == min(complete)))
     }
   }
 
   # Sort the activity log
-  activity_log <- activity_log %>% arrange(start,complete)
+  activitylog <- activitylog %>% arrange(start,complete)
 
   # Create prior_start and prior_complete column
   #activity_log$start <- as.character(activity_log$start)
@@ -77,7 +77,7 @@ detect_inactive_periods.activitylog <- function(activitylog,
   #activity_log$prior_start <- ymd_hms(activity_log$prior_start)
   #activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
 
-  activity_log <- activity_log %>%
+  activitylog <- activitylog %>%
     mutate(
       prior_start = lag(start),
       prior_complete = lag(complete)
@@ -86,17 +86,17 @@ detect_inactive_periods.activitylog <- function(activitylog,
   # Determine inactive periods
   if(timestamp == "both"){
     if(is.na(only_first)){
-      activity_log$time_gap <- as.numeric(difftime(activity_log$start, activity_log$prior_complete, units = "mins"))
+      activitylog$time_gap <- as.numeric(difftime(activitylog$start, activitylog$prior_complete, units = "mins"))
     } else{
-      activity_log$time_gap <- as.numeric(difftime(activity_log$start, activity_log$prior_start, units = "mins"))
+      activitylog$time_gap <- as.numeric(difftime(activitylog$start, activitylog$prior_start, units = "mins"))
     }
   } else if(timestamp == "start"){
-    activity_log$time_gap <- as.numeric(difftime(activity_log$start, activity_log$prior_start, units = "mins"))
+    activity_log$time_gap <- as.numeric(difftime(activitylog$start, activitylog$prior_start, units = "mins"))
   } else{
-    activity_log$time_gap <- as.numeric(difftime(activity_log$complete, activity_log$prior_complete, units = "mins"))
+    activity_log$time_gap <- as.numeric(difftime(activitylog$complete, activitylog$prior_complete, units = "mins"))
   }
 
-  activity_log <- activity_log %>% filter(time_gap >= threshold_in_minutes)
+  activitylog <- activitylog %>% filter(time_gap >= threshold)
 
   # Print general output information
 
@@ -104,21 +104,21 @@ detect_inactive_periods.activitylog <- function(activitylog,
 
   # Print specific output
   cat("*** OUTPUT ***", "\n")
-  cat("Specified threshold of", threshold_in_minutes, "minutes is violated", nrow(activity_log), "times.", "\n", "\n")
+  cat("Specified threshold of", threshold, "minutes is violated", nrow(activitylog), "times.", "\n", "\n")
 
   if(details == TRUE){
     cat("Threshold is violated in the following periods:", "\n")
     if(timestamp == "both"){
       if(is.na(only_first)){
-        activity_log <- activity_log %>% select(period_start = prior_complete, period_end = start, time_gap)
+        activitylog <- activitylog %>% select(period_start = prior_complete, period_end = start, time_gap)
       } else{
-        activity_log <- activity_log %>% select(period_start = prior_start, period_end = start, time_gap)
+        activitylog <- activitylog %>% select(period_start = prior_start, period_end = start, time_gap)
       }
     } else if(timestamp == "start"){
-      activity_log <- activity_log %>% select(period_start = prior_start, period_end = start, time_gap)
+      activitylog <- activitylog %>% select(period_start = prior_start, period_end = start, time_gap)
     } else{
-      activity_log <- activity_log %>% select(period_start = prior_complete, period_end = complete, time_gap)
+      activitylog <- activitylog %>% select(period_start = prior_complete, period_end = complete, time_gap)
     }
-    return(activity_log)
+    return(activitylog)
   }
 }

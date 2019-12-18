@@ -8,6 +8,8 @@ detect_similar_labels(activitylog, column_labels, max_edit_distance = 3,
   show_NA = FALSE, ignore_capitals = FALSE)
 }
 \arguments{
+\item{activitylog}{The activity log}
+
 \item{column_labels}{The name of the column(s) in which to search for spelling mistakes}
 
 \item{max_edit_distance}{The maximum number of insertions, deletions and substitutions that are allowed to be executed in order for two strings to be considered similar.}

@@ -53,13 +53,13 @@ detect_inactive_periods.activitylog <- function(activitylog,
   }
 
   # Select specified start activity for each case when specified
-  if(!is.na(only_consider_first_activity)){
+  if(!is.na(only_first)){
     if(timestamp %in% c("both", "start")){
       activity_log <- as.data.frame(activity_log %>% group_by(case_id) %>%
-                                      filter(activity %in% only_consider_first_activity) %>% filter(start == min(start)))
+                                      filter(activity %in% only_first) %>% filter(start == min(start)))
     } else{
       activity_log <- as.data.frame(activity_log %>% group_by(case_id) %>%
-                                      filter(activity %in% only_consider_first_activity) %>% filter(complete == min(complete)))
+                                      filter(activity %in% only_first) %>% filter(complete == min(complete)))
     }
   }
 
@@ -85,7 +85,7 @@ detect_inactive_periods.activitylog <- function(activitylog,
 
   # Determine inactive periods
   if(timestamp == "both"){
-    if(is.na(only_consider_first_activity)){
+    if(is.na(only_first)){
       activity_log$time_gap <- as.numeric(difftime(activity_log$start, activity_log$prior_complete, units = "mins"))
     } else{
       activity_log$time_gap <- as.numeric(difftime(activity_log$start, activity_log$prior_start, units = "mins"))
@@ -109,7 +109,7 @@ detect_inactive_periods.activitylog <- function(activitylog,
   if(details == TRUE){
     cat("Threshold is violated in the following periods:", "\n")
     if(timestamp == "both"){
-      if(is.na(only_consider_first_activity)){
+      if(is.na(only_first)){
         activity_log <- activity_log %>% select(period_start = prior_complete, period_end = start, time_gap)
       } else{
         activity_log <- activity_log %>% select(period_start = prior_start, period_end = start, time_gap)

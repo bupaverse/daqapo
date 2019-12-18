@@ -48,6 +48,10 @@ readr::read_csv
 #' @export
 readr::read_csv2
 
+#' @importFrom dplyr rename
+#' @export
+dplyr::rename
+
 #' @importFrom rlang sym
 #'
 case_id_ <- function(eventlog) sym(case_id(eventlog))

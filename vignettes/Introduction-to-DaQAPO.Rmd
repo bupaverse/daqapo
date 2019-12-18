@@ -64,85 +64,69 @@ First of all, data must be read and prepared such that the quality assessment te
 
 As mentioned earlier, the goal of reading and preparing data is to obtain a standardised activity log format. When your source data is already in this format, preparations come down to the following elements:
 
-* Standardising column names,
-* Applying the `POSIXct` timestamp format,
-* Removing irrelevant attributes.
+* Providing appropriate names for timestamp columns
+* Applying the `POSIXct` timestamp format
 
-For this section, the dataset `hospital` will be used to illustrate data preparations. Three main functions help the user to prepare his/her own dataset:
 
-* `read_activity_log()`,
-* `rename_activity_log()`,
-* `convert_timestamp_format()`.
+For this section, the dataset `hospital` will be used to illustrate data preparations. Two main functions help the user to prepare his/her own dataset:
 
-`read_activity_log()` is the generic function able to fully prepare an activity log. Note that the activity log is only fully prepared when you enter all parameters. In the code below not all details are provided. The function returns this information in terms of warnings along with the original dataset.
+* `rename`
+* `convert_timestamp`
+* `activitylog`
 
-```{r ReadActLog}
-read_activity_log(hospital)
+#### Rename
+
+```{r}
+hospital %>%
+  rename(start = start_ts,
+         complete = complete_ts) -> hospital
 ```
 
-If we do, however, pass all column names and the timestap format, this is the only function you would have to call.
 
-```{r ReadActLog_Complete}
-read_activity_log(
-  hospital, "patient_visit_nr", "activity", "originator", "start_ts",
-  "complete_ts", c("triagecode", "specialization"), "dd/mm/yyyy hh:mm:ss"
-) -> hospital
-hospital
+#### Convert format
+
+```{r}
+hospital %>%
+  convert_timestamps(c("start","complete"), format = dmy_hms) -> hospital
 ```
 
-As you can see, all columns are renamed using standardised values and the correct timestamp format has been applied. These two steps can also be performed separately with `rename_activity_log()` and `convert_timestamp_format()`.
+
+#### Create activitylog
+
+```{r}
+hospital %>%
+  activitylog(case_id = "patient_visit_nr",
+              activity_id = "activity",
+              resource_id = "originator",
+              lifecycle_ids = c("start", "complete")) -> hospital
+```
+
+
 
 ### Preparing an Event Log
 
-With event logs, things are a bit more complex. In an event log, each row represents only a part of an activity instance. Therefore, more complex data transformations must be executed and several problems could arise. In this section, we will use an event log variant of the activity log used earlier, named `hospital_events`. Again, three functions form the building blocks of the required data preparation:
+With event logs, things are a bit more complex. In an event log, each row represents only a part of an activity instance. Therefore, more complex data transformations must be executed and several problems could arise. In this section, we will use an event log variant of the activity log used earlier, named `hospital_events`.  three functions form the building blocks of the required data preparation:
 
-* `read_event_log()`,
-* `resource_inconsistencies()`,
-* `restructure_to_activity_log()`.
+* `convert_tiemstamps`
+* `assign_instance_id`
+* `check/fix_resource_inconsistencies`
+* `standardize_lifecycle`
+* `events_to_activitylog`
 
 To illustrate this, we will start with only entering the dataset in the parameters of `read_event_log()`.
 
 ```{r ReadEventLog}
-read_event_log(hospital_events) %>% as_tibble()
+
 ```
 
 The warning informs us that column labels can also be passed in the arguments. 
 
 ```{r ReadEventLog_Cols}
-read_event_log(
-  hospital_events, "patient_visit_nr", "activity", "originator", "event_lifecycle_state",
-  "timestamp", c("triagecode", "specialization"), "dd/mm/yyyy hh:mm:ss"
-) %>% as_tibble()
+
+
 ```
 
-After entering the column labels, two different warnings may occur depending on your input data. The example dataset contains mismatches in resource inconsistencies and duplicate identifiers.
 
-The first warning, the resource inconsistencies, indicates that there are start events and complete events that form a pair, but which do not share the same resource. If we do not handle this deviation and transform the event log to an activity log later, invalid rows will be generated. In short, we would introduce new and unnecessary rows containing `NA` values.
-
-The second warning is about duplicate identifiers of case - activity - resource - event lifecycle combinations. In short, this means there are duplicate activity instances in the log. This, as a concept, is not an issue as this could be expected behavior. But again, it is something to keep in mind when moving on to data transformation.
-
-Having a column that indicates which rows form a pair, i.e. an `event_matching` column, is the solution to the duplicate identifier problem. However, resource inconsistencies must be solved to ensure a correct transformation.
-
-The function `resource_inconsistencies()` not only provides a way to detect resource mismatches, but also a basic algorithm to solve them. In short, for every resource inconsistency, the values are overwritting by merging them together. Take the 5^th^ row as an example, where the resource is now marked to be `Doctor 7 - Doctor 4`.
-
-```{r ResIncons}
-resource_inconsistencies(
-  hospital_events, "patient_visit_nr", "activity", "originator",
-  "event_lifecycle_state", "timestamp", "event_matching", detect_only = F
-) -> hospital_events
-hospital_events %>% as.data.frame() %>% head(5)
-```
-
-Having solved the inconsistencies, we can move back to `read_event_log()`.
-
-```{r ReadEventLog_Final}
-read_event_log(
-  hospital_events, "patient_visit_nr", "activity", "originator", "event_lifecycle_state",
-  "timestamp", c("triagecode", "specialization"), "dd/mm/yyyy hh:mm:ss", "event_matching"
-) %>% as_tibble()
-```
-
-In the background, `restructure_to_activity_log()` is executed to go from an event log to activity log. You can use this separately after solving the resource inconsistencies, but this is not required.
 
 ## Stage 2 - Data Quality Assessment
 
@@ -194,13 +178,13 @@ Note that the test will always print output statistics.
 This test checks if there are any activities with a deviating duration compared to the average. The bounds of when a duration is considered to be an outlier can be customized by the user.
 
 ```{r}
-detect_duration_outliers(hospital, activity_considered = "Clinical exam")
+detect_duration_outliers(hospital, "Clinical exam" = duration_within())
 ```
 
 At this point, no outliers are detected. But say you are more sensitive to duration variance, then you can tweak the bounds by either hard-coding it or by altering the number of standard deviations used to calculate the bounds.
 
 ```{r}
-detect_duration_outliers(hospital, activity_considered = "Clinical exam", bound_sd = 2) -> anomalies
+detect_duration_outliers(hospital,  "Clinical exam" = duration_within(bound_sd = 2)) -> anomalies
 anomalies
 ```
 
@@ -209,7 +193,6 @@ Assume that this line is entered by mistake. In that case, we can easily take th
 ```{r}
 filter_anomalies(activity_log = hospital, anomaly_log = anomalies) -> hospital
 
-detect_duration_outliers(hospital, activity_considered = "Clinical exam", bound_sd = 2)
 ```
 
 
@@ -228,6 +211,6 @@ Note that this function can only be applied if the case numbering is unique to t
 Finally, we will demonstrate `detect_related_activities()`, where you can check if an activity is recorded for a case if another is present. This link is very clear between a treatment and its evaluation: a treatment can only be evaluated if a treatment was recorded in the first place.
 
 ```{r}
-detect_related_activities(hospital, "Treatment evaluation", "Treatment")
+detect_related_activities(hospital, antecedent = "Treatment evaluation", consequent =  "Treatment")
 ```
 

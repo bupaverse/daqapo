@@ -4,15 +4,15 @@
 \alias{detect_missing_values}
 \title{Detect missing values}
 \usage{
-detect_missing_values(activity_log, level_of_aggregation = "overview",
-  colname = NULL, details = TRUE, filter_condition = NULL)
+detect_missing_values(activitylog, level_of_aggregation, column, details,
+  filter_condition)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+\item{activitylog}{The activity log}
 
 \item{level_of_aggregation}{Level of aggregation at which missing values are identified (either "overview", "column" or "activity)}
 
-\item{colname}{Column name of the column that needs to be analyzed when the level of aggregation is "column"}
+\item{column}{Column name of the column that needs to be analyzed when the level of aggregation is "column"}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 

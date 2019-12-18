@@ -4,11 +4,10 @@
 \alias{detect_incorrect_activity_names}
 \title{Detect incorrect activity names}
 \usage{
-detect_incorrect_activity_names(activity_log, details = TRUE,
-  filter_condition = NULL)
+detect_incorrect_activity_names(activitylog, details, filter_condition)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+\item{activitylog}{The activity log}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 

@@ -21,3 +21,13 @@ bupaR::assign_instance_id
 #' @importFrom bupaR convert_timestamps
 #' @export
 bupaR::convert_timestamps
+
+#' @importFrom bupaR detect_resource_inconsistencies
+#' @export
+bupaR::detect_resource_inconsistencies
+
+#' @importFrom bupaR fix_resource_inconsistencies
+#' @export
+bupaR::fix_resource_inconsistencies
+
+

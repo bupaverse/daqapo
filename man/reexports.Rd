@@ -8,6 +8,8 @@
 \alias{activitylog}
 \alias{assign_instance_id}
 \alias{convert_timestamps}
+\alias{detect_resource_inconsistencies}
+\alias{fix_resource_inconsistencies}
 \alias{\%>\%}
 \alias{ymd_hms}
 \alias{ymd_hm}
@@ -31,7 +33,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{bupaR}{\code{\link[bupaR]{standardize_lifecycle}}, \code{\link[bupaR]{events_to_activitylog}}, \code{\link[bupaR]{activitylog}}, \code{\link[bupaR]{assign_instance_id}}, \code{\link[bupaR]{convert_timestamps}}}
+  \item{bupaR}{\code{\link[bupaR]{standardize_lifecycle}}, \code{\link[bupaR]{events_to_activitylog}}, \code{\link[bupaR]{activitylog}}, \code{\link[bupaR]{assign_instance_id}}, \code{\link[bupaR]{convert_timestamps}}, \code{\link[bupaR]{detect_resource_inconsistencies}}, \code{\link[bupaR]{fix_resource_inconsistencies}}}
 
   \item{dplyr}{\code{\link[dplyr]{rename}}}
 

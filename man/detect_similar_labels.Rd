@@ -5,7 +5,7 @@
 \title{Search for similar labels in a column}
 \usage{
 detect_similar_labels(activitylog, column_labels, max_edit_distance = 3,
-  show_NA = FALSE, ignore_capitals = FALSE)
+  show_NA = FALSE, ignore_capitals = FALSE, filter_condition = NULL)
 }
 \arguments{
 \item{activitylog}{The activity log}
@@ -17,6 +17,8 @@ detect_similar_labels(activitylog, column_labels, max_edit_distance = 3,
 \item{show_NA}{A boolean indicating if labels that do not show similarities with others should be shown in the output}
 
 \item{ignore_capitals}{A boolean indicating if capitalization should be included or excluded when calculating the edit distance between two strings}
+
+\item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
 A data frame containing, for each label in the column, an overview of similar labels.

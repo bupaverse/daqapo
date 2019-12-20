@@ -10,13 +10,13 @@
 #' @export
 
 
-detect_similar_labels <- function(activitylog, column_labels, max_edit_distance, show_NA,ignore_capitals) {
+detect_similar_labels <- function(activitylog, column_labels, max_edit_distance, show_NA,ignore_capitals, filter_condition) {
   UseMethod("detect_similar_labels")
 }
 
 #' @export
 
-detect_similar_labels <- function(activitylog, column_labels, max_edit_distance = 3, show_NA = FALSE, ignore_capitals = FALSE) {
+detect_similar_labels <- function(activitylog, column_labels, max_edit_distance = 3, show_NA = FALSE, ignore_capitals = FALSE, filter_condition = NULL) {
 
   # Predefine variables
   similar_to <- NULL
@@ -29,6 +29,24 @@ detect_similar_labels <- function(activitylog, column_labels, max_edit_distance 
   if(!all(column_labels %in% names(activitylog))) {
     warning(glue("Some provided column labels don't exist and will be ignored: {str_c(column_labels[!(column_labels %in% names(activitylog))], collapse = ', ')}"))
     column_labels <- column_labels[(column_labels %in% names(activitylog))]
+  }
+
+
+  # Apply filter condition when specified
+  filter_specified <- FALSE
+  tryCatch({
+    is.null(filter_condition)
+  }, error = function(e) {
+    filter_specified <<- TRUE
+  }
+  )
+
+  if(!filter_specified) {
+    # geen filter gespecifieerd.
+
+  } else {
+    filter_condition_q <- enquo(filter_condition)
+    activitylog <- APPLY_FILTER(activitylog, filter_condition_q = filter_condition_q)
   }
 
 

@@ -37,9 +37,8 @@ detect_activity_frequency_violations.activitylog <- function(activitylog, ... , 
 
   # Unpack the parameters in the ellipsis
   params <- list(...)
-
   # Prepare the filter condition for anomaly detection
-  anomaly_filter <- paste0(glue::glue("({activity_id(activitylog)} == '", names(params), "' & n > ", params, ")", collapse = " | "))
+  anomaly_filter <- paste0(glue::glue("({activity_id(activitylog)} == '{names(params)}' & n > {params})"), collapse = " | ")
 
   n_cases <- n_cases(activitylog)
 

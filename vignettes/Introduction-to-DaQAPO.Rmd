@@ -107,24 +107,32 @@ hospital %>%
 
 With event logs, things are a bit more complex. In an event log, each row represents only a part of an activity instance. Therefore, more complex data transformations must be executed and several problems could arise. In this section, we will use an event log variant of the activity log used earlier, named `hospital_events`.  three functions form the building blocks of the required data preparation:
 
-* `convert_tiemstamps`
+* `convert_timestamps`
 * `assign_instance_id`
 * `check/fix_resource_inconsistencies`
 * `standardize_lifecycle`
 * `events_to_activitylog`
 
-To illustrate this, we will start with only entering the dataset in the parameters of `read_event_log()`.
 
 ```{r ReadEventLog}
-
+hospital_events
 ```
 
 The warning informs us that column labels can also be passed in the arguments. 
 
 ```{r ReadEventLog_Cols}
-
+hospital_events %>%
+  convert_timestamps(c("timestamp"), format = dmy_hms) %>%
+  mutate(event_matching = paste(patient_visit_nr, activity, event_matching)) %>%
+  events_to_activitylog(case_id = "patient_visit_nr", 
+                        activity_id = "activity", 
+                        activity_instance_id = "event_matching", 
+                        timestamp = "timestamp", 
+                        resource_id = "originator",
+                        lifecycle_id = "event_lifecycle_state") -> hospital_events
 
 ```
+
 
 
 
@@ -155,6 +163,133 @@ The table below summarizes the different data quality assessment tests available
 Table: An overview of data quality tests in DaQAPO.
 
 To illustrate the use of these assessment functions, four functions outlined in the table above are demonstrated in the remainder of this vignette. 
+
+### Activity Frequency violations
+
+```{r}
+hospital %>%
+  detect_activity_frequency_violations("Registration" = 1,
+                                       "Clinical exam" = 1)
+```
+
+
+### Activity Order Violations
+### Attribute dependencies
+
+```{r}
+hospital %>% 
+  detect_attribute_dependencies(antecedent = activity == "Registration",
+                                consequence = originator == "Clerk")
+```
+
+### Detect Case ID sequence gaps
+
+```{r}
+hospital %>%
+  detect_case_id_sequence_gaps()
+```
+
+### Detect Conditional Activity Presence
+
+```{r}
+hospital %>%
+  detect_conditional_activity_presence(condition = cattr_specialization == "Trau",
+                                       activity = "Clinical exam")
+```
+
+
+### Detect Duration Outliers
+
+```{r}
+hospital %>%
+  detect_duration_outliers(Treatment = duration_within(bound_sd = 1))
+```
+
+
+```{r}
+hospital %>%
+  detect_duration_outliers(Treatment = duration_within(lower_bound = 0, upper_bound = 15))
+```
+
+### Detect inactive periods
+
+### Detect incomplete cases
+
+```{r}
+hospital %>%
+  detect_incomplete_cases(activities = c("Registration","Triage","Clinical exam","Treatment","Treatment evaluation"))
+```
+
+### Detect Incorrect Activity Names
+
+```{r}
+hospital %>%
+  detect_incorrect_activity_names(allowed_activities = c("Registration","Triage","Clinical exam","Treatment","Treatment evaluation"))
+```
+
+### Detect Missing Values 
+
+```{r}
+hospital %>%
+  detect_missing_values(column = "activity")
+## column heeft hier geen zin?!
+```
+
+```{r}
+hospital %>% 
+  detect_missing_values(level_of_aggregation = "activity")
+```
+
+```{r}
+hospital %>% 
+  detect_missing_values(
+  level_of_aggregation = "column",
+  column = "triagecode")
+```
+
+### Detect Multiregistration
+
+### Detect Related activities
+
+```{r}
+hospital %>%
+  detect_related_activities(antecedent = "Treatment evaluation", 
+                            consequent = "Treatment")
+```
+
+### Detect similar labels
+
+```{r}
+hospital %>%
+  detect_similar_labels(column_labels = "activity", max_edit_distance = 3)
+```
+
+### Detect Time Anomalies
+
+```{r}
+hospital %>%
+  detect_time_anomalies()
+```
+
+### Detect Unique Values
+
+```{r}
+hospital %>%
+  detect_unique_values(column_labels = "activity")
+```
+```{r}
+hospital %>%
+  detect_unique_values(column_labels = c("activity", "originator"))
+```
+### Detect Value Range Violations
+
+```{r}
+hospital %>%
+  detect_value_range_violations(triagecode = domain_numeric(from = 0, to = 5))
+```
+
+
+
 
 ### `detect_value_range_violations()`
 

@@ -4,18 +4,12 @@
 \alias{detect_value_range_violations}
 \title{Detect value range violations}
 \usage{
-detect_value_range_violations(activity_log, column, domain_range,
-  timestamp_format = "yyyy-mm-dd hh:mm:ss", details = TRUE,
-  filter_condition = NULL)
+detect_value_range_violations(activitylog, ..., details, filter_condition)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+\item{activitylog}{The activity log}
 
-\item{column}{Column in the activity log for which the domain range needs to be checked}
-
-\item{domain_range}{Domain range for the specified column in parameter column}
-
-\item{timestamp_format}{When the provided domain range represents timestamps, the format of the timestamps needs to be provided (either "yyyy-mm-dd hh:mm:ss" or "dd-mm-yyyy hh:mm:ss")}
+\item{...}{Define domain range using domain_numeric, domain_categorical and/or domain_time for each column}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 
@@ -26,4 +20,7 @@ Information on the presence of attribute range violations in the specified colum
 }
 \description{
 Function detecting violations of the value range, i.e. values outside the range of tolerable values
+}
+\seealso{
+\code{\link{domain_categorical}},\code{\link{domain_time}},\code{\link{domain_numeric}}
 }

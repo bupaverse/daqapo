@@ -17,7 +17,7 @@ detect_incorrect_activity_names.activitylog <- function(activitylog, allowed_act
 
   # Predefine variables
   activity <- NULL
-
+  absolute_frequency <- NULL
 
   # Apply filter condition when specified
   filter_specified <- FALSE

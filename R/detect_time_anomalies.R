@@ -13,7 +13,8 @@ detect_time_anomalies <- function(activitylog, anomaly_type = c("both", "negativ
   type <- NULL
   duration <- NULL
   activity <- NULL
-
+  complete <- NULL
+  start <- NULL
   anomaly_type <- match.arg(anomaly_type)
   # Generate warning if inappropriate anomaly type is selected
 

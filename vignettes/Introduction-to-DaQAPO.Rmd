@@ -11,9 +11,9 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  error = TRUE,
   collapse = TRUE,
-  comment = "#>",
-  error = TRUE
+  comment = "#>"
 )
 ```
 
@@ -118,7 +118,6 @@ With event logs, things are a bit more complex. In an event log, each row repres
 hospital_events
 ```
 
-The warning informs us that column labels can also be passed in the arguments. 
 
 ```{r ReadEventLog_Cols}
 hospital_events %>%
@@ -179,7 +178,7 @@ hospital %>%
 ```{r}
 hospital %>% 
   detect_attribute_dependencies(antecedent = activity == "Registration",
-                                consequence = originator == "Clerk")
+                                consequent = startsWith(originator,"Clerk"))
 ```
 
 ### Detect Case ID sequence gaps
@@ -193,8 +192,8 @@ hospital %>%
 
 ```{r}
 hospital %>%
-  detect_conditional_activity_presence(condition = cattr_specialization == "Trau",
-                                       activity = "Clinical exam")
+  detect_conditional_activity_presence(condition = specialization == "TRAU",
+                                       activities = "Clinical exam")
 ```
 
 
@@ -296,13 +295,13 @@ hospital %>%
 The `detect_value_range_violations()` function checks whether the values of a passed attribute are within certain bounds for numeric attributes, or in a list of values for a character or factor attribute. For example, the triage code is typically a number between 1 and 5. We can easily test whether all cases abide to this rule.
 
 ```{r}
-detect_value_range_violations(hospital, "cattr_triagecode", c(1,5))
+detect_value_range_violations(hospital, "triagecode" = domain_numeric(1,5))
 ```
 
 Data quality assessment tests provide the user with summary statistics in the console. Also, where appropriate, they return the rows in the log that are considered to be an anomaly. In this case, you get all rows where `cattr_triagecode < 1` or `cattr_triagecode > 5`. Therefore, one can simply request the unique cases in this result to get more specific information.
 
 ```{r}
-detect_value_range_violations(hospital, "cattr_triagecode", c(1,5)) %>%
+detect_value_range_violations(hospital, "triagecode" = domain_numeric(1,5)) %>%
   distinct(case_id, cattr_triagecode)
 ```
 

@@ -1,88 +1,115 @@
 #' Detect activity duration outliers
 #'
 #' Function detecting duration outliers for a particular activity
-#' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
-#' @param activity_considered Activity name for which duration outliers should be detected
-#' @param bound_sd Number of standard deviations from the mean duration which is used to define an outlier in the absence of lower_bound and upper_bound (default value of 3 is used)
-#' @param lower_bound Lower bound for activity duration used during outlier detection (expressed in minutes)
-#' @param upper_bound Upper bound for activity duration used during outlier detection (expressed in minutes)
-#' @param details Boolean indicating wheter details of the results need to be shown
-#' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
+#' @inheritParams detect_activity_frequency_violations
+#' @param ... for each activity to be checked, an argument "activity_name" = duration_within(...) to define bounds. See ?duration_within
 #' @return Information on the presence of activity duration outliers
+#' @seealso \code{\link{duration_within}}
+#' @importFrom purrr map
+#' @importFrom tidyr unnest
 #' @export
 
-detect_duration_outliers <- function(activity_log, activity_considered, bound_sd = 3, lower_bound = NA, upper_bound = NA, details = TRUE, filter_condition = NULL){
+detect_duration_outliers <- function(activitylog,
+                                     ...,
+                                     details,
+                                     filter_condition) {
+  UseMethod("detect_duration_outliers")
+}
+#' @export
+detect_duration_outliers.activitylog <- function(activitylog,
+                                                 ...,
+                                                 details = TRUE,
+                                                 filter_condition = NULL){
 
   # Predefine variables
   duration <- NULL
   activity <- NULL
-
-  # Initiate warning variables
-  warning.filtercondition <- FALSE
-
-  # Check if the required columns are present in the log
-  missing_columns <- check_colnames(activity_log, c("activity", "start", "complete"))
-  if(!is.null(missing_columns)){
-    stop("The following columns, which are required for the test, were not found in the activity log: ",
-         paste(missing_columns, collapse = "\t"), ".", "\n  ",
-         "Please check rename_activity_log.")
-  }
+  `<list>` <- NULL
+  value <- NULL
+  act <- NULL
+  complete <- NULL
+  start <- NULL
+  bound_sd <- NULL
+  lower_bound <- NULL
+  upper_bound <- NULL
 
   # Apply filter condition when specified
+  filter_specified <- FALSE
   tryCatch({
-    if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
-    }
+    is.null(filter_condition)
   }, error = function(e) {
-    warning.filtercondition <<- TRUE
+    filter_specified <<- TRUE
   }
   )
 
-  if(warning.filtercondition) {
-    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
+  if(!filter_specified) {
+    # geen filter gespecifieerd.
+
+  } else {
+    filter_condition_q <- enquo(filter_condition)
+    activitylog <- APPLY_FILTER(activitylog, filter_condition_q = filter_condition_q)
   }
 
-  # Select activity under consideration
-  activity_log <- activity_log %>% filter(activity == activity_considered)
 
-  # If there are no rows present in the log at this point, there is no need to keep going
-  if(nrow(activity_log) == 0) {
-    warning("The activity '", activity_considered, "' was not found in the log. Therefore, no outliers exist for that activity.")
-    return(activity_log)
+
+  params <- list(...)
+
+  tibble(act = names(params), params) %>%
+    mutate(params = map(params, tibble)) %>%
+    mutate(params = map(params, ~mutate(.x, names = names(`<list>`)))) %>%
+    unnest(params) %>%
+    mutate(value = as.numeric(`<list>`)) %>%
+    select(act, names,  value) %>%
+    spread(names, value)  -> params
+
+
+  if(all(!(params$act %in% activity_labels(activitylog)))) {
+    stop("None of the activities were found in the data. Perhaps you misspelled them?")
+  } else if(any(!(params$act %in% activity_labels(activitylog)))) {
+    warning("Some activities not found in log: {str_c(params$act[!(params$act %in% activity_labels_activitylog)],collapse = ', ')}.")
   }
 
-  # Calculate durations
-  activity_log$duration <- as.numeric(difftime(activity_log$complete, activity_log$start, units = "mins"))
+  activitylog %>%
+    filter_activity(activities = params$act) %>%
+    mutate(duration = as.double(complete - start, units = "mins")) -> activitylog_durations
 
   # Determine whether warning for negative durations is required
-  if(nrow(activity_log %>% filter(duration < 0)) > 0){
+  if(nrow(activitylog_durations %>% filter(duration < 0)) > 0){
     warning("Negative durations detected. Check function time_anomalies for more details.")
   }
 
-  # Determine upper and lower bounds in case they are not specified
-  if(is.na(lower_bound) & is.na(upper_bound)){
-    lower_bound <- mean(activity_log$duration, na.rm = T) - bound_sd * sd(activity_log$duration, na.rm = T)
-    if(lower_bound < 0){ # Correction in case a negative value is obtained
-      lower_bound <- 0
-    }
-    upper_bound <- mean(activity_log$duration, na.rm = T) + bound_sd * sd(activity_log$duration, na.rm = T)
-  }
+  activitylog_durations %>%
+    group_by(!!activity_id_(activitylog)) %>%
+    summarize(mean = mean(duration, na.rm = T), sd = sd(duration, na.rm = T)) %>%
+    mutate_at(activity_id(activitylog), as.character) -> activitylog_durations_summary
+
+  colnames(params)[colnames(params) == "act"] <- activity_id(activitylog)
+
+  activitylog_durations_summary %>%
+    inner_join(params, by = activity_id(activitylog)) %>%
+    group_by(!!activity_id_(activitylog)) %>%
+    mutate(lower_bound = ifelse(is.na(lower_bound), max(0, mean-bound_sd*sd), lower_bound),
+           upper_bound = ifelse(is.na(upper_bound), mean+bound_sd*sd, upper_bound)) -> activitylog_durations_summary
+
+  activitylog_durations %>%
+    mutate_at(activity_id(activitylog), as.character) %>%
+    inner_join(activitylog_durations_summary, by = activity_id(activitylog)) -> outliers
+
 
   # Outlier determination
-  outliers <- activity_log %>% filter(duration < lower_bound | duration > upper_bound)
+  outliers <- outliers %>% filter(duration < lower_bound | duration > upper_bound)
 
   # Print output
-  if(!is.null(filter_condition)) {
-    cat("Applied filtering condition:", filter_condition, "\n", "\n")
-  }
 
-  cat("*** OUTPUT ***", "\n")
-  cat("Outliers are detected for activity", activity_considered, "with lower bound", lower_bound, "and upper bound", upper_bound, ".", "\n", "\n")
-  cat("A total of", nrow(outliers),"is detected (", nrow(outliers) / nrow(activity_log) * 100, "% of the activity executions)", "\n")
+  message("*** OUTPUT ***")
+  message("Outliers are detected for following activities")
+  for(i in seq_len(nrow(activitylog_durations_summary)))
+    message(glue("{activitylog_durations_summary[i,1]} \t Lower bound: {round(activitylog_durations_summary$lower_bound[i], 2)} \t Upper bound: {round(activitylog_durations_summary$upper_bound[i],2)}"))
+  message("A total of ", nrow(outliers)," is detected (", round(nrow(outliers) / nrow(activitylog) * 100, 2), "% of the activity executions)")
 
   if(details == TRUE){
     if(nrow(outliers) > 0){
-      cat("For the following rows, outliers are detected:", "\n")
+      message("For the following activity instances, outliers are detected:")
       return(outliers)
     }
   }

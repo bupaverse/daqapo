@@ -4,11 +4,13 @@
 \alias{detect_incorrect_activity_names}
 \title{Detect incorrect activity names}
 \usage{
-detect_incorrect_activity_names(activity_log, details = TRUE,
-  filter_condition = NULL)
+detect_incorrect_activity_names(activitylog, allowed_activities, details,
+  filter_condition)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+\item{activitylog}{The activity log}
+
+\item{allowed_activities}{Vector with correct activity labels. If NULL, user input will be asked.}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 

@@ -4,13 +4,12 @@
 \alias{detect_incomplete_cases}
 \title{Detect incomplete cases}
 \usage{
-detect_incomplete_cases(activity_log, activity_vector, details = TRUE,
-  filter_condition = NULL)
+detect_incomplete_cases(activitylog, activities, details, filter_condition)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+\item{activitylog}{The activity log}
 
-\item{activity_vector}{A vector of activity names which should be present for a case}
+\item{activities}{A vector of activity names which should be present for a case}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 

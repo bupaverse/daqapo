@@ -1,84 +1,71 @@
 #' Detect time anomalies
 #'
 #' Function detecting time anomalies, which can refer to activities with negative or zero duration
-#' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
+#' @inheritParams detect_activity_frequency_violations
 #' @param anomaly_type Type of anomalies that need to be detected (either "negative", "zero" or "both")
-#' @param details Boolean indicating wheter details of the results need to be shown
-#' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the presence of time anomalies of the specified anomaly type
 #' @export
 
-detect_time_anomalies <- function(activity_log, anomaly_type = "both", details = TRUE, filter_condition = NULL){
+detect_time_anomalies <- function(activitylog, anomaly_type = c("both", "negative","zero") ,
+                                  details = TRUE, filter_condition = NULL){
 
   # Predefine variables
   type <- NULL
   duration <- NULL
   activity <- NULL
-
-  # Initiate warning variables
-  warning.filtercondition <- FALSE
-
-  # Check if the required columns are present in the log
-  missing_columns <- check_colnames(activity_log, c("activity", "start", "complete"))
-  if(!is.null(missing_columns)){
-    stop("The following columns, which are required for the test, were not found in the activity log: ",
-         paste(missing_columns, collapse = "\t"), ".", "\n  ",
-         "Please check rename_activity_log.")
-  }
-
+  complete <- NULL
+  start <- NULL
+  anomaly_type <- match.arg(anomaly_type)
   # Generate warning if inappropriate anomaly type is selected
-  if(!(anomaly_type %in% c("negative", "zero", "both"))){
-    warning("This anomaly type is not supported. Anomaly type should be: negative, zero, both. Default level of aggregation selected: negative.")
-    anomaly_type <- "negative"
-  }
+
 
   # Apply filter condition when specified
+  filter_specified <- FALSE
   tryCatch({
-    if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
-    }
+    is.null(filter_condition)
   }, error = function(e) {
-    warning.filtercondition <<- TRUE
+    filter_specified <<- TRUE
   }
   )
 
-  if(warning.filtercondition) {
-    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
+  if(!filter_specified) {
+    # geen filter gespecifieerd.
+
+  } else {
+    filter_condition_q <- enquo(filter_condition)
+    activitylog <- APPLY_FILTER(activitylog, filter_condition_q = filter_condition_q)
   }
 
   # Calculate durations
-  activity_log$duration <- as.numeric(difftime(activity_log$complete, activity_log$start, units = "mins"))
+  activitylog %>%
+    mutate(duration = as.double(complete - start, units = "mins")) -> anomalies
 
   # Determine time anomalies
   if(anomaly_type == "negative"){
-    anomalies <- activity_log %>% filter(duration < 0)
+    anomalies <- anomalies %>% filter(duration < 0)
   } else if(anomaly_type == "zero"){
-    anomalies <- activity_log %>% filter(duration == 0)
+    anomalies <- anomalies %>% filter(duration == 0)
   } else{
-    anomalies <- activity_log %>% filter(duration <= 0)
-    anomalies$type <- ifelse(anomalies$duration < 0, "negative duration", "zero duration")
+    anomalies <- anomalies %>% filter(duration <= 0) %>%
+      mutate(type = ifelse(duration < 0, "negative duration", "zero duration"))
   }
 
   # Print output
-  if(!is.null(filter_condition)) {
-    cat("Applied filtering condition:", filter_condition, "\n")
-  }
-  cat("Selected anomaly type:", anomaly_type, "\n", "\n")
+  message("Selected anomaly type: ", anomaly_type, "\n")
 
-  cat("*** OUTPUT ***", "\n")
-  cat("For", nrow(anomalies), "rows in the activity log (", nrow(anomalies) / nrow(activity_log) * 100, "%), an anomaly is detected.", "\n")
+  message("*** OUTPUT ***")
+  message("For ", nrow(anomalies), " rows in the activity log (", round(nrow(anomalies) / nrow(activitylog) * 100, 2), "%), an anomaly is detected.")
 
   if(nrow(anomalies) > 0){
-    cat("The anomalies are spread over the activities as follows:", "\n")
+    message("The anomalies are spread over the activities as follows:")
     if(anomaly_type == "both"){
-      print(anomalies %>% group_by(activity, type) %>% summarize(n = n()) %>% arrange(desc(n)))
+      print(anomalies %>% group_by(!!activity_id_(activitylog), type) %>% summarize(n = n()) %>% arrange(desc(n)))
     } else{
-      print(anomalies %>% group_by(activity) %>% summarize(n = n()) %>% arrange(desc(n)))
+      print(anomalies %>% group_by(!!activity_id_(activitylog)) %>% summarize(n = n()) %>% arrange(desc(n)))
     }
-    cat("\n", "\n")
 
     if(details == TRUE){
-      cat("Anomalies are found in the following rows:", "\n")
+      message("Anomalies are found in the following rows:")
       return(anomalies)
     }
   }

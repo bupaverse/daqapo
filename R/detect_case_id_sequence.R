@@ -1,13 +1,17 @@
 #' Detect gaps in case_id
 #'
 #' Function detecting gaps in the sequence of case identifiers
-#' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
-#' @param details Boolean indicating wheter details of the results need to be shown
-#' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
+#' @inheritParams detect_activity_frequency_violations
 #' @return The case IDs that are missing in the sequence.
 #' @export
 
-detect_case_id_sequence_gaps <- function(activity_log, details = TRUE, filter_condition = NULL) {
+detect_case_id_sequence_gaps <- function(activitylog, details, filter_condition) {
+  UseMethod("detect_case_id_sequence_gaps")
+}
+
+#' @export
+
+detect_case_id_sequence_gaps.activitylog <- function(activitylog, details = TRUE, filter_condition = NULL) {
 
   # Predefine variables
   case <- NULL
@@ -15,62 +19,59 @@ detect_case_id_sequence_gaps <- function(activity_log, details = TRUE, filter_co
   case_id <- NULL
 
   # Initiate warning variables
-  warning.filtercondition <- FALSE
-
-  # Check if the required columns are present in the log
-  missing_columns <- check_colnames(activity_log, "case_id")
-  if(!is.null(missing_columns)){
-    stop("The following columns, which are required for the test, were not found in the activity log: ",
-         paste(missing_columns, collapse = "\t"), ".", "\n  ",
-         "Please check rename_activity_log.")
-  }
+  warning.asnumeric <- FALSE
 
   # Check if case_id is a numeric column
-  if(!class(activity_log$case_id) %in% c("numeric", "integer")){
-    stop("The case IDs in the activity log are not numeric. Therefore, it is not possible to perform this test on the dataset.")
+  if(!class(activitylog[[case_id(activitylog)]]) %in% c("numeric", "integer")){
+    tryCatch({
+      activitylog <- mutate_at(.tbl = activitylog, .vars = case_id(activitylog), .funs = as.numeric) %>%
+        re_map(mapping(activitylog))
+    }, warning = function(e) {
+      warning.asnumeric <<- TRUE
+    }
+    )
+    if(warning.asnumeric) {
+      stop("The case IDs in the activity log cannot be converted to numeric. Therefore, it is not possible to perform this test on the dataset.")
+    }
+
   }
 
+  filter_specified <- FALSE
   # Apply filter condition when specified
   tryCatch({
-    if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
-    }
+    is.null(filter_condition)
   }, error = function(e) {
-    warning.filtercondition <<- TRUE
+    filter_specified <<- TRUE
   }
   )
+  # Apply filter condition when specified
+  if(!filter_specified) {
+    # geen filter gespecifieerd.
 
-  if(warning.filtercondition) {
-    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
+  } else {
+    filter_condition_q <- enquo(filter_condition)
+    activitylog <- APPLY_FILTER(activitylog, filter_condition_q = filter_condition_q)
   }
-
-  # Take all the case IDs in order
-  case_ids <- activity_log %>% distinct(case_id) %>% arrange(case_id)
-
   # Detect gaps
-  first <- case_ids$case_id[1]
-  last <- case_ids$case_id[nrow(case_ids)]
+  first <- min(activitylog[[case_id(activitylog)]])
+  last <- max(activitylog[[case_id(activitylog)]])
 
   cases <- data.frame(case = seq(first, last)) %>%
-    mutate(present = case %in% case_ids$case_id) %>%
+    mutate(present = case %in% case_labels(activitylog)) %>%
     filter(present == F)
 
   # Prepare output
-  missing_case_ids <- paste(cases$case, collapse = " - ")
   n_missing_case_ids <- nrow(cases)
-  n_expected_cases <- seq(first, last) %>% length()
+  n_expected_cases <- last - first + 1
 
   # Print output
-  if(!is.null(filter_condition)) {
-    cat("Applied filtering condition", filter_condition, "\n")
-  }
-  cat("*** OUTPUT ***", "\n")
-  cat("It was checked if there are gaps in the sequence of case IDs", "\n")
-  cat("From the", n_expected_cases, "expected cases in the activity log, ranging from", first, "to", last, ",",
-      n_missing_case_ids, "(", n_missing_case_ids / n_expected_cases * 100, "% ) are missing.\n")
 
-  if(details == TRUE){
-    cat("These case numbers are:\n")
-    return(missing_case_ids)
+  message("*** OUTPUT ***", "\n")
+  message("It was checked whether there are gaps in the sequence of case IDs", "\n")
+  message(glue("From the {n_expected_cases} expected cases in the activity log, ranging from {first} to {last}, {n_missing_case_ids} ({round(100*n_missing_case_ids/n_expected_cases, 2)}%) are missing."))
+
+  if(details == TRUE & n_missing_case_ids > 0){
+    message("These case numbers are:\n")
+    return(cases)
   }
 }

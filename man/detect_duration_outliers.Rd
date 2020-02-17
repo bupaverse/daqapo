@@ -4,20 +4,12 @@
 \alias{detect_duration_outliers}
 \title{Detect activity duration outliers}
 \usage{
-detect_duration_outliers(activity_log, activity_considered, bound_sd = 3,
-  lower_bound = NA, upper_bound = NA, details = TRUE,
-  filter_condition = NULL)
+detect_duration_outliers(activitylog, ..., details, filter_condition)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+\item{activitylog}{The activity log}
 
-\item{activity_considered}{Activity name for which duration outliers should be detected}
-
-\item{bound_sd}{Number of standard deviations from the mean duration which is used to define an outlier in the absence of lower_bound and upper_bound (default value of 3 is used)}
-
-\item{lower_bound}{Lower bound for activity duration used during outlier detection (expressed in minutes)}
-
-\item{upper_bound}{Upper bound for activity duration used during outlier detection (expressed in minutes)}
+\item{...}{for each activity to be checked, an argument "activity_name" = duration_within(...) to define bounds. See ?duration_within}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 
@@ -28,4 +20,7 @@ Information on the presence of activity duration outliers
 }
 \description{
 Function detecting duration outliers for a particular activity
+}
+\seealso{
+\code{\link{duration_within}}
 }

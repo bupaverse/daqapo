@@ -1,58 +1,60 @@
 #' Detect dependency violations between attributes
 #'
 #' Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold(s))
-#' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
-#' @param condition_vector1 Vector of condition(s) which serve as an antecedent (if the condition(s) in condition_vector1 hold, then the condition(s) in condition_vector2 should also hold)
-#' @param condition_vector2 Vector of condition(s) which serve as a consequent (if the condition(s) in condition_vector1 hold, then the condition(s) in condition_vector2 should also hold)
-#' @param details Boolean indicating wheter details of the results need to be shown
-#' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
+#' @inheritParams detect_activity_frequency_violations
+#' @param antecedent (Vector of) condition(s) which serve as an antecedent (if the condition(s) in antecedent hold, then the condition(s) in consequent should also hold)
+#' @param consequent (Vector of) condition(s) which serve as a consequent (if the condition(s) in antecedent hold, then the condition(s) in consequent should also hold)
 #' @return Information on the degree to which the specified dependencies are respected/violated.
 #' @export
-detect_attribute_dependencies <- function(activity_log, condition_vector1, condition_vector2, details = TRUE, filter_condition = NULL){
+detect_attribute_dependencies <- function(activitylog, antecedent, consequent, details = TRUE, filter_condition = NULL, ...){
 
   # Initiate warning variables
-  warning.filtercondition <- FALSE
+  filter_specified <- FALSE
   error.cond1 <- FALSE
   error.cond2 <- FALSE
 
+
   # Apply filter condition when specified
+  filter_specified <- FALSE
   tryCatch({
-    if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
-    }
+    is.null(filter_condition)
   }, error = function(e) {
-    warning.filtercondition <<- TRUE
+    filter_specified <<- TRUE
   }
   )
 
-  if(warning.filtercondition) {
-    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
-  }
+  if(!filter_specified) {
+    # geen filter gespecifieerd.
 
-  # Concatenate condition_vector1 and condition_vector2
-  condition_vector1 <- paste(condition_vector1, collapse = " & ")
-  condition_vector2 <- paste(condition_vector2, collapse = " & ")
+  } else {
+    filter_condition_q <- enquo(filter_condition)
+    activitylog <- APPLY_FILTER(activitylog, filter_condition_q = filter_condition_q)
+
+  }
+  # Quote antecedent and consequent
+  antecedent <- enquo(antecedent)
+  consequent <- enquo(consequent)
 
   # Check rows in activity log for which conditions in condition_vector1 holds
   tryCatch({
-    activity_log_cond1 <- activity_log %>% filter(!! rlang::parse_expr(condition_vector1))
+    activity_log_cond1 <- activitylog %>% filter(!!(antecedent))
   }, error = function(e) {
     error.cond1 <<- TRUE
   })
 
   if(error.cond1) {
-    stop("The first condition vector (", condition_vector1, ") is not valid. Check the syntax and column names.")
+    stop("The first condition vector (", expr_text(antecedent), ") is not valid. Check the syntax and column names.")
   }
 
   # Check rows for which both condition_vector1 and condition_vector2 holds
   tryCatch({
-    activity_log_cond12 <- activity_log_cond1 %>% filter(!! rlang::parse_expr(condition_vector2))
+    activity_log_cond12 <- activity_log_cond1 %>% filter(!!(consequent))
   }, error = function(e) {
     error.cond2 <<- TRUE
   })
 
   if(error.cond2) {
-    stop("The second condition vector (", condition_vector2, ") is not valid. Check the syntax and column names.")
+    stop("The second condition vector (", expr_text(consequent), ") is not valid. Check the syntax and column names.")
   }
 
   # Prepare output
@@ -60,19 +62,15 @@ detect_attribute_dependencies <- function(activity_log, condition_vector1, condi
   stat_false <- 100 - stat_true
 
   # Print output
-  if(!is.null(filter_condition)) {
-    cat("Applied filtering condition:", filter_condition, "\n", "\n")
-  }
-
-  cat("*** OUTPUT ***", "\n")
-  cat("The following statement was checked: if condition(s)", condition_vector1, "hold(s), then", condition_vector2, "should also hold", "\n", "\n")
-  cat("This statement holds for",
-      nrow(activity_log_cond12), "(", stat_true, "%) of the rows in the activity log for which the first condition(s) hold and does not hold for",
-      nrow(activity_log_cond1) - nrow(activity_log_cond12), "(", stat_false, "%) of these rows.", "\n", "\n")
+  message("*** OUTPUT ***")
+  message("The following statement was checked: if condition(s) ", expr_text(antecedent), " hold(s), then ", expr_text(consequent), " should also hold.")
+  message("This statement holds for ",
+      nrow(activity_log_cond12), " (", round(stat_true, 2), "%) of the rows in the activity log for which the first condition(s) hold and does not hold for ",
+      nrow(activity_log_cond1) - nrow(activity_log_cond12), " (", round(stat_false, 2), "%) of these rows.", "\n")
 
   if(details == TRUE){
     if(stat_false > 0){
-      cat("For the following rows, the first condition(s) hold(s), but the second condition does not:", "\n")
+      message("For the following rows, the first condition(s) hold(s), but the second condition does not:")
       return(dplyr::setdiff(activity_log_cond1,activity_log_cond12))
     }
   }

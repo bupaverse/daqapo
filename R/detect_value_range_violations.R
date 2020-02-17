@@ -1,103 +1,130 @@
 #' Detect value range violations
 #'
 #' Function detecting violations of the value range, i.e. values outside the range of tolerable values
-#' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
-#' @param column Column in the activity log for which the domain range needs to be checked
-#' @param domain_range Domain range for the specified column in parameter column
-#' @param timestamp_format When the provided domain range represents timestamps, the format of the timestamps needs to be provided (either "yyyy-mm-dd hh:mm:ss" or "dd-mm-yyyy hh:mm:ss")
-#' @param details Boolean indicating wheter details of the results need to be shown
-#' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
+#' @inheritParams detect_activity_frequency_violations
+#' @param ... Define domain range using domain_numeric, domain_categorical and/or domain_time for each column
 #' @return Information on the presence of attribute range violations in the specified column
+#' @seealso \code{\link{domain_categorical}},\code{\link{domain_time}},\code{\link{domain_numeric}}
+#' @importFrom glue glue
 #' @export
 #'
+detect_value_range_violations <- function(activitylog, ..., details, filter_condition) {
+  UseMethod("detect_value_range_violations")
+}
+#' @export
+detect_value_range_violations.activitylog <- function(activitylog, ... , details = TRUE, filter_condition = NULL){
 
-detect_value_range_violations <- function(activity_log, column, domain_range, timestamp_format = "yyyy-mm-dd hh:mm:ss", details = TRUE, filter_condition = NULL){
-
-  # Predefine variables
-  new_ts <- NULL
-
-  # Initiate warning variables
-  warning.filtercondition <- FALSE
-
-  # Check if the required columns for this test exist: case_id & activity
-  missing_columns <- check_colnames(activity_log, column)
-  if(!is.null(missing_columns)){
-    stop("The following columns, which are required for the test, were not found in the activity log: ", paste(missing_columns, collapse = "\t"), ".", "\n", "Please check rename_activity_log.")
-  }
 
   # Apply filter condition when specified
+  filter_specified <- FALSE
   tryCatch({
-    if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
-    }
+    is.null(filter_condition)
   }, error = function(e) {
-    warning.filtercondition <<- TRUE
+    filter_specified <<- TRUE
   }
   )
 
-  if(warning.filtercondition) {
-    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
-  }
+  if(!filter_specified) {
+    # geen filter gespecifieerd.
 
-  # Save domain_range for printing purposes (before POSIXct conversion to numeric)
-  print_domain_range <- domain_range
-
-  # If column under investigation is a POSIXct-column, convert domain_range to POSIXct-objects
-  if(is.POSIXct(activity_log[,column])){
-
-    activity_log$new_ts <- as.numeric(activity_log[,column])
-
-    if(timestamp_format == "yyyy-mm-dd hh:mm:ss"){
-      domain_range[1] <- as.numeric(ymd_hms(domain_range[1]))
-      domain_range[2] <- as.numeric(ymd_hms(domain_range[2]))
-    } else if(timestamp_format == "dd-mm-yyyy hh:mm:ss"){
-      domain_range[1] <- as.numeric(dmy_hms(domain_range[1]))
-      domain_range[2] <- as.numeric(dmy_hms(domain_range[2]))
-    } else{
-      stop("Timestamp format not supported. Convert timestamp to one of the following formats: yyyy-mm-dd hh:mm:ss or dd-mm-yyyy hh:mm:ss.")
-    }
-  }
-
-  # Determine the number of rows for which the attributes domain range is violated
-  n_rows <- nrow(activity_log)
-
-  if(is.numeric(activity_log[[column]])){
-    violated <- activity_log[which(is.na(activity_log[,column]) | activity_log[,column] < domain_range[1] | activity_log[,column] > domain_range[2]),]
-
-  } else if(is.POSIXct(activity_log[[column]])){
-    violated <- activity_log[which(is.na(activity_log$new_ts) | activity_log$new_ts < domain_range[1] | activity_log$new_ts > domain_range[2]),]
-    violated <- violated %>% select(-new_ts)
-
-  } else if(is.character(activity_log[[column]])){
-    violated <- activity_log[-(which(is.na(activity_log[,column]) | activity_log[,column] %in% domain_range)),]
-
-  } else if(is.factor(activity_log[[column]])){
-    activity_log[,column] <- as.character(activity_log[,column])
-    domain_range <- unique(activity_log[, column])
-    violated <- activity_log[-(which(is.na(activity_log[,column]) | activity_log[,column] %in% domain_range)),]
   } else {
-    stop("The class ", class(activity_log[[column]]), " is not supported. Must be either numeric, POSIXct, character or factor.")
+    filter_condition_q <- enquo(filter_condition)
+    activitylog <- APPLY_FILTER(activitylog, filter_condition_q = filter_condition_q)
   }
 
-  # Prepare output
-  stat_outside <- nrow(violated) / n_rows * 100
-  stat_inside <- 100 - stat_outside
 
-  # Print output
-  if(!is.null(filter_condition) & !warning.filtercondition) {
-    cat("Applied filtering condition:", filter_condition, "\n", "\n")
+  params <- list(...)
+
+  classes <- map(params, ~class(.x)[1]) %>% unlist()
+  if(any(classes != "value_range")) {
+    stop("Domains should be defined with domain_ functions.")
   }
 
-  cat("*** OUTPUT ***", "\n")
-  cat("The domain range", print_domain_range, "for column", column, "is checked.", "\n", "\n")
-  cat("The values fall within the specified domain range for",
-      n_rows - nrow(violated), "(", stat_inside, "%) of the rows in the activity log and outside the domain range for",
-      nrow(violated), "(", stat_outside, "%) of these rows.", "\n", "\n")
+  columns <- names(params)
+  if(any(!(columns %in% names(activitylog)))) {
+    warning(glue::glue("The following columns are not found and ignored: {str_c(columns[!(columns %in% names(activitylog))], collapse = ', ')}. Did you spelled them wrong?"))
+    columns <- columns[(columns %in% names(activitylog))]
+  }
 
+  violated <- vector(mode = "list", length = length(params))
+
+  message("*** OUTPUT ***")
+  for(i in seq_along(params)) {
+    type <- params[[i]]$type
+    column <- names(params)[i]
+    FUN <- switch(type,
+                  numeric = check_domain_numeric,
+                  categorical = check_domain_character,
+                  time = check_domain_time)
+
+    violated[[i]] <- FUN(activitylog, column, params[[i]])
+  message("")
+  }
+
+  violated <- bind_rows(violated)
   if(details == TRUE){
-    if(stat_outside > 0){
-      cat("The following rows fall outside the specified domain range for column", column, ":", "\n")
+    if(nrow(violated) > 0){
+      message("The following rows fall outside the specified domain range for indicated column:")
       return(violated)
     }
   }
+}
+
+check_domain_time <- function(activitylog, column, domain_range) {
+  column_checked <- NULL
+  activitylog %>%
+    filter(is.na(!!sym(column)) | !!sym(column) < domain_range$from | !!sym(column) > domain_range$to) -> violated
+
+  # Prepare output
+  stat_outside <- round(nrow(violated) / nrow(activitylog) * 100, 2)
+  stat_inside <- round(100 - stat_outside, 2)
+
+  message("The domain range for column ", column, " is checked.")
+  message(glue("Values allowed between {domain_range$from} and {domain_range$to}"))
+  message("The values fall within the specified domain range for ",
+      nrow(activitylog) - nrow(violated), " (", stat_inside, "%) of the rows in the activity log and outside the domain range for ",
+      nrow(violated), " (", stat_outside, "%) of these rows.")
+  violated %>%
+    mutate(column_checked = column) %>%
+    select(column_checked, everything())
+
+}
+
+check_domain_numeric <- function(activitylog, column, domain_range) {
+  column_checked <- NULL
+
+  activitylog %>%
+    filter(is.na(!!sym(column)) | !between(!!sym(column), domain_range$from, domain_range$to)) -> violated
+
+  stat_outside <- round(nrow(violated) / nrow(activitylog) * 100, 2)
+  stat_inside <- round(100 - stat_outside, 2)
+
+  message("The domain range for column ", column, " is checked.")
+  message(glue("Values allowed between {domain_range$from} and {domain_range$to}"))
+  message("The values fall within the specified domain range for ",
+          nrow(activitylog) - nrow(violated), " (", stat_inside, "%) of the rows in the activity log and outside the domain range for ",
+          nrow(violated), " (", stat_outside, "%) of these rows.")
+
+  violated %>%
+    mutate(column_checked = column) %>%
+    select(column_checked, everything())
+}
+
+check_domain_character <- function(activitylog, column, domain_range) {
+  column_checked <- NULL
+
+  activitylog %>%
+    filter(is.na(!!sym(column)) | !(!!sym(column) %in% domain_range$allowed)) -> violated
+
+  stat_outside <- round(nrow(violated) / nrow(activitylog) * 100, 2)
+  stat_inside <- round(100 - stat_outside, 2)
+
+  message("The domain range for column ", column, " is checked.")
+  message(glue("Values allowed: {str_c(domain_range$allowed, collapse = ', ')}"))
+  message("The values fall within the specified domain range for ",
+          nrow(activitylog) - nrow(violated), " (", stat_inside, "%) of the rows in the activity log and outside the domain range for ",
+          nrow(violated), " (", stat_outside, "%) of these rows.")
+  violated %>%
+    mutate(column_checked = column) %>%
+    select(column_checked, everything())
 }

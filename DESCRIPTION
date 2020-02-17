@@ -21,7 +21,15 @@ Imports:
   stringr,
   tidyr,
   xesreadR,
-  rlang
+  rlang,
+  bupaR,
+  readr,
+  edeaR,
+  magrittr,
+  purrr,
+  glue,
+  miniUI,
+  shiny
 Suggests: 
     knitr,
     rmarkdown

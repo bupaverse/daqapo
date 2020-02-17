@@ -1,89 +1,85 @@
 #' Detect conditional activity presence violations
 #'
 #' Function detecting violations of conditional activity presence (i.e. an activity/activities that should be present when (a) particular condition(s) hold(s))
-#' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
-#' @param condition_vector Vector of condition(s) which serve as an antecedent (if the condition(s) in condition_vector hold, then the activity/activities in activity_vector should be recorded)
-#' @param activity_vector Vector of activity/activities which serve as a consequent (if the condition(s) in condition_vector hold, then the activity/activities in activity_vector should be recorded)
-#' @param details Boolean indicating wheter details of the results need to be shown
-#' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
+#' @param condition Condition which serve as an antecedent (if the condition in condition holds, then the activit(y)(ies) in activities should be present.)
+#' @param activities Vector of activity/activities which serve as a consequent (if the condition(s) in condition_vector hold, then the activity/activities in activity_vector should be recorded)
+#' @inheritParams detect_activity_frequency_violations
 #' @return Information on the degree to which the specified conditional activity presence is respected/violated.
+#'
 #' @export
 
-detect_conditional_activity_presence <- function(activity_log, condition_vector, activity_vector, details = TRUE, filter_condition = NULL){
+
+detect_conditional_activity_presence <- function(activitylog, condition, activities, details, filter_condition ){
+ UseMethod("detect_conditional_activity_presence")
+}
+#' @export
+detect_conditional_activity_presence.activitylog <- function(activitylog, condition, activities, details = TRUE, filter_condition = NULL){
 
   # Predefine variables
   case_id <- NULL
   activity <- NULL
 
   # Initiate warning variables
-  warning.filtercondition <- FALSE
   error.conditionfilter <- FALSE
 
-  # Check if the required columns are present in the log
-  missing_columns <- check_colnames(activity_log, c("case_id", "activity"))
-  if(!is.null(missing_columns)){
-    stop("The following columns, which are required for the test, were not found in the activity log: ",
-         paste(missing_columns, collapse = "\t"), ".", "\n  ",
-         "Please check rename_activity_log.")
+  if(any(!(activities %in% activity_labels(activitylog)))) {
+    warning(glue("The following activities do not occur in the data, and are dropped: {str_c(activities[[!(activities %in% activity_labels(activitylog)]]), collapse = ', ')}"))
+
+    activities <- activities[[activities %in% activity_labels(activitylog)]]
   }
 
   # Apply filter condition when specified
+  filter_specified <- FALSE
   tryCatch({
-    if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
-    }
+    is.null(filter_condition)
   }, error = function(e) {
-    warning.filtercondition <<- TRUE
+    filter_specified <<- TRUE
   }
   )
 
-  if(warning.filtercondition) {
-    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
+  if(!filter_specified) {
+    # geen filter gespecifieerd.
+
+  } else {
+    filter_condition_q <- enquo(filter_condition)
+    activitylog <- APPLY_FILTER(activitylog, filter_condition_q = filter_condition_q)
   }
 
   # Concatenate condition_vector
-  condition_vector <- paste(condition_vector, collapse = " & ")
+  condition <- enquo(condition)
 
   # Determine cases in activity log for which conditions in condition_vector holds
   tryCatch({
-    cases_cond_satisfied <- unique((activity_log %>% filter(!! rlang::parse_expr(condition_vector)))$case_id)
+    cases_cond_satisfied <- activitylog %>% filter(!!(condition)) %>% case_labels()
   }, error = function(e) {
     error.conditionfilter <<- TRUE
   })
 
   if(error.conditionfilter) {
-    stop("The condition vector (", condition_vector, ") is not valid. Check the syntax and column names.")
+    stop("The condition vector (", expr_text(condition), ") is not valid. Check the syntax and column names.")
   }
 
-  # Determine whether activities in activity_vector are recorded for cases in cases_cond_satisfied
-  activity_log <- activity_log %>% filter(case_id %in% cases_cond_satisfied, activity %in% activity_vector) %>%
-    group_by(case_id) %>% arrange(activity) %>% summarize(n = n())
+  # Determine whether activities in activities are recorded for cases in cases_cond_satisfied
+  activitylog_summary <- activitylog %>%
+    filter_case(cases_cond_satisfied) %>%
+    filter_activity(activities) %>%
+    group_by(!!case_id_(activitylog)) %>% summarize(n = n())
 
-  # Prepare output
-  if(length(activity_vector) == 1){
-    violated <- setdiff(cases_cond_satisfied, activity_log$case_id)
-  } else{
-    activities_recorded <- activity_log %>% filter(n == length(activity_vector))
-    violated <- setdiff(cases_cond_satisfied, activities_recorded$case_id)
-  }
+  all_activities_recorded <- activitylog_summary %>% filter(n == length(activities))
+  violated <- setdiff(cases_cond_satisfied, all_activities_recorded[[case_id(activitylog)]])
 
   stat_false <- length(violated) / length(cases_cond_satisfied) * 100
   stat_true <- 100 - stat_false
 
-  # Print output
-  if(!is.null(filter_condition)) {
-    cat("Applied filtering condition:", filter_condition, "\n", "\n")
-  }
-
-  cat("*** OUTPUT ***", "\n")
-  cat("The following statement was checked: if condition(s)", condition_vector, "hold(s), then activity/activities", activity_vector, "should be recorded", "\n", "\n")
-  cat("The condition(s) hold(s) for", length(cases_cond_satisfied), "cases. From these cases:", "\n")
-  cat("- the specified activity/activities is/are recorded for", length(cases_cond_satisfied) - length(violated), "cases (", stat_true, "%)", "\n")
-  cat("- the specified activity/activities is/are not recorded for", length(violated), "cases (", stat_false, "%)", "\n", "\n")
+  message("*** OUTPUT ***")
+  message("The following statement was checked: if condition(s) ", expr_text(condition), " hold(s), then activity/activities ", str_c(activities, collapse = ", "), " should be recorded", "\n")
+  message("The condition(s) hold(s) for ", length(cases_cond_satisfied), " cases. From these cases:")
+  message("- the specified activity/activities is/are recorded for ", length(cases_cond_satisfied) - length(violated), " case(s) (", stat_true, "%)")
+  message("- the specified activity/activities is/are not recorded for ", length(violated), " case(s) (", stat_false, "%)", "\n")
 
   if(details == TRUE){
     if(stat_false > 0){
-      cat("For the following cases, the condition(s) hold(s) but", activity_vector, "is/are not recorded:", "\n")
+      message("For the following cases, the condition(s) hold(s) but (some) activit(y)(ies) is/are not recorded:", "\n")
       return(violated)
     }
   }

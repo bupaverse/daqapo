@@ -4,13 +4,13 @@
 \alias{detect_activity_frequency_violations}
 \title{Check activity frequencies}
 \usage{
-detect_activity_frequency_violations(activity_log, ..., details = TRUE,
-  filter_condition = NULL)
+detect_activity_frequency_violations(activitylog, ..., details,
+  filter_condition)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+\item{activitylog}{The activity log}
 
-\item{...}{Vectors of length 2 containing first the activity label followed by a numeric threshold value for that activity.}
+\item{...}{Named vectors with name of the activity, and value of the threshold.}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 

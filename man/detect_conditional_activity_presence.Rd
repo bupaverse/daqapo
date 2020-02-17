@@ -5,15 +5,15 @@
 \alias{detect_conditional_activity_presence}
 \title{Detect conditional activity presence violations}
 \usage{
-detect_conditional_activity_presence(activity_log, condition_vector,
-  activity_vector, details = TRUE, filter_condition = NULL)
+detect_conditional_activity_presence(activitylog, condition, activities,
+  details, filter_condition)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+\item{activitylog}{The activity log}
 
-\item{condition_vector}{Vector of condition(s) which serve as an antecedent (if the condition(s) in condition_vector hold, then the activity/activities in activity_vector should be recorded)}
+\item{condition}{Condition which serve as an antecedent (if the condition in condition holds, then the activit(y)(ies) in activities should be present.)}
 
-\item{activity_vector}{Vector of activity/activities which serve as a consequent (if the condition(s) in condition_vector hold, then the activity/activities in activity_vector should be recorded)}
+\item{activities}{Vector of activity/activities which serve as a consequent (if the condition(s) in condition_vector hold, then the activity/activities in activity_vector should be recorded)}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 

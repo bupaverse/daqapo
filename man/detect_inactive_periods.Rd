@@ -4,8 +4,14 @@
 \alias{detect_inactive_periods}
 \title{Detect inactive periods}
 \usage{
-detect_inactive_periods(activitylog, threshold, timestamp, only_first,
-  details, filter_condition)
+detect_inactive_periods(
+  activitylog,
+  threshold,
+  timestamp,
+  only_first,
+  details,
+  filter_condition
+)
 }
 \arguments{
 \item{activitylog}{The activity log}

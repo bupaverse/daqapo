@@ -10,7 +10,24 @@
 #' @return Information on the occurrence of multi-registration at the selected level of aggregation
 #' @export
 
-detect_multiregistration <- function(activity_log, level_of_aggregation = "resource", timestamp = "complete", threshold_in_seconds, details = TRUE, filter_condition = NULL){
+
+detect_multiregistration <- function(activitylog,
+                                     level_of_aggregation,
+                                     timestamp,
+                                     threshold_in_seconds,
+                                     details,
+                                     filter_condition) {
+  UseMethod("detect_multiregistration")
+}
+
+#' @export
+
+detect_multiregistration.activitylog <- function(activitylog,
+                                     level_of_aggregation = c("resource", "case"),
+                                     timestamp = c("complete","start","both"),
+                                     threshold_in_seconds,
+                                     details = TRUE,
+                                     filter_condition = NULL){
 
   # Predefine variables
   less_than_th <- NULL
@@ -31,211 +48,169 @@ detect_multiregistration <- function(activity_log, level_of_aggregation = "resou
   # Initiate warning variables
   warning.filtercondition <- FALSE
 
-  # Check if the required columns are present in the log
-  missing_columns <- check_colnames(activity_log, c("case_id", "resource", "start", "complete"))
-  if(!is.null(missing_columns)){
-    stop("The following columns, which are required for the test, were not found in the activity log: ",
-         paste(missing_columns, collapse = "\t"), ".", "\n  ",
-         "Please check rename_activity_log.")
-  }
 
-  # Generate warning if inappropriate level of aggregation is selected
-  if(!(level_of_aggregation %in% c("resource", "case"))){
-    warning("This level of aggregation is not supported. Level of aggregation should have value: resource, case. Default level of aggregation selected: resource.")
-    level_of_aggregation <- "resource"
-  }
+  level_of_aggregation <- match.arg(level_of_aggregation)
+  timestamp <- match.arg(timestamp)
 
-  # Generate warning if inappropriate timestamp value is provided
-  if(!(timestamp %in% c("start", "complete", "both"))){
-    warning("This timestamp parameter value is not supported. Timestamp parameter should have value: start, complete, both. Default timestamp value selected: complete.")
-    timestamp <- "complete"
-  }
+
 
   # Apply filter condition when specified
+  filter_specified <- FALSE
   tryCatch({
-    if(!is.null(filter_condition)) {
-      activity_log <- activity_log %>% filter(!! rlang::parse_expr(filter_condition))
-    }
+    is.null(filter_condition)
   }, error = function(e) {
-    warning.filtercondition <<- TRUE
+    filter_specified <<- TRUE
   }
   )
 
-  if(warning.filtercondition) {
-    warning("The condition '", filter_condition, "'  is invalid. No filtering performed on the dataset.")
+  if(!filter_specified) {
+    # geen filter gespecifieerd.
+
+  } else {
+    filter_condition_q <- enquo(filter_condition)
+    activitylog <- APPLY_FILTER(activitylog, filter_condition_q = filter_condition_q)
   }
 
-  # Sort the activity log and create appropriate prior-columns
-  if(level_of_aggregation == "resource"){
-    if(timestamp == "start"){
-      activity_log <- activity_log %>% arrange(resource, start,complete) %>%
-        mutate(
-          prior_start = lag(start),
-          prior_resource = lag(resource)
-        )
-      # activity_log$start <- as.character(activity_log$start)
-      # activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
-      # activity_log$prior_resource <- c(NA, activity_log$resource[-nrow(activity_log)])
-      # activity_log$start <- ymd_hms(activity_log$start)
-      # activity_log$prior_start <- ymd_hms(activity_log$prior_start)
-    } else if(timestamp == "complete"){
-      activity_log <- activity_log %>% arrange(resource, complete, start) %>%
-        mutate(
-          prior_complete = lag(complete),
-          prior_resource = lag(resource)
-        )
-      # activity_log$complete <- as.character(activity_log$complete)
-      # activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
-      # activity_log$prior_resource <- c(NA, activity_log$resource[-nrow(activity_log)])
-      # activity_log$complete <- ymd_hms(activity_log$complete)
-      # activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
-    } else{
-      activity_log <- activity_log %>% arrange(resource, start, complete) %>%
-        mutate(
-          prior_start = lag(start),
-          prior_complete = lag(complete),
-          prior_resource = lag(resource)
-        )
-      # activity_log$start <- as.character(activity_log$start)
-      # activity_log$complete <- as.character(activity_log$complete)
-      # activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
-      # activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
-      # activity_log$prior_resource <- c(NA, activity_log$resource[-nrow(activity_log)])
-      # activity_log$start <- ymd_hms(activity_log$start)
-      # activity_log$prior_start <- ymd_hms(activity_log$prior_start)
-      # activity_log$complete <- ymd_hms(activity_log$complete)
-      # activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
-    }
-  } else{
-    if(timestamp == "start"){
-      activity_log <- activity_log %>% arrange(case_id, start,complete) %>%
-        mutate(
-          prior_start = lag(start),
-          prior_case = lag(case_id)
-        )
-      # activity_log$start <- as.character(activity_log$start)
-      # activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
-      # activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
-      # activity_log$start <- ymd_hms(activity_log$start)
-      # activity_log$prior_start <- ymd_hms(activity_log$prior_start)
-    } else if(timestamp == "complete"){
-      activity_log <- activity_log %>% arrange(case_id, complete, start) %>%
-        mutate(
-          prior_complete = lag(complete),
-          prior_case = lag(case_id)
-        )
-      # activity_log$complete <- as.character(activity_log$complete)
-      # activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
-      # activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
-      # activity_log$complete <- ymd_hms(activity_log$complete)
-      # activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
-    } else{
-      activity_log <- activity_log %>% arrange(case_id, start,complete) %>%
-        mutate(
-          prior_start = lag(start),
-          prior_complete = lag(complete),
-          prior_case = lag(case_id)
-        )
-      # activity_log$start <- as.character(activity_log$start)
-      # activity_log$complete <- as.character(activity_log$complete)
-      # activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
-      # activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
-      # activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
-      # activity_log$start <- ymd_hms(activity_log$start)
-      # activity_log$prior_start <- ymd_hms(activity_log$prior_start)
-      # activity_log$complete <- ymd_hms(activity_log$complete)
-      # activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
-    }
-  }
 
   # Determine whether multi-registration is present
   if(level_of_aggregation == "resource"){
-    if(timestamp == "start"){
-      activity_log$time_gap <- as.numeric(difftime(activity_log$start, activity_log$prior_start, units = "secs"))
-    } else if(timestamp == "complete"){
-      activity_log$time_gap <- as.numeric(difftime(activity_log$complete, activity_log$prior_complete, units = "secs"))
-    } else{
-      activity_log$time_gap <- as.numeric(difftime(activity_log$start, activity_log$prior_complete, units = "secs"))
-    }
-
-    # Determine lines that qualify as multi-registration
-    multi_reg <- activity_log
-    multi_reg$less_than_th <- multi_reg$resource == multi_reg$prior_resource & multi_reg$time_gap <= threshold_in_seconds
-    # Following lines ensure that the first line in case of multi-registration is also recorded
-    multi_reg$next_less_than_th <- c(multi_reg$less_than_th[-1], NA)
-    multi_reg$next_resource <- c(multi_reg$resource[-1], NA)
-    multi_reg$also_include <- multi_reg$resource == multi_reg$next_resource & multi_reg$next_less_than_th == TRUE
-
-    if(timestamp == "start"){
-      multi_reg <- multi_reg %>% filter(less_than_th == TRUE | also_include == TRUE) %>%
-        select(-c(prior_start, prior_resource, time_gap, less_than_th, next_less_than_th, next_resource, also_include))
-    } else if(timestamp == "complete"){
-      multi_reg <- multi_reg %>% filter(less_than_th == TRUE | also_include == TRUE) %>%
-        select(-c(prior_complete, prior_resource, time_gap, less_than_th, next_less_than_th, next_resource, also_include))
-    } else{
-      multi_reg <- multi_reg %>% filter(less_than_th == TRUE | also_include == TRUE) %>%
-        select(-c(prior_start, prior_complete, prior_resource, time_gap, less_than_th, next_less_than_th, next_resource, also_include))
-    }
-
+    multi_reg <- detect_multiregistration_resource(activitylog, timestamp, threshold_in_seconds)
   } else{
-    if(timestamp == "start"){
-      activity_log$time_gap <- as.numeric(difftime(activity_log$start, activity_log$prior_start, units = "secs"))
-    } else if(timestamp == "complete"){
-      activity_log$time_gap <- as.numeric(difftime(activity_log$complete, activity_log$prior_complete, units = "secs"))
-    } else{
-      activity_log$time_gap <- as.numeric(difftime(activity_log$start, activity_log$prior_complete, units = "secs"))
-    }
-
-    # Determine lines that qualify as multi-registration
-    multi_reg <- activity_log
-    multi_reg$less_than_th <- multi_reg$case_id == multi_reg$prior_case & multi_reg$time_gap <= threshold_in_seconds
-    # Following lines ensure that the first line in case of multi-registration is also recorded
-    multi_reg$next_less_than_th <- c(multi_reg$less_than_th[-1], NA)
-    multi_reg$next_case <- c(multi_reg$case_id[-1], NA)
-    multi_reg$also_include <- multi_reg$case_id == multi_reg$next_case & multi_reg$next_less_than_th == TRUE
-
-    if(timestamp == "start"){
-      multi_reg <- multi_reg %>% filter(less_than_th == TRUE | also_include == TRUE) %>%
-        select(-c(prior_start, prior_case, time_gap, less_than_th, next_less_than_th, next_case, also_include))
-    } else if(timestamp == "complete"){
-      multi_reg <- multi_reg %>% filter(less_than_th == TRUE | also_include == TRUE) %>%
-        select(-c(prior_complete, prior_case, time_gap, less_than_th, next_less_than_th, next_case, also_include))
-    } else{
-      multi_reg <- multi_reg %>% filter(less_than_th == TRUE | also_include == TRUE) %>%
-        select(-c(prior_start,prior_complete, prior_case, time_gap, less_than_th, next_less_than_th, next_case, also_include))
-    }
+    multi_reg <- detect_multiregistration_case(activitylog, timestamp, threshold_in_seconds)
   }
 
   # Prepare_output
-  pct_resource <- length(unique(multi_reg$resource)) / length(unique(activity_log$resource)) * 100
-  pct_case <- length(unique(multi_reg$case_id)) / length(unique(activity_log$case_id)) * 100
+  pct_resource <- round(length(unique(multi_reg[[resource_id(activitylog)]])) / length(unique(activitylog[[resource_id(activitylog)]])) * 100,2)
+  pct_case <- round(length(unique(multi_reg[[case_id(activitylog)]])) / length(unique(activitylog[[case_id(activitylog)]])) * 100,2)
 
   # Print output
-  if(!is.null(filter_condition)) {
-    cat("Applied filtering condition:", filter_condition, "\n")
-  }
-  cat("Selected level of aggregation:", level_of_aggregation, "\n")
-  cat("Selected timestamp parameter value:", timestamp, "\n", "\n")
+  message("Selected level of aggregation: ", level_of_aggregation)
+  message("Selected timestamp parameter value: ", timestamp, "\n")
 
-  cat("*** OUTPUT ***", "\n")
+  message("*** OUTPUT ***")
 
   if(level_of_aggregation == "resource"){
-    cat("Multi-registration is detected for", length(unique(multi_reg$resource)), "of the", length(unique(activity_log$resource)), "resources (", pct_resource, "%) These resources are:", "\n")
-    print(unique(multi_reg$resource))
+    message("Multi-registration is detected for ", length(unique(multi_reg[[resource_id(activitylog)]])), " of the ", length(unique(activitylog[[resource_id(activitylog)]])), " resources (", pct_resource, "%). These resources are:")
+    message(paste(unique(multi_reg[[resource_id(activitylog)]]), collapse = " - "))
     cat("\n")
   } else{
-    cat("Multi-registration is detected for", length(unique(multi_reg$case_id)), "of the", length(unique(activity_log$case_id)), "cases (", pct_case, "%) of the cases. These cases are:", "\n")
-    print(unique(multi_reg$case_id))
-    cat("\n")
+    message("Multi-registration is detected for ", length(unique(multi_reg[[case_id(activitylog)]])), " of the ", length(unique(activitylog[[case_id(activitylog)]])), " cases (", pct_case, "%) of the cases. These cases are:")
+    message(paste(unique(multi_reg[[case_id(activitylog)]]), collapse = " - "))
+    message("\n")
   }
 
   if(details == TRUE){
     if(level_of_aggregation == "resource" & pct_resource > 0){
-      cat("For the following rows in the activity log, multi-registration is detected:", "\n")
+      message("For the following rows in the activity log, multi-registration is detected:")
       return(multi_reg)
     } else if(level_of_aggregation == "case" & pct_case > 0){
-      cat("For the following rows in the activity log, multi-registration is detected:", "\n")
+      message("For the following rows in the activity log, multi-registration is detected:")
       return(multi_reg)
     }
   }
+}
+
+
+detect_multiregistration_resource <- function(activitylog, timestamp, threshold_in_seconds) {
+  if(timestamp == "start"){
+    activity_log <- activitylog %>%
+      group_by(!!resource_id_(activitylog)) %>%
+      arrange(start) %>%
+      mutate(prior_start = lag(start)) %>%
+      mutate(time_gap = as.double(start - prior_start, units = "secs"))
+
+  } else if(timestamp == "complete"){
+    activity_log <- activitylog %>%
+      group_by(!!resource_id_(activitylog)) %>%
+      arrange(complete) %>%
+      mutate(prior_complete = lag(complete)) %>%
+      mutate(time_gap = as.double(complete - prior_complete, units = "secs"))
+
+  } else{
+    activity_log <- activitylog %>%
+      group_by(!!resource_id_(activitylog)) %>%
+      arrange(start, complete) %>%
+      mutate(prior_start = lag(start),
+             prior_complete = lag(complete)) %>%
+      mutate(time_gap = as.double(start - prior_complete, units = "secs"))
+
+  }
+
+  activity_log %>%
+    mutate(less_than_th = time_gap <= threshold_in_seconds) %>%
+    mutate(also_include = lead(less_than_th, default = F)) -> multi_reg
+
+
+  # # Determine lines that qualify as multi-registration
+  # multi_reg <- activity_log
+  # multi_reg$less_than_th <- multi_reg$resource == multi_reg$prior_resource & multi_reg$time_gap <= threshold_in_seconds
+  # # Following lines ensure that the first line in case of multi-registration is also recorded
+  # multi_reg$next_less_than_th <- c(multi_reg$less_than_th[-1], NA)
+  # multi_reg$next_resource <- c(multi_reg$resource[-1], NA)
+  # multi_reg$also_include <- multi_reg$resource == multi_reg$next_resource & multi_reg$next_less_than_th == TRUE
+  #
+  if(timestamp == "start"){
+    multi_reg <- multi_reg %>%
+      filter(less_than_th == TRUE | also_include == TRUE) %>%
+      select(-c(prior_start, time_gap, less_than_th, also_include))
+  } else if(timestamp == "complete"){
+    multi_reg <- multi_reg %>%
+      filter(less_than_th == TRUE | also_include == TRUE) %>%
+      select(-c(prior_complete, time_gap, less_than_th, also_include))
+  } else{
+    multi_reg <- multi_reg %>%
+      filter(less_than_th == TRUE | also_include == TRUE) %>%
+      select(-c(prior_start, prior_complete, time_gap, less_than_th, also_include))
+  }
+  return(multi_reg)
+}
+
+detect_multiregistration_case <- function(activitylog, timestamp, threshold_in_seconds) {
+  if(timestamp == "start"){
+    activity_log <- activitylog %>%
+      group_by(!!case_id_(activitylog)) %>%
+      arrange(start) %>%
+      mutate(
+        prior_start = lag(start)
+      ) %>%
+      mutate(time_gap = as.double(start - prior_start, units = "secs"))
+
+  } else if(timestamp == "complete"){
+    activity_log <- activitylog %>%
+      group_by(!!case_id_(activitylog)) %>%
+      arrange(complete) %>%
+      mutate(
+        prior_complete = lag(complete)
+      ) %>%
+      mutate(time_gap = as.double(complete - prior_complete, units = "secs"))
+
+  } else{
+    activity_log <- activitylog %>%
+      group_by(!!case_id(activitylog)) %>%
+      arrange(start,complete) %>%
+      mutate(
+        prior_start = lag(start),
+        prior_complete = lag(complete)
+      ) %>%
+      mutate(time_gap = as.double(start - prior_complete, units = "secs"))
+  }
+
+  activity_log %>%
+    mutate(less_than_th = time_gap <= threshold_in_seconds) %>%
+    mutate(also_include = lead(less_than_th, default = F)) -> multi_reg
+
+
+  if(timestamp == "start"){
+    multi_reg <- multi_reg %>%
+      filter(less_than_th == TRUE | also_include == TRUE) %>%
+      select(-c(prior_start, time_gap, less_than_th, also_include))
+  } else if(timestamp == "complete"){
+    multi_reg <- multi_reg %>% filter(less_than_th == TRUE | also_include == TRUE) %>%
+      select(-c(prior_complete, time_gap, less_than_th, also_include))
+  } else{
+    multi_reg <- multi_reg %>%
+      filter(less_than_th == TRUE | also_include == TRUE) %>%
+      select(-c(prior_start,prior_complete, time_gap, less_than_th, also_include))
+  }
+  return(multi_reg)
 }

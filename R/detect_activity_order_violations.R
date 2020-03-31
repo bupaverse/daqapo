@@ -1,6 +1,6 @@
 #' Detect activity order violations
 #'
-#' Function detecting violations in activity order
+#' Function detecting violations in activity order. Having additional or less activity types than those specified in activity_order is no violation, but the activity types present should occur in the specified order, and only once.
 #' @inheritParams detect_activity_frequency_violations
 #' @param activity_order Vector expressing the activity order that needs to be checked (using activity names)
 #' @param timestamp Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)
@@ -61,6 +61,11 @@ detect_activity_order_violations.activitylog <- function(activitylog,
     }
   }
 
+  incomplete <- suppressMessages(detect_incomplete_cases(activitylog, activities = activity_order))
+  if(nrow(incomplete) > 0) {
+    warning("Not all specified activities occur in each case. Use detect_incomplete_cases to investigate further.")
+  }
+
 
   n_cases <- n_cases(activitylog)
 
@@ -100,7 +105,8 @@ detect_activity_order_violations.activitylog <- function(activitylog,
   activitylog_order %>%
     group_by(!!case_id_(activitylog)) %>%
     #incorrect if order is different, or
-    summarize(incorrect = any(actual_nr != nr) | max(actual_nr) < max(orders$nr)) %>%
+    mutate(nr = dense_rank(nr)) %>%
+    summarize(incorrect = any(actual_nr != nr)) %>%
     filter(incorrect) -> incorrect_order
 
   activitylog_order %>%
@@ -112,28 +118,24 @@ detect_activity_order_violations.activitylog <- function(activitylog,
 
   # Prepare output
   # stat_false <- nrow(incorrect_order) / nrow(activitylog) * 100
-  stat_false <- nrow(incorrect_order) / n_cases * 100
+  stat_false <- round(nrow(incorrect_order) / n_cases * 100, 2)
   stat_true <- 100 - stat_false
 
   req_activity_order <- paste(activity_order, collapse = " - ")
   # Print output
 
-  cat("Selected timestamp parameter value:", timestamp, "\n", "\n")
+  message("Selected timestamp parameter value: ", timestamp, "\n", "\n")
 
-  cat("*** OUTPUT ***", "\n")
-  cat("It was checked whether the activity order", req_activity_order, "is respected.", "\n")
-  cat("This activity order is respected for",
+  message("*** OUTPUT ***")
+  message("It was checked whether the activity order ", req_activity_order, " is respected.")
+  message("This activity order is respected for ",
       # nrow(activity_log) - nrow(incorrect_order), "(", stat_true, "%) of the cases and not for",
-      n_cases - nrow(incorrect_order), "(", stat_true, "%) of the cases and not for",
-      nrow(incorrect_order), "(", stat_false, "%) of the cases.", "\n", "\n")
-
-  cat("Note: cases for which not all activities are recorded, will be considered as cases for which an incorrect order is registered.", "\n", "\n")
-
+      n_cases - nrow(incorrect_order), " (", stat_true, "%) of the cases and not for",
+      nrow(incorrect_order), " (", stat_false, "%) of the cases.")
 
   if(details == TRUE){
     if(stat_false > 0){
-      cat("\n")
-      cat("For cases for which the aformentioned activity order is not respected, the following order is detected (ordered by decreasing frequeny of occurrence):", "\n")
+      message("For cases for which the aformentioned activity order is not respected, the following order is detected (ordered by decreasing frequeny of occurrence):", "\n")
       incorrect_order_summary <- incorrect_order %>% group_by(activity_list) %>% summarize(n = n(), case_ids = paste(!!case_id_(activitylog), collapse = " - ")) %>% arrange(desc(n))
       return(incorrect_order_summary)
     }

@@ -36,7 +36,7 @@ detect_activity_order_violations(
 Information on the degree to which the specified activity order is respected/violated.
 }
 \description{
-Function detecting violations in activity order
+Function detecting violations in activity order. Having additional or less activity types than those specified in activity_order is no violation, but the activity types present should occur in the specified order, and only once.
 }
 \section{Methods (by class)}{
 \itemize{

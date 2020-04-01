@@ -4,8 +4,14 @@
 \alias{detect_similar_labels}
 \title{Search for similar labels in a column}
 \usage{
-detect_similar_labels(activitylog, column_labels, max_edit_distance = 3,
-  show_NA = FALSE, ignore_capitals = FALSE, filter_condition = NULL)
+detect_similar_labels(
+  activitylog,
+  column_labels,
+  max_edit_distance = 3,
+  show_NA = FALSE,
+  ignore_capitals = FALSE,
+  filter_condition = NULL
+)
 }
 \arguments{
 \item{activitylog}{The activity log}

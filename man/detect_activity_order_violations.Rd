@@ -5,12 +5,21 @@
 \alias{detect_activity_order_violations.activitylog}
 \title{Detect activity order violations}
 \usage{
-detect_activity_order_violations(activitylog, activity_order, timestamp,
-  details, filter_condition)
+detect_activity_order_violations(
+  activitylog,
+  activity_order,
+  timestamp,
+  details,
+  filter_condition
+)
 
-\method{detect_activity_order_violations}{activitylog}(activitylog,
-  activity_order, timestamp = c("both", "start", "complete"),
-  details = TRUE, filter_condition = NULL)
+\method{detect_activity_order_violations}{activitylog}(
+  activitylog,
+  activity_order,
+  timestamp = c("both", "start", "complete"),
+  details = TRUE,
+  filter_condition = NULL
+)
 }
 \arguments{
 \item{activitylog}{The activity log}
@@ -27,7 +36,7 @@ detect_activity_order_violations(activitylog, activity_order, timestamp,
 Information on the degree to which the specified activity order is respected/violated.
 }
 \description{
-Function detecting violations in activity order
+Function detecting violations in activity order. Having additional or less activity types than those specified in activity_order is no violation, but the activity types present should occur in the specified order, and only once.
 }
 \section{Methods (by class)}{
 \itemize{

@@ -45,7 +45,7 @@ Before we can perform the first stage - reading data - we must have access to th
 
 Two example datasets are included in `daqapo`. These are `hospital` and `hospital_events`. Below, you can find their respective structures.
 
-```{r LogTypes_Activity}
+```{r LogTypes_Activity, echo = F}
 str(hospital)
 ```
 ```{r LogTypes_Event}

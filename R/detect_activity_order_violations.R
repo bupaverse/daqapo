@@ -1,6 +1,6 @@
 #' Detect activity order violations
 #'
-#' Function detecting violations in activity order
+#' Function detecting violations in activity order. Having additional or less activity types than those specified in activity_order is no violation, but the activity types present should occur in the specified order, and only once.
 #' @inheritParams detect_activity_frequency_violations
 #' @param activity_order Vector expressing the activity order that needs to be checked (using activity names)
 #' @param timestamp Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)
@@ -10,7 +10,8 @@
 
 detect_activity_order_violations <- function(activitylog,
                                              activity_order,
-                                             timestamp, details, filter_condition) {
+                                             timestamp, details,
+                                             filter_condition) {
   UseMethod("detect_activity_order_violations")
 }
 
@@ -24,6 +25,7 @@ detect_activity_order_violations.activitylog <- function(activitylog,
                                                          filter_condition = NULL){
 
 
+
   timestamp <- match.arg(timestamp)
   # Predefine variables
   nr <- NULL
@@ -32,6 +34,8 @@ detect_activity_order_violations.activitylog <- function(activitylog,
   case_id <- NULL
   activity <- NULL
   start <- NULL
+  actual_nr <- NULL
+  incorrect <- NULL
   complete <- NULL
 
   # Apply filter condition when specified
@@ -52,101 +56,90 @@ detect_activity_order_violations.activitylog <- function(activitylog,
 
   }
 
+
+  if(timestamp == "both") {
+    overlaps <- detect_overlaps(activitylog, details = F, level_of_aggregation = "case")
+    if(nrow(overlaps) > 0) {
+      warning("Some activity instances within the same case overlap. Use detect_overlaps to investigate further.")
+    }
+  }
+
+  incomplete <- suppressMessages(detect_incomplete_cases(activitylog, activities = activity_order))
+  if(nrow(incomplete) > 0) {
+    warning("Not all specified activities occur in each case. Use detect_incomplete_cases to investigate further.")
+  }
+
+
   n_cases <- n_cases(activitylog)
 
-  # Filter activities included in activity_order
-  activitylog <- activitylog %>% filter_activity(activities = activity_order)
-
   # Add number to ordered activities (used for ordering when multiple activities have the same timestamp for a particular case)
-  activity_order <- as.data.frame(activity_order)
-  activity_order$nr <- seq(1, nrow(activity_order))
-  colnames(activity_order)[1] <- activity_id(activitylog)
-  activitylog <- merge(activitylog,activity_order, by  = activity_id(activitylog))
 
-  # Detect time overlap between consecutive activities in case both timestamps are used
-  if(timestamp == "both" & details == TRUE){
-    # Sort the activity log
-    activitylog <- activitylog %>% arrange(case_id, start,complete, nr)
-    # Determine whether activities are overlapping
-    #activity_log$start <- as.character(activity_log$start)
-    #activity_log$complete <- as.character(activity_log$complete)
-    #activity_log$prior_start <- c(NA, activity_log$start[-nrow(activity_log)])
-    #activity_log$prior_complete <- c(NA, activity_log$complete[-nrow(activity_log)])
-    #activity_log$prior_case <- c(NA, activity_log$case_id[-nrow(activity_log)])
-    #activity_log$prior_activity <- c(NA, activity_log$activity[-nrow(activity_log)])
-    #activity_log$start <- ymd_hms(activity_log$start)
-    #activity_log$complete <- ymd_hms(activity_log$complete)
-    #activity_log$prior_start <- ymd_hms(activity_log$prior_start)
-    #activity_log$prior_complete <- ymd_hms(activity_log$prior_complete)
+  tibble(!!activity_id_(activitylog) := activity_order) %>%
+    mutate(nr = 1:n()) -> orders
 
-    activitylog <- activitylog %>%
-      mutate(
-        prior_start = lag(start),
-        prior_complete = lag(complete),
-        prior_case = lag(case_id),
-        prior_activity = lag(activity)
-      )
+  activitylog %>%
+    filter(!!activity_id_(activitylog) %in% activity_order) -> filtered_activitylog
 
-    activitylog$time_overlap <- activitylog$case_id == activitylog$prior_case & activitylog$prior_complete > activitylog$start
-    activitylog$time_overlap[1] <- FALSE
-    activitylog$overlapping <- NA
+  filtered_activitylog %>%
+    inner_join(orders, by = activity_id(activitylog)) -> activitylog_order
 
-    index <- is.na(activitylog$time_overlap)  # NA values are generated when there are missing timestamps. In that case, no overlaps can be detected.
-    activitylog$time_overlap[index] <- FALSE
-    remove(index)
-
-    index <- activitylog$time_overlap == TRUE
-    activitylog$overlapping[index] <- paste(activitylog$prior_activity[index], "and", activitylog$activity[index])
-    remove(index)
-
-    time_overlaps <- activitylog %>% filter(!is.na(overlapping)) %>% group_by(overlapping) %>% summarize(n = n()) %>% arrange(desc(n))
-  }
 
   # Determine activity order for each case
-  if(timestamp %in% c("both", "start")){
+  if(timestamp == "both"){
     # Sort the activity log
-    activitylog <- activitylog %>% arrange(case_id, start,complete, nr)
-    # Check whether activity order is satisfied
-    activitylog <- activitylog %>% group_by(case_id) %>% summarize(activity_list = paste(activity, collapse = " - "))
-  } else{
+    activitylog_order <- activitylog_order %>%
+      group_by(!!case_id_(activitylog)) %>%
+      arrange(start,complete, nr) %>%
+      mutate(actual_nr = 1:n())
+  } else if(timestamp == "start") {
+    activitylog_order <- activitylog_order %>%
+      group_by(!!case_id_(activitylog)) %>%
+      arrange(start, nr) %>%
+      mutate(actual_nr = 1:n())
+  }  else{
     # Sort the activity log
-    activitylog <- activitylog %>% arrange(case_id, complete, start, nr)
-    # Check whether activity order is satisfied
-    activitylog <- activitylog %>% group_by(case_id) %>% summarize(activity_list = paste(activity, collapse = " - "))
+      activitylog_order <- activitylog_order %>%
+        group_by(!!case_id_(activitylog)) %>%
+        arrange(complete, nr) %>%
+        mutate(actual_nr = 1:n())
   }
-
   # Perform comparison
-  req_activity_order <- paste(activity_order$activity, collapse = " - ")
-  incorrect_order <- activitylog %>% filter(!(activity_list == req_activity_order))
+
+  activitylog_order %>%
+    group_by(!!case_id_(activitylog)) %>%
+    #incorrect if order is different, or
+    mutate(nr = dense_rank(nr)) %>%
+    summarize(incorrect = any(actual_nr != nr)) %>%
+    filter(incorrect) -> incorrect_order
+
+  activitylog_order %>%
+    ungroup() %>%
+    filter(!!case_id_(activitylog) %in% incorrect_order[[1]]) %>%
+    group_by(!!case_id_(activitylog)) %>%
+    arrange(actual_nr) %>%
+    summarize(activity_list = paste(!!activity_id_(activitylog), collapse = " - ")) -> incorrect_order
 
   # Prepare output
   # stat_false <- nrow(incorrect_order) / nrow(activitylog) * 100
-  stat_false <- nrow(incorrect_order) / n_cases * 100
+  stat_false <- round(nrow(incorrect_order) / n_cases * 100, 2)
   stat_true <- 100 - stat_false
 
+  req_activity_order <- paste(activity_order, collapse = " - ")
   # Print output
 
-  cat("Selected timestamp parameter value:", timestamp, "\n", "\n")
+  message("Selected timestamp parameter value: ", timestamp, "\n", "\n")
 
-  cat("*** OUTPUT ***", "\n")
-  cat("It was checked whether the activity order", req_activity_order, "is respected.", "\n")
-  cat("This activity order is respected for",
+  message("*** OUTPUT ***")
+  message("It was checked whether the activity order ", req_activity_order, " is respected.")
+  message("This activity order is respected for ",
       # nrow(activity_log) - nrow(incorrect_order), "(", stat_true, "%) of the cases and not for",
-      n_cases - nrow(incorrect_order), "(", stat_true, "%) of the cases and not for",
-      nrow(incorrect_order), "(", stat_false, "%) of the cases.", "\n", "\n")
-
-  cat("Note: cases for which not all activities are recorded, will be considered as cases for which an incorrect order is registered.", "\n", "\n")
-
+      n_cases - nrow(incorrect_order), " (", stat_true, "%) of the cases and not for",
+      nrow(incorrect_order), " (", stat_false, "%) of the cases.")
 
   if(details == TRUE){
-    if(timestamp == "both"){
-      cat("Time overlap is detected between the following consecutive activities (ordered by decreasing frequency of occurrence):", "\n")
-      print(time_overlaps)
-    }
     if(stat_false > 0){
-      cat("\n")
-      cat("For cases for which the aformentioned activity order is not respected, the following order is detected (ordered by decreasing frequeny of occurrence):", "\n")
-      incorrect_order_summary <- incorrect_order %>% group_by(activity_list) %>% summarize(n = n(), case_ids = paste(case_id, collapse = " - ")) %>% arrange(desc(n))
+      message("For cases for which the aformentioned activity order is not respected, the following order is detected (ordered by decreasing frequeny of occurrence):", "\n")
+      incorrect_order_summary <- incorrect_order %>% group_by(activity_list) %>% summarize(n = n(), case_ids = paste(!!case_id_(activitylog), collapse = " - ")) %>% arrange(desc(n))
       return(incorrect_order_summary)
     }
   }

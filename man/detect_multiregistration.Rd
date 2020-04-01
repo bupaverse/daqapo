@@ -4,12 +4,17 @@
 \alias{detect_multiregistration}
 \title{Detect multi-registration}
 \usage{
-detect_multiregistration(activity_log, level_of_aggregation = "resource",
-  timestamp = "complete", threshold_in_seconds, details = TRUE,
-  filter_condition = NULL)
+detect_multiregistration(
+  activitylog,
+  level_of_aggregation,
+  timestamp,
+  threshold_in_seconds,
+  details,
+  filter_condition
+)
 }
 \arguments{
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+\item{activitylog}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
 
 \item{level_of_aggregation}{Level of aggregation at which multi-registration should be detected (either "resource" or "case")}
 

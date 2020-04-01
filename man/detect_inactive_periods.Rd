@@ -7,8 +7,9 @@
 detect_inactive_periods(
   activitylog,
   threshold,
+  type,
   timestamp,
-  only_first,
+  start_activities,
   details,
   filter_condition
 )
@@ -18,9 +19,11 @@ detect_inactive_periods(
 
 \item{threshold}{Threshold after which a period without activity executions/arrivals is considered as an inactive period (expressed in minutes)}
 
+\item{type}{Type of inactive periods you want to detect. "arrivals" will look for periods without new cases arriving. "activities" will look for periods where no activities occur.}
+
 \item{timestamp}{Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)}
 
-\item{only_first}{List of activity labels marking the first activity in the process. When specified, an inactive period only occurs when the time between two consecutive arrivals exceeds the specified threshold (arrival is proxied by the activity/activities specified in this argument).}
+\item{start_activities}{List of activity labels marking the first activity in the process. When specified, an inactive period only occurs when the time between two consecutive arrivals exceeds the specified threshold (arrival is proxied by the activity/activities specified in this argument).}
 
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 

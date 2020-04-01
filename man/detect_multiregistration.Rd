@@ -14,6 +14,8 @@ detect_multiregistration(
 )
 }
 \arguments{
+\item{activitylog}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
+
 \item{level_of_aggregation}{Level of aggregation at which multi-registration should be detected (either "resource" or "case")}
 
 \item{timestamp}{Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both")}
@@ -23,8 +25,6 @@ detect_multiregistration(
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
-
-\item{activity_log}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
 }
 \value{
 Information on the occurrence of multi-registration at the selected level of aggregation

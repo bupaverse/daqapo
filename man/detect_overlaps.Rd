@@ -4,12 +4,7 @@
 \alias{detect_overlaps}
 \title{Detect overlapping acitivity instances}
 \usage{
-detect_overlaps(
-  activitylog,
-  details = FALSE,
-  level_of_aggregation = c("case", "resource"),
-  filter_conditon
-)
+detect_overlaps(activitylog, details, level_of_aggregation, filter_condition)
 }
 \arguments{
 \item{activitylog}{The activity log}
@@ -17,9 +12,8 @@ detect_overlaps(
 \item{details}{Boolean indicating wheter details of the results need to be shown}
 
 \item{level_of_aggregation}{Look for overlapping activity instances within a case or within a resource.}
-}
-\value{
 
+\item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \description{
 Detect overlapping acitivity instances

@@ -1,7 +1,7 @@
 #' Detect multi-registration
 #'
 #' Function detecting multi-registration for the same case or by the same resource at the same point in time
-#' @param activity_log The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
+#' @param activitylog The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)
 #' @param level_of_aggregation Level of aggregation at which multi-registration should be detected (either "resource" or "case")
 #' @param timestamp Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both")
 #' @param threshold_in_seconds Threshold which is applied to determine whether multi-registration occurs (expressed in seconds) (time gaps smaller than threshold are considered as multi-registration)
@@ -112,6 +112,22 @@ detect_multiregistration.activitylog <- function(activitylog,
 
 
 detect_multiregistration_resource <- function(activitylog, timestamp, threshold_in_seconds) {
+  less_than_th <- NULL
+  also_include <- NULL
+  prior_start <- NULL
+  prior_resource <- NULL
+  time_gap <- NULL
+  next_less_than_th <- NULL
+  next_resource <- NULL
+  prior_complete <- NULL
+  prior_case <- NULL
+  next_case <- NULL
+  resource <- NULL
+  start <- NULL
+  complete <- NULL
+  case_id <- NULL
+
+
   if(timestamp == "start"){
     activity_log <- activitylog %>%
       group_by(!!resource_id_(activitylog)) %>%
@@ -166,6 +182,21 @@ detect_multiregistration_resource <- function(activitylog, timestamp, threshold_
 }
 
 detect_multiregistration_case <- function(activitylog, timestamp, threshold_in_seconds) {
+  less_than_th <- NULL
+  also_include <- NULL
+  prior_start <- NULL
+  prior_resource <- NULL
+  time_gap <- NULL
+  next_less_than_th <- NULL
+  next_resource <- NULL
+  prior_complete <- NULL
+  prior_case <- NULL
+  next_case <- NULL
+  resource <- NULL
+  start <- NULL
+  complete <- NULL
+  case_id <- NULL
+
   if(timestamp == "start"){
     activity_log <- activitylog %>%
       group_by(!!case_id_(activitylog)) %>%

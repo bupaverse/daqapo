@@ -25,6 +25,7 @@ detect_activity_order_violations.activitylog <- function(activitylog,
                                                          filter_condition = NULL){
 
 
+
   timestamp <- match.arg(timestamp)
   # Predefine variables
   nr <- NULL
@@ -33,6 +34,8 @@ detect_activity_order_violations.activitylog <- function(activitylog,
   case_id <- NULL
   activity <- NULL
   start <- NULL
+  actual_nr <- NULL
+  incorrect <- NULL
   complete <- NULL
 
   # Apply filter condition when specified

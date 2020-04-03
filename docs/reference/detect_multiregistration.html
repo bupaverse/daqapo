@@ -129,15 +129,20 @@
     <p>Function detecting multi-registration for the same case or by the same resource at the same point in time</p>
     </div>
 
-    <pre class="usage"><span class='fu'>detect_multiregistration</span>(<span class='no'>activity_log</span>, <span class='kw'>level_of_aggregation</span> <span class='kw'>=</span> <span class='st'>"resource"</span>,
-  <span class='kw'>timestamp</span> <span class='kw'>=</span> <span class='st'>"complete"</span>, <span class='no'>threshold_in_seconds</span>, <span class='kw'>details</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>filter_condition</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>detect_multiregistration</span>(
+  <span class='no'>activitylog</span>,
+  <span class='no'>level_of_aggregation</span>,
+  <span class='no'>timestamp</span>,
+  <span class='no'>threshold_in_seconds</span>,
+  <span class='no'>details</span>,
+  <span class='no'>filter_condition</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>activity_log</th>
+      <th>activitylog</th>
       <td><p>The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)</p></td>
     </tr>
     <tr>

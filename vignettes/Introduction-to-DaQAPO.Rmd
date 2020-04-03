@@ -1,7 +1,6 @@
 ---
 title: "Introduction to DaQAPO"
-author:
-  - Niels Martin^[Hasselt University, Research group Business Informatics | Research Foundation Flanders. niels.martin@uhasselt.be], Greg Van Houdt^[Hasselt University, Research group Business Informatics. greg.vanhoudt@uhasselt.be], and Gert Janssenswillen^[Hasselt University, Research group Business Informatics. gert.janssenswillen@uhasselt.be]
+author: Niels Martin^[Hasselt University, Research group Business Informatics | Research Foundation Flanders (FWO). niels.martin@uhasselt.be], Greg Van Houdt^[Hasselt University, Research group Business Informatics. greg.vanhoudt@uhasselt.be], and Gert Janssenswillen^[Hasselt University, Research group Business Informatics. gert.janssenswillen@uhasselt.be]
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -25,6 +24,8 @@ data("hospital")
 data("hospital_events")
 ```
 
+## Introduction
+
 Process mining techniques generate valuable insights in business processes using automatically generated process execution data. However, despite the extensive opportunities that process mining techniques provide, the garbage in - garbage out principle still applies. Data quality issues are widespread in real-life data and can generate misleading results when used for analysis purposes. Currently, there is no systematic way to perform data quality assessment on process-oriented data. To fill this gap, we introduce DaQAPO - Data Quality Assessment for Process-Oriented data. It provides a set of assessment functions to identify a wide array of quality issues.
 
 We identify two stages in the data quality assessment process:
@@ -33,9 +34,6 @@ We identify two stages in the data quality assessment process:
 2. Assessing the data quality - running quality tests.
 
 If the user desires to remove anomalies detected by quality tests, he has the ability to do so.
-
-
-Besides reading through this vignette, you can also run an interactive demo of `DaQAPO` in [Swirl](https://swirlstats.com/). Download the course from [Github](https://github.com/nielsmartin/Introduction_to_DaQAPO).
 
 ## Data Sources
 
@@ -46,7 +44,7 @@ Before we can perform the first stage - reading data - we must have access to th
 
 Two example datasets are included in `daqapo`. These are `hospital` and `hospital_events`. Below, you can find their respective structures.
 
-```{r LogTypes_Activity, echo = F}
+```{r LogTypes_Activity}
 str(hospital)
 ```
 ```{r LogTypes_Event}
@@ -56,9 +54,10 @@ str(hospital_events)
 
 Both datasets were artificially created merely to illustrate the package's functionalities.
 
+
 ## Stage 1 - Read in data
 
-First of all, data must be read and prepared such that the quality assessment tests can be executed. Data preparation requires transforming the dataset to a standardised activity log format. However, earlier we mentioned two input data formats: an activity log and an event log. When an event log is available, it needs to be converted to an activity log. `DaQAPO` provides a set of functions to assist the user in this process.
+First of all, data must be read and prepared such that the quality assessment tests can be executed. Data preparation requires transforming the dataset to a standardised activity log format. However, earlier we mentioned two input data formats: an activity log and an event log. When an event log is available, it needs to be converted to an activity log. `daqapo` provides a set of functions, with the aid of `bupaR`, to assist the user in this process.
 
 
 ### Preparing an Activity Log
@@ -67,9 +66,10 @@ As mentioned earlier, the goal of reading and preparing data is to obtain a stan
 
 * Providing appropriate names for timestamp columns
 * Applying the `POSIXct` timestamp format
+* Creating the activity log object.
 
 
-For this section, the dataset `hospital` will be used to illustrate data preparations. Two main functions help the user to prepare his/her own dataset:
+For this section, the dataset `hospital` will be used to illustrate data preparations. Three main functions help the user to prepare his/her own dataset:
 
 * `rename`
 * `convert_timestamp`
@@ -77,16 +77,34 @@ For this section, the dataset `hospital` will be used to illustrate data prepara
 
 #### Rename
 
-```{r}
+The activity log object adds a mapping to the data frame to link each column with its specific meaning. In this regard, the timestamp columns each represent a different lifecycle state. `daqapo` must know which column is which, requiring standardised timestamp names. The accepted timestamp values are:
+
+* schedule
+* assign
+* reassign
+* start
+* suspend
+* resume
+* abort_activity
+* abort_case
+* complete
+* manualskip
+* autoskip
+
+The two timestamps required by `daqapo` are start and complete.
+
+```{r rename}
 hospital %>%
   rename(start = start_ts,
          complete = complete_ts) -> hospital
 ```
 
 
-#### Convert format
+#### Convert timestamp format
 
-```{r}
+Each timestamp must also be in the `POSIXct` format.
+
+```{r convert_timestamps}
 hospital %>%
   convert_timestamps(c("start","complete"), format = dmy_hms) -> hospital
 ```
@@ -94,7 +112,9 @@ hospital %>%
 
 #### Create activitylog
 
-```{r}
+When the timestamps are edited to the desired format, the activity log object can be created along with the required mapping.
+
+```{r create_activitylog}
 hospital %>%
   activitylog(case_id = "patient_visit_nr",
               activity_id = "activity",
@@ -106,18 +126,21 @@ hospital %>%
 
 ### Preparing an Event Log
 
-With event logs, things are a bit more complex. In an event log, each row represents only a part of an activity instance. Therefore, more complex data transformations must be executed and several problems could arise. In this section, we will use an event log variant of the activity log used earlier, named `hospital_events`.  three functions form the building blocks of the required data preparation:
+With event logs, things are a bit more complex. In an event log, each row represents only a part of an activity instance. Therefore, more complex data transformations must be executed and several problems could arise. In this section, we will use an event log variant of the activity log used earlier, named `hospital_events`.
+
+```{r ReadEventLog}
+hospital_events
+```
+
+The same principle regarding the timestamps apply. Therefore, the `POSIXct` format must be applied in advance. Additionally, the event log object also requires an activity instance id. If needed, one can be created manually as illustrated below.
+
+The following functions form the building blocks of the required data preparation, but not all must be called to obtain a fully prepared event log at all times:
 
 * `convert_timestamps`
 * `assign_instance_id`
 * `check/fix_resource_inconsistencies`
 * `standardize_lifecycle`
 * `events_to_activitylog`
-
-
-```{r ReadEventLog}
-hospital_events
-```
 
 
 ```{r ReadEventLog_Cols}
@@ -134,37 +157,33 @@ hospital_events %>%
 ```
 
 
-
-
 ## Stage 2 - Data Quality Assessment
 
-The table below summarizes the different data quality assessment tests available in DaQAPO.
+The table below summarizes the different data quality assessment tests available in `daqapo`, after which each test will be briefly demonstrated.
 
-| Function name           | Description                                               | Output                      |
-|:------------------------|:----------------------------------------------------------|:----------------------------|
-| missing_values | Function detecting missing values at different levels of aggregation | Summary in console + Returns rows with NAs | 
-| similar_labels | Function detecting potential spelling mistakes | Table showing similarities for each label |
-| incorrect_activity_names | Function returning the incorrect activity labels in the log | Summary in console + Returns rows with incorrect activities |
-| unique_values | Function listing all distinct combinations of the given log attributes | Summary in console + Returns all unique combinations of values in given columns |
-| value_range | Function detecting violations of the range of acceptable values | Summary in console + Returns rows with value range infringements |
-| incomplete_cases | Function detecting incomplete cases in terms of the activities that need to be recorded for a case | Summary in console + Returns traces in which the mentioned activities are not present |
-| time_anomalies | Funtion detecting activity executions with negative or zero duration | Summary in console + Returns rows with negative or zero durations |
-| duration_outliers | Function detecting duration outliers for a particular activity | Summary in console + Returns rows with outliers |
-| inactive_periods | Function detecting inactive periods, i.e. periods of time in which no activity executions/arrivals are recorded | Summary in console + Returns periods of inactivity
-| case_id_sequence | Function detecting gaps in the sequence of case identifiers | Summary in console + Returns case IDs which should be expected to be present |
-| multi_registration | Function detecting the registration of a series of events in a short timestamp for the same case or by the same resource | Summary in console + Returns rows with multiregistration on resource or case level |
-| activity_frequency | Function that detects activity frequency anomalies per case | Summary in console + Returns activities in cases which are executed too many times |
-| activity_order | Function detecting violations in activity order | Summary in console + Returns detected orders which violate the specified order |
-| attribute_dependency | Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold(s)) | Summary in console + Returns rows with dependency violations |
-| conditional_activity_presence | Function detection violations of conditional activity presence (i.e. activity/activities that should be present when (a) particular condition(s) hold(s)) | Summary in console + Returns cases violating conditional activity presence |
-| related_activities | Function detecting missing related activities, i.e. activities that should be registered because another activity is registered for a case | Summary in console + Returns cases violating relating activities |
-| filter_anomalies | Function that filters detected anomalies, returned by the assessment tests, from the activity log | The activity log without anomalies |
+| Function name            | Description                                           | Output                         |
+|:-------------------------|:------------------------------------------------------|:-------------------------------|
+| detect_activity_frequency_violations | Function that detects activity frequency anomalies per case | Summary in console + Returns activities in cases which are executed too many times |
+| detect_activity_order_violations | Function detecting violations in activity order | Summary in console + Returns detected orders which violate the specified order |
+| detect_attribute_dependencies | Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold(s)) | Summary in console + Returns rows with dependency violations |
+| detect_case_id_sequence_gaps | Function detecting gaps in the sequence of case identifiers | Summary in console + Returns case IDs which should be expected to be present |
+| detect_conditional_activity_presence | Function detection violations of conditional activity presence (i.e. activity/activities that should be present when (a) particular condition(s) hold(s)) | Summary in console + Returns cases violating conditional activity presence |
+| detect_duration_outliers | Function detecting duration outliers for a particular activity | Summary in console + Returns rows with outliers |
+| detect_inactive_periods | Function detecting inactive periods, i.e. periods of time in which no activity executions/arrivals are recorded | Summary in console + Returns periods of inactivity |
+| detect_incomplete_cases | Function detecting incomplete cases in terms of the activities that need to be recorded for a case | Summary in console + Returns traces in which the mentioned activities are not present |
+| detect_incorrect_activity_names | Function returning the incorrect activity labels in the log | Summary in console + Returns rows with incorrect activities |
+| detect_missing_values | Function detecting missing values at different levels of aggregation | Summary in console + Returns rows with NAs |
+| detect_multiregistration | Function detecting the registration of a series of events in a short time period for the same case or by the same resource | Summary in console + Returns rows with multiregistration on resource or case level |
+| detect_overlaps | Checks if a resource has performed 2 activities in parallel | Data frame containing the activities, the number of overlaps and average overlap in minutes |
+| detect_related_activities | Function detecting missing related activities, i.e. activities that should be registered because another activity is registered for a case | Summary in console + Returns cases violating relating activities |
+| detect_similar_labels | Function detecting potential spelling mistakes | Table showing similarities for each label |
+| detect_time_anomalies | Funtion detecting activity executions with negative or zero duration | Summary in console + Returns rows with negative or zero durations |
+| detect_unique_values | Function listing all distinct combinations of the given log attributes | Summary in console + Returns all unique combinations of values in given columns |
+| detect_value_range_violations | Function detecting violations of the range of acceptable values | Summary in console + Returns rows with value range infringements |
 
-Table: An overview of data quality tests in DaQAPO.
+Table: An overview of data quality assessment tests in `daqapo`.
 
-To illustrate the use of these assessment functions, four functions outlined in the table above are demonstrated in the remainder of this vignette. 
-
-### Activity Frequency violations
+### Detect Activity Frequency Violations
 
 ```{r}
 hospital %>%
@@ -173,8 +192,15 @@ hospital %>%
 ```
 
 
-### Activity Order Violations
-### Attribute dependencies
+### Detect Activity Order Violations
+
+```{r}
+hospital %>%
+  detect_activity_order_violations(activity_order = c("Registration", "Triage", "Clinical exam",
+                                                      "Treatment", "Treatment evaluation"))
+```
+
+### Detect Attribute Dependencies
 
 ```{r}
 hospital %>% 
@@ -182,7 +208,7 @@ hospital %>%
                                 consequent = startsWith(originator,"Clerk"))
 ```
 
-### Detect Case ID sequence gaps
+### Detect Case ID Sequence Gaps
 
 ```{r}
 hospital %>%
@@ -211,9 +237,14 @@ hospital %>%
   detect_duration_outliers(Treatment = duration_within(lower_bound = 0, upper_bound = 15))
 ```
 
-### Detect inactive periods
+### Detect Inactive Periods
 
-### Detect incomplete cases
+```{r}
+hospital %>%
+  detect_inactive_periods(threshold = 30)
+```
+
+### Detect Incomplete Cases
 
 ```{r}
 hospital %>%
@@ -249,7 +280,19 @@ hospital %>%
 
 ### Detect Multiregistration
 
-### Detect Related activities
+```{r}
+hospital %>%
+  detect_multiregistration(threshold_in_seconds = 10)
+```
+
+### Detect Overlaps
+
+```{r}
+hospital %>%
+  detect_overlaps()
+```
+
+### Detect Related Activities
 
 ```{r}
 hospital %>%
@@ -257,7 +300,7 @@ hospital %>%
                             consequent = "Treatment")
 ```
 
-### Detect similar labels
+### Detect Similar Labels
 
 ```{r}
 hospital %>%
@@ -281,71 +324,11 @@ hospital %>%
 hospital %>%
   detect_unique_values(column_labels = c("activity", "originator"))
 ```
+
 ### Detect Value Range Violations
 
 ```{r}
 hospital %>%
   detect_value_range_violations(triagecode = domain_numeric(from = 0, to = 5))
-```
-
-
-
-
-### `detect_value_range_violations()`
-
-The `detect_value_range_violations()` function checks whether the values of a passed attribute are within certain bounds for numeric attributes, or in a list of values for a character or factor attribute. For example, the triage code is typically a number between 1 and 5. We can easily test whether all cases abide to this rule.
-
-```{r}
-detect_value_range_violations(hospital, "triagecode" = domain_numeric(1,5))
-```
-
-Data quality assessment tests provide the user with summary statistics in the console. Also, where appropriate, they return the rows in the log that are considered to be an anomaly. In this case, you get all rows where `cattr_triagecode < 1` or `cattr_triagecode > 5`. Therefore, one can simply request the unique cases in this result to get more specific information.
-
-```{r}
-detect_value_range_violations(hospital, "triagecode" = domain_numeric(1,5)) %>%
-  distinct(case_id, cattr_triagecode)
-```
-
-Note that the test will always print output statistics.
-
-### `detect_duration_outliers()`
-
-This test checks if there are any activities with a deviating duration compared to the average. The bounds of when a duration is considered to be an outlier can be customized by the user.
-
-```{r}
-detect_duration_outliers(hospital, "Clinical exam" = duration_within())
-```
-
-At this point, no outliers are detected. But say you are more sensitive to duration variance, then you can tweak the bounds by either hard-coding it or by altering the number of standard deviations used to calculate the bounds.
-
-```{r}
-detect_duration_outliers(hospital,  "Clinical exam" = duration_within(bound_sd = 2)) -> anomalies
-anomalies
-```
-
-Assume that this line is entered by mistake. In that case, we can easily take the output from this assessment test to correct the hospital dataset. For this purpose, we provide you with `filter_anomalies()`.
-
-```{r}
-filter_anomalies(activity_log = hospital, anomaly_log = anomalies) -> hospital
-
-```
-
-
-### `detect_case_id_sequence_gaps()`
-
-In our toy dataset, the case identifier is a numeric attribute. Therefore, we can check if there are any cases missing in the sequence.
-
-```{r}
-detect_case_id_sequence_gaps(hospital)
-```
-
-Note that this function can only be applied if the case numbering is unique to the business process under investigation.
-
-### `detect_related_activities()`
-
-Finally, we will demonstrate `detect_related_activities()`, where you can check if an activity is recorded for a case if another is present. This link is very clear between a treatment and its evaluation: a treatment can only be evaluated if a treatment was recorded in the first place.
-
-```{r}
-detect_related_activities(hospital, antecedent = "Treatment evaluation", consequent =  "Treatment")
 ```
 

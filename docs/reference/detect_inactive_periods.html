@@ -129,8 +129,15 @@
     <p>Function detecting inactive periods, i.e. periods of time in which no activity executions/arrivals are recorded in the activity log</p>
     </div>
 
-    <pre class="usage"><span class='fu'>detect_inactive_periods</span>(<span class='no'>activitylog</span>, <span class='no'>threshold</span>, <span class='no'>timestamp</span>, <span class='no'>only_first</span>,
-  <span class='no'>details</span>, <span class='no'>filter_condition</span>)</pre>
+    <pre class="usage"><span class='fu'>detect_inactive_periods</span>(
+  <span class='no'>activitylog</span>,
+  <span class='no'>threshold</span>,
+  <span class='no'>type</span>,
+  <span class='no'>timestamp</span>,
+  <span class='no'>start_activities</span>,
+  <span class='no'>details</span>,
+  <span class='no'>filter_condition</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -144,11 +151,15 @@
       <td><p>Threshold after which a period without activity executions/arrivals is considered as an inactive period (expressed in minutes)</p></td>
     </tr>
     <tr>
+      <th>type</th>
+      <td><p>Type of inactive periods you want to detect. "arrivals" will look for periods without new cases arriving. "activities" will look for periods where no activities occur.</p></td>
+    </tr>
+    <tr>
       <th>timestamp</th>
       <td><p>Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)</p></td>
     </tr>
     <tr>
-      <th>only_first</th>
+      <th>start_activities</th>
       <td><p>List of activity labels marking the first activity in the process. When specified, an inactive period only occurs when the time between two consecutive arrivals exceeds the specified threshold (arrival is proxied by the activity/activities specified in this argument).</p></td>
     </tr>
     <tr>

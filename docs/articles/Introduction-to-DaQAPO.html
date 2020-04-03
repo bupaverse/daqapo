@@ -80,9 +80,10 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduction to DaQAPO</h1>
-                        <h4 class="author">Niels Martin and Greg Van Houdt, Hasselt University, Research group Business Informatics</h4>
+                        <h4 class="author">Niels Martin<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, Greg Van Houdt<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>, and Gert Janssenswillen<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>
+</h4>
             
-            <h4 class="date">2020-04-01</h4>
+            <h4 class="date">2020-04-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nielsmartin/daqapo/blob/master/vignettes/Introduction-to-DaQAPO.Rmd"><code>vignettes/Introduction-to-DaQAPO.Rmd</code></a></small>
       <div class="hidden name"><code>Introduction-to-DaQAPO.Rmd</code></div>
@@ -91,6 +92,9 @@
 
     
     
+<div id="introduction" class="section level2">
+<h2 class="hasAnchor">
+<a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>Process mining techniques generate valuable insights in business processes using automatically generated process execution data. However, despite the extensive opportunities that process mining techniques provide, the garbage in - garbage out principle still applies. Data quality issues are widespread in real-life data and can generate misleading results when used for analysis purposes. Currently, there is no systematic way to perform data quality assessment on process-oriented data. To fill this gap, we introduce DaQAPO - Data Quality Assessment for Process-Oriented data. It provides a set of assessment functions to identify a wide array of quality issues.</p>
 <p>We identify two stages in the data quality assessment process:</p>
 <ol style="list-style-type: decimal">
@@ -98,7 +102,7 @@
 <li>Assessing the data quality - running quality tests.</li>
 </ol>
 <p>If the user desires to remove anomalies detected by quality tests, he has the ability to do so.</p>
-<p>Besides reading through this vignette, you can also run an interactive demo of <code>DaQAPO</code> in <a href="https://swirlstats.com/">Swirl</a>. Download the course from <a href="https://github.com/nielsmartin/Introduction_to_DaQAPO">Github</a>.</p>
+</div>
 <div id="data-sources" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-sources" class="anchor"></a>Data Sources</h2>
@@ -134,7 +138,7 @@
 <div id="stage-1---read-in-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#stage-1---read-in-data" class="anchor"></a>Stage 1 - Read in data</h2>
-<p>First of all, data must be read and prepared such that the quality assessment tests can be executed. Data preparation requires transforming the dataset to a standardised activity log format. However, earlier we mentioned two input data formats: an activity log and an event log. When an event log is available, it needs to be converted to an activity log. <code>DaQAPO</code> provides a set of functions to assist the user in this process.</p>
+<p>First of all, data must be read and prepared such that the quality assessment tests can be executed. Data preparation requires transforming the dataset to a standardised activity log format. However, earlier we mentioned two input data formats: an activity log and an event log. When an event log is available, it needs to be converted to an activity log. <code>daqapo</code> provides a set of functions, with the aid of <code>bupaR</code>, to assist the user in this process.</p>
 <div id="preparing-an-activity-log" class="section level3">
 <h3 class="hasAnchor">
 <a href="#preparing-an-activity-log" class="anchor"></a>Preparing an Activity Log</h3>
@@ -142,8 +146,9 @@
 <ul>
 <li>Providing appropriate names for timestamp columns</li>
 <li>Applying the <code>POSIXct</code> timestamp format</li>
+<li>Creating the activity log object.</li>
 </ul>
-<p>For this section, the dataset <code>hospital</code> will be used to illustrate data preparations. Two main functions help the user to prepare his/her own dataset:</p>
+<p>For this section, the dataset <code>hospital</code> will be used to illustrate data preparations. Three main functions help the user to prepare his/her own dataset:</p>
 <ul>
 <li><code>rename</code></li>
 <li><code>convert_timestamp</code></li>
@@ -152,32 +157,65 @@
 <div id="rename" class="section level4">
 <h4 class="hasAnchor">
 <a href="#rename" class="anchor"></a>Rename</h4>
+<p>The activity log object adds a mapping to the data frame to link each column with its specific meaning. In this regard, the timestamp columns each represent a different lifecycle state. <code>daqapo</code> must know which column is which, requiring standardised timestamp names. The accepted timestamp values are:</p>
+<ul>
+<li>schedule</li>
+<li>assign</li>
+<li>reassign</li>
+<li>start</li>
+<li>suspend</li>
+<li>resume</li>
+<li>abort_activity</li>
+<li>abort_case</li>
+<li>complete</li>
+<li>manualskip</li>
+<li>autoskip</li>
+</ul>
+<p>The two timestamps required by <code>daqapo</code> are start and complete.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r">hospital %&gt;%
   rename(start = start_ts,
          complete = complete_ts) -&gt; hospital</pre></body></html></div>
 </div>
-<div id="convert-format" class="section level4">
+<div id="convert-timestamp-format" class="section level4">
 <h4 class="hasAnchor">
-<a href="#convert-format" class="anchor"></a>Convert format</h4>
+<a href="#convert-timestamp-format" class="anchor"></a>Convert timestamp format</h4>
+<p>Each timestamp must also be in the <code>POSIXct</code> format.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r">hospital %&gt;%
-  convert_timestamps(c("start","complete"), format = dmy_hms) -&gt; hospital
-#&gt; Error in convert_timestamps(., c("start", "complete"), format = dmy_hms): could not find function "convert_timestamps"</pre></body></html></div>
+  convert_timestamps(c("start","complete"), format = dmy_hms) -&gt; hospital</pre></body></html></div>
 </div>
 <div id="create-activitylog" class="section level4">
 <h4 class="hasAnchor">
 <a href="#create-activitylog" class="anchor"></a>Create activitylog</h4>
+<p>When the timestamps are edited to the desired format, the activity log object can be created along with the required mapping.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r">hospital %&gt;%
   activitylog(case_id = "patient_visit_nr",
               activity_id = "activity",
               resource_id = "originator",
-              lifecycle_ids = c("start", "complete")) -&gt; hospital
-#&gt; Error in activitylog(., case_id = "patient_visit_nr", activity_id = "activity", : could not find function "activitylog"</pre></body></html></div>
+              lifecycle_ids = c("start", "complete")) -&gt; hospital</pre></body></html></div>
 </div>
 </div>
 <div id="preparing-an-event-log" class="section level3">
 <h3 class="hasAnchor">
 <a href="#preparing-an-event-log" class="anchor"></a>Preparing an Event Log</h3>
-<p>With event logs, things are a bit more complex. In an event log, each row represents only a part of an activity instance. Therefore, more complex data transformations must be executed and several problems could arise. In this section, we will use an event log variant of the activity log used earlier, named <code>hospital_events</code>. three functions form the building blocks of the required data preparation:</p>
+<p>With event logs, things are a bit more complex. In an event log, each row represents only a part of an activity instance. Therefore, more complex data transformations must be executed and several problems could arise. In this section, we will use an event log variant of the activity log used earlier, named <code>hospital_events</code>.</p>
+<div class="sourceCode" id="cb6"><html><body><pre class="r">hospital_events
+#&gt; # A tibble: 106 x 8
+#&gt;    patient_visit_nr activity originator event_lifecycle~ timestamp triagecode
+#&gt;               <dbl><chr><chr><chr><chr><dbl>
+#&gt;  1              510 registr~ Clerk 9    start            20/11/20~          3
+#&gt;  2              510 registr~ Clerk 9    complete         20/11/20~          3
+#&gt;  3              510 Triage   Nurse 27   start            20/11/20~          3
+#&gt;  4              510 Triage   Nurse 27   complete         20/11/20~          3
+#&gt;  5              510 Clinica~ Doctor 7   start            20/11/20~         NA
+#&gt;  6              510 Clinica~ Doctor 4   complete         20/11/20~         NA
+#&gt;  7              512 Registr~ Clerk 12   start            20/11/20~          3
+#&gt;  8              512 Registr~ Clerk 12   complete         20/11/20~          3
+#&gt;  9              512 Triage   Nurse 27   start            20/11/20~          3
+#&gt; 10              512 Triage   Nurse 27   complete         20/11/20~          3
+#&gt; # ... with 96 more rows, and 2 more variables: specialization <chr>,
+#&gt; #   event_matching <dbl></dbl></chr></dbl></chr></chr></chr></chr></dbl></pre></body></html></div>
+<p>The same principle regarding the timestamps apply. Therefore, the <code>POSIXct</code> format must be applied in advance. Additionally, the event log object also requires an activity instance id. If needed, one can be created manually as illustrated below.</p>
+<p>The following functions form the building blocks of the required data preparation, but not all must be called to obtain a fully prepared event log at all times:</p>
 <ul>
 <li><code>convert_timestamps</code></li>
 <li><code>assign_instance_id</code></li>
@@ -185,22 +223,6 @@
 <li><code>standardize_lifecycle</code></li>
 <li><code>events_to_activitylog</code></li>
 </ul>
-<div class="sourceCode" id="cb6"><html><body><pre class="r">hospital_events
-#&gt; # A tibble: 106 x 8
-#&gt;    patient_visit_nr activity originator event_lifecycle~ timestamp
-#&gt;               <dbl><chr><chr><chr><chr>    
-#&gt;  1              510 registr~ Clerk 9    start            20/11/20~
-#&gt;  2              510 registr~ Clerk 9    complete         20/11/20~
-#&gt;  3              510 Triage   Nurse 27   start            20/11/20~
-#&gt;  4              510 Triage   Nurse 27   complete         20/11/20~
-#&gt;  5              510 Clinica~ Doctor 7   start            20/11/20~
-#&gt;  6              510 Clinica~ Doctor 4   complete         20/11/20~
-#&gt;  7              512 Registr~ Clerk 12   start            20/11/20~
-#&gt;  8              512 Registr~ Clerk 12   complete         20/11/20~
-#&gt;  9              512 Triage   Nurse 27   start            20/11/20~
-#&gt; 10              512 Triage   Nurse 27   complete         20/11/20~
-#&gt; # ... with 96 more rows, and 3 more variables: triagecode <dbl>,
-#&gt; #   specialization <chr>, event_matching <dbl></dbl></chr></dbl></chr></chr></chr></chr></dbl></pre></body></html></div>
 <div class="sourceCode" id="cb7"><html><body><pre class="r">hospital_events %&gt;%
   convert_timestamps(c("timestamp"), format = dmy_hms) %&gt;%
   mutate(event_matching = paste(patient_visit_nr, activity, event_matching)) %&gt;%
@@ -209,20 +231,19 @@
                         activity_instance_id = "event_matching", 
                         timestamp = "timestamp", 
                         resource_id = "originator",
-                        lifecycle_id = "event_lifecycle_state") -&gt; hospital_events
-#&gt; Error in convert_timestamps(., c("timestamp"), format = dmy_hms): could not find function "convert_timestamps"</pre></body></html></div>
+                        lifecycle_id = "event_lifecycle_state") -&gt; hospital_events</pre></body></html></div>
 </div>
 </div>
 <div id="stage-2---data-quality-assessment" class="section level2">
 <h2 class="hasAnchor">
 <a href="#stage-2---data-quality-assessment" class="anchor"></a>Stage 2 - Data Quality Assessment</h2>
-<p>The table below summarizes the different data quality assessment tests available in DaQAPO.</p>
+<p>The table below summarizes the different data quality assessment tests available in <code>daqapo</code>, after which each test will be briefly demonstrated.</p>
 <table class="table">
-<caption>An overview of data quality tests in DaQAPO.</caption>
+<caption>An overview of data quality assessment tests in <code>daqapo</code>.</caption>
 <colgroup>
-<col width="22%">
-<col width="52%">
-<col width="25%">
+<col width="23%">
+<col width="48%">
+<col width="28%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">Function name</th>
@@ -231,354 +252,543 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">missing_values</td>
-<td align="left">Function detecting missing values at different levels of aggregation</td>
-<td align="left">Summary in console + Returns rows with NAs</td>
+<td align="left">detect_activity_frequency_violations</td>
+<td align="left">Function that detects activity frequency anomalies per case</td>
+<td align="left">Summary in console + Returns activities in cases which are executed too many times</td>
 </tr>
 <tr class="even">
-<td align="left">similar_labels</td>
-<td align="left">Function detecting potential spelling mistakes</td>
-<td align="left">Table showing similarities for each label</td>
+<td align="left">detect_activity_order_violations</td>
+<td align="left">Function detecting violations in activity order</td>
+<td align="left">Summary in console + Returns detected orders which violate the specified order</td>
 </tr>
 <tr class="odd">
-<td align="left">incorrect_activity_names</td>
-<td align="left">Function returning the incorrect activity labels in the log</td>
-<td align="left">Summary in console + Returns rows with incorrect activities</td>
+<td align="left">detect_attribute_dependencies</td>
+<td align="left">Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold(s))</td>
+<td align="left">Summary in console + Returns rows with dependency violations</td>
 </tr>
 <tr class="even">
-<td align="left">unique_values</td>
-<td align="left">Function listing all distinct combinations of the given log attributes</td>
-<td align="left">Summary in console + Returns all unique combinations of values in given columns</td>
-</tr>
-<tr class="odd">
-<td align="left">value_range</td>
-<td align="left">Function detecting violations of the range of acceptable values</td>
-<td align="left">Summary in console + Returns rows with value range infringements</td>
-</tr>
-<tr class="even">
-<td align="left">incomplete_cases</td>
-<td align="left">Function detecting incomplete cases in terms of the activities that need to be recorded for a case</td>
-<td align="left">Summary in console + Returns traces in which the mentioned activities are not present</td>
-</tr>
-<tr class="odd">
-<td align="left">time_anomalies</td>
-<td align="left">Funtion detecting activity executions with negative or zero duration</td>
-<td align="left">Summary in console + Returns rows with negative or zero durations</td>
-</tr>
-<tr class="even">
-<td align="left">duration_outliers</td>
-<td align="left">Function detecting duration outliers for a particular activity</td>
-<td align="left">Summary in console + Returns rows with outliers</td>
-</tr>
-<tr class="odd">
-<td align="left">inactive_periods</td>
-<td align="left">Function detecting inactive periods, i.e. periods of time in which no activity executions/arrivals are recorded</td>
-<td align="left">Summary in console + Returns periods of inactivity</td>
-</tr>
-<tr class="even">
-<td align="left">case_id_sequence</td>
+<td align="left">detect_case_id_sequence_gaps</td>
 <td align="left">Function detecting gaps in the sequence of case identifiers</td>
 <td align="left">Summary in console + Returns case IDs which should be expected to be present</td>
 </tr>
 <tr class="odd">
-<td align="left">multi_registration</td>
-<td align="left">Function detecting the registration of a series of events in a short timestamp for the same case or by the same resource</td>
-<td align="left">Summary in console + Returns rows with multiregistration on resource or case level</td>
-</tr>
-<tr class="even">
-<td align="left">activity_frequency</td>
-<td align="left">Function that detects activity frequency anomalies per case</td>
-<td align="left">Summary in console + Returns activities in cases which are executed too many times</td>
-</tr>
-<tr class="odd">
-<td align="left">activity_order</td>
-<td align="left">Function detecting violations in activity order</td>
-<td align="left">Summary in console + Returns detected orders which violate the specified order</td>
-</tr>
-<tr class="even">
-<td align="left">attribute_dependency</td>
-<td align="left">Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold(s))</td>
-<td align="left">Summary in console + Returns rows with dependency violations</td>
-</tr>
-<tr class="odd">
-<td align="left">conditional_activity_presence</td>
+<td align="left">detect_conditional_activity_presence</td>
 <td align="left">Function detection violations of conditional activity presence (i.e. activity/activities that should be present when (a) particular condition(s) hold(s))</td>
 <td align="left">Summary in console + Returns cases violating conditional activity presence</td>
 </tr>
 <tr class="even">
-<td align="left">related_activities</td>
+<td align="left">detect_duration_outliers</td>
+<td align="left">Function detecting duration outliers for a particular activity</td>
+<td align="left">Summary in console + Returns rows with outliers</td>
+</tr>
+<tr class="odd">
+<td align="left">detect_inactive_periods</td>
+<td align="left">Function detecting inactive periods, i.e. periods of time in which no activity executions/arrivals are recorded</td>
+<td align="left">Summary in console + Returns periods of inactivity</td>
+</tr>
+<tr class="even">
+<td align="left">detect_incomplete_cases</td>
+<td align="left">Function detecting incomplete cases in terms of the activities that need to be recorded for a case</td>
+<td align="left">Summary in console + Returns traces in which the mentioned activities are not present</td>
+</tr>
+<tr class="odd">
+<td align="left">detect_incorrect_activity_names</td>
+<td align="left">Function returning the incorrect activity labels in the log</td>
+<td align="left">Summary in console + Returns rows with incorrect activities</td>
+</tr>
+<tr class="even">
+<td align="left">detect_missing_values</td>
+<td align="left">Function detecting missing values at different levels of aggregation</td>
+<td align="left">Summary in console + Returns rows with NAs</td>
+</tr>
+<tr class="odd">
+<td align="left">detect_multiregistration</td>
+<td align="left">Function detecting the registration of a series of events in a short time period for the same case or by the same resource</td>
+<td align="left">Summary in console + Returns rows with multiregistration on resource or case level</td>
+</tr>
+<tr class="even">
+<td align="left">detect_overlaps</td>
+<td align="left">Checks if a resource has performed 2 activities in parallel</td>
+<td align="left">Data frame containing the activities, the number of overlaps and average overlap in minutes</td>
+</tr>
+<tr class="odd">
+<td align="left">detect_related_activities</td>
 <td align="left">Function detecting missing related activities, i.e. activities that should be registered because another activity is registered for a case</td>
 <td align="left">Summary in console + Returns cases violating relating activities</td>
 </tr>
+<tr class="even">
+<td align="left">detect_similar_labels</td>
+<td align="left">Function detecting potential spelling mistakes</td>
+<td align="left">Table showing similarities for each label</td>
+</tr>
 <tr class="odd">
-<td align="left">filter_anomalies</td>
-<td align="left">Function that filters detected anomalies, returned by the assessment tests, from the activity log</td>
-<td align="left">The activity log without anomalies</td>
+<td align="left">detect_time_anomalies</td>
+<td align="left">Funtion detecting activity executions with negative or zero duration</td>
+<td align="left">Summary in console + Returns rows with negative or zero durations</td>
+</tr>
+<tr class="even">
+<td align="left">detect_unique_values</td>
+<td align="left">Function listing all distinct combinations of the given log attributes</td>
+<td align="left">Summary in console + Returns all unique combinations of values in given columns</td>
+</tr>
+<tr class="odd">
+<td align="left">detect_value_range_violations</td>
+<td align="left">Function detecting violations of the range of acceptable values</td>
+<td align="left">Summary in console + Returns rows with value range infringements</td>
 </tr>
 </tbody>
 </table>
-<p>To illustrate the use of these assessment functions, four functions outlined in the table above are demonstrated in the remainder of this vignette.</p>
-<div id="activity-frequency-violations" class="section level3">
+<div id="detect-activity-frequency-violations" class="section level3">
 <h3 class="hasAnchor">
-<a href="#activity-frequency-violations" class="anchor"></a>Activity Frequency violations</h3>
+<a href="#detect-activity-frequency-violations" class="anchor"></a>Detect Activity Frequency Violations</h3>
 <div class="sourceCode" id="cb8"><html><body><pre class="r">hospital %&gt;%
   detect_activity_frequency_violations("Registration" = 1,
                                        "Clinical exam" = 1)
-#&gt; Error in detect_activity_frequency_violations(., Registration = 1, `Clinical exam` = 1): The following columns, which are required for the test, were not found in the activity log: case_id.
-#&gt;   Please check rename_activity_log.</pre></body></html></div>
+#&gt; *** OUTPUT ***
+#&gt; For 3 cases in the activity log (13.6363636363636%) an anomaly is detected.
+#&gt; The anomalies are spread over the following cases:
+#&gt; # A tibble: 3 x 3
+#&gt;   patient_visit_nr activity          n
+#&gt;              <dbl><chr><int>
+#&gt; 1              518 Registration      3
+#&gt; 2              512 Clinical exam     2
+#&gt; 3              535 Registration      2</int></chr></dbl></pre></body></html></div>
 </div>
-<div id="activity-order-violations" class="section level3">
+<div id="detect-activity-order-violations" class="section level3">
 <h3 class="hasAnchor">
-<a href="#activity-order-violations" class="anchor"></a>Activity Order Violations</h3>
+<a href="#detect-activity-order-violations" class="anchor"></a>Detect Activity Order Violations</h3>
+<div class="sourceCode" id="cb9"><html><body><pre class="r">hospital %&gt;%
+  detect_activity_order_violations(activity_order = c("Registration", "Triage", "Clinical exam",
+                                                      "Treatment", "Treatment evaluation"))
+#&gt; Warning in detect_activity_order_violations.activitylog(., activity_order =
+#&gt; c("Registration", : Some activity instances within the same case overlap. Use
+#&gt; detect_overlaps to investigate further.
+#&gt; Warning in detect_activity_order_violations.activitylog(., activity_order
+#&gt; = c("Registration", : Not all specified activities occur in each case. Use
+#&gt; detect_incomplete_cases to investigate further.
+#&gt; Selected timestamp parameter value: both
+#&gt; *** OUTPUT ***
+#&gt; It was checked whether the activity order Registration - Triage - Clinical exam - Treatment - Treatment evaluation is respected.
+#&gt; This activity order is respected for 18 (81.82%) of the cases and not for4 (18.18%) of the cases.
+#&gt; For cases for which the aformentioned activity order is not respected, the following order is detected (ordered by decreasing frequeny of occurrence):
+#&gt; # A tibble: 4 x 3
+#&gt;   activity_list                                                       n case_ids
+#&gt;   <chr><int><chr>   
+#&gt; 1 Registration - Registration - Registration                          1 518     
+#&gt; 2 Registration - Registration - Triage - Clinical exam - Treatme~     1 535     
+#&gt; 3 Registration - Triage - Clinical exam - Clinical exam               1 512     
+#&gt; 4 Triage - Registration                                               1 521</chr></int></chr></pre></body></html></div>
 </div>
-<div id="attribute-dependencies" class="section level3">
+<div id="detect-attribute-dependencies" class="section level3">
 <h3 class="hasAnchor">
-<a href="#attribute-dependencies" class="anchor"></a>Attribute dependencies</h3>
-<div class="sourceCode" id="cb9"><html><body><pre class="r">hospital %&gt;% 
+<a href="#detect-attribute-dependencies" class="anchor"></a>Detect Attribute Dependencies</h3>
+<div class="sourceCode" id="cb10"><html><body><pre class="r">hospital %&gt;% 
   detect_attribute_dependencies(antecedent = activity == "Registration",
                                 consequent = startsWith(originator,"Clerk"))
-#&gt; Error in detect_attribute_dependencies(., antecedent = activity == "Registration", : unused arguments (antecedent = activity == "Registration", consequent = startsWith(originator, "Clerk"))</pre></body></html></div>
+#&gt; *** OUTPUT ***
+#&gt; The following statement was checked: if condition(s) ~activity == "Registration" hold(s), then ~startsWith(originator, "Clerk") should also hold.
+#&gt; This statement holds for 12 (85.71%) of the rows in the activity log for which the first condition(s) hold and does not hold for 2 (14.29%) of these rows.
+#&gt; For the following rows, the first condition(s) hold(s), but the second condition does not:
+#&gt; # A tibble: 2 x 7
+#&gt;   patient_visit_nr activity originator start               complete           
+#&gt;              <dbl><chr><chr><dttm><dttm>             
+#&gt; 1              528 Registr~ Nurse 6    2017-11-21 18:10:17 2017-11-21 18:15:04
+#&gt; 2              534 Registr~ <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
+#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr></chr></dbl></na></dttm></dttm></chr></chr></dbl></pre></body></html></div>
 </div>
 <div id="detect-case-id-sequence-gaps" class="section level3">
 <h3 class="hasAnchor">
-<a href="#detect-case-id-sequence-gaps" class="anchor"></a>Detect Case ID sequence gaps</h3>
-<div class="sourceCode" id="cb10"><html><body><pre class="r">hospital %&gt;%
+<a href="#detect-case-id-sequence-gaps" class="anchor"></a>Detect Case ID Sequence Gaps</h3>
+<div class="sourceCode" id="cb11"><html><body><pre class="r">hospital %&gt;%
   detect_case_id_sequence_gaps()
-#&gt; Error in detect_case_id_sequence_gaps(.): The following columns, which are required for the test, were not found in the activity log: case_id.
-#&gt;   Please check rename_activity_log.</pre></body></html></div>
+#&gt; *** OUTPUT ***
+#&gt; It was checked whether there are gaps in the sequence of case IDs
+#&gt; From the 27 expected cases in the activity log, ranging from 510 to 536, 5 (18.52%) are missing.
+#&gt; These case numbers are:
+#&gt;   case present
+#&gt; 1  511   FALSE
+#&gt; 2  513   FALSE
+#&gt; 3  514   FALSE
+#&gt; 4  515   FALSE
+#&gt; 5  516   FALSE</pre></body></html></div>
 </div>
 <div id="detect-conditional-activity-presence" class="section level3">
 <h3 class="hasAnchor">
 <a href="#detect-conditional-activity-presence" class="anchor"></a>Detect Conditional Activity Presence</h3>
-<div class="sourceCode" id="cb11"><html><body><pre class="r">hospital %&gt;%
+<div class="sourceCode" id="cb12"><html><body><pre class="r">hospital %&gt;%
   detect_conditional_activity_presence(condition = specialization == "TRAU",
                                        activities = "Clinical exam")
-#&gt; Error in detect_conditional_activity_presence(., condition = specialization == : unused argument (activities = "Clinical exam")</pre></body></html></div>
+#&gt; *** OUTPUT ***
+#&gt; The following statement was checked: if condition(s) ~specialization == "TRAU" hold(s), then activity/activities Clinical exam should be recorded
+#&gt; The condition(s) hold(s) for 2 cases. From these cases:
+#&gt; - the specified activity/activities is/are recorded for 2 case(s) (100%)
+#&gt; - the specified activity/activities is/are not recorded for 0 case(s) (0%)</pre></body></html></div>
 </div>
 <div id="detect-duration-outliers" class="section level3">
 <h3 class="hasAnchor">
 <a href="#detect-duration-outliers" class="anchor"></a>Detect Duration Outliers</h3>
-<div class="sourceCode" id="cb12"><html><body><pre class="r">hospital %&gt;%
-  detect_duration_outliers(Treatment = duration_within(bound_sd = 1))
-#&gt; Error in detect_duration_outliers(., Treatment = duration_within(bound_sd = 1)): unused argument (Treatment = duration_within(bound_sd = 1))</pre></body></html></div>
 <div class="sourceCode" id="cb13"><html><body><pre class="r">hospital %&gt;%
+  detect_duration_outliers(Treatment = duration_within(bound_sd = 1))
+#&gt; *** OUTPUT ***
+#&gt; Outliers are detected for following activities
+#&gt; Treatment     Lower bound: 5.06   Upper bound: 22.2
+#&gt; A total of 1 is detected (1.89% of the activity executions)
+#&gt; For the following activity instances, outliers are detected:
+#&gt; # A tibble: 1 x 13
+#&gt;   patient_visit_nr activity originator start               complete           
+#&gt;              <dbl><chr><chr><dttm><dttm>             
+#&gt; 1              523 Treatme~ Nurse 17   2017-11-21 18:26:04 2017-11-21 18:55:00
+#&gt; # ... with 8 more variables: triagecode <dbl>, specialization <chr>,
+#&gt; #   duration <dbl>, mean <dbl>, sd <dbl>, bound_sd <dbl>, lower_bound <dbl>,
+#&gt; #   upper_bound <dbl></dbl></dbl></dbl></dbl></dbl></dbl></chr></dbl></dttm></dttm></chr></chr></dbl></pre></body></html></div>
+<div class="sourceCode" id="cb14"><html><body><pre class="r">hospital %&gt;%
   detect_duration_outliers(Treatment = duration_within(lower_bound = 0, upper_bound = 15))
-#&gt; Error in detect_duration_outliers(., Treatment = duration_within(lower_bound = 0, : unused argument (Treatment = duration_within(lower_bound = 0, upper_bound = 15))</pre></body></html></div>
+#&gt; *** OUTPUT ***
+#&gt; Outliers are detected for following activities
+#&gt; Treatment     Lower bound: 0      Upper bound: 15
+#&gt; A total of 1 is detected (1.89% of the activity executions)
+#&gt; For the following activity instances, outliers are detected:
+#&gt; # A tibble: 1 x 13
+#&gt;   patient_visit_nr activity originator start               complete           
+#&gt;              <dbl><chr><chr><dttm><dttm>             
+#&gt; 1              523 Treatme~ Nurse 17   2017-11-21 18:26:04 2017-11-21 18:55:00
+#&gt; # ... with 8 more variables: triagecode <dbl>, specialization <chr>,
+#&gt; #   duration <dbl>, mean <dbl>, sd <dbl>, bound_sd <dbl>, lower_bound <dbl>,
+#&gt; #   upper_bound <dbl></dbl></dbl></dbl></dbl></dbl></dbl></chr></dbl></dttm></dttm></chr></chr></dbl></pre></body></html></div>
 </div>
 <div id="detect-inactive-periods" class="section level3">
 <h3 class="hasAnchor">
-<a href="#detect-inactive-periods" class="anchor"></a>Detect inactive periods</h3>
+<a href="#detect-inactive-periods" class="anchor"></a>Detect Inactive Periods</h3>
+<div class="sourceCode" id="cb15"><html><body><pre class="r">hospital %&gt;%
+  detect_inactive_periods(threshold = 30)
+#&gt; Selected timestamp parameter value: both
+#&gt; Selected inactivity type:arrivals
+#&gt; *** OUTPUT ***
+#&gt; Specified threshold of 30 minutes is violated 9 times.
+#&gt; Threshold is violated in the following periods:
+#&gt; # A tibble: 9 x 3
+#&gt;   period_start        period_end          time_gap
+#&gt;   <dttm><dttm><dbl>
+#&gt; 1 2017-11-20 10:20:06 2017-11-21 11:35:16   1515. 
+#&gt; 2 2017-11-21 11:22:16 2017-11-21 11:59:41     37.4
+#&gt; 3 2017-11-21 12:05:52 2017-11-21 13:43:16     97.4
+#&gt; 4 2017-11-21 14:06:09 2017-11-21 15:12:17     66.1
+#&gt; 5 2017-11-21 15:18:19 2017-11-21 16:42:08     83.8
+#&gt; 6 2017-11-21 17:06:10 2017-11-21 18:02:10     56  
+#&gt; 7 2017-11-21 18:15:04 2017-11-22 10:04:57    950. 
+#&gt; 8 2017-11-22 10:32:56 2017-11-22 16:30:00    357. 
+#&gt; 9 2017-11-22 17:00:00 2017-11-22 18:00:00     60</dbl></dttm></dttm></pre></body></html></div>
 </div>
 <div id="detect-incomplete-cases" class="section level3">
 <h3 class="hasAnchor">
-<a href="#detect-incomplete-cases" class="anchor"></a>Detect incomplete cases</h3>
-<div class="sourceCode" id="cb14"><html><body><pre class="r">hospital %&gt;%
+<a href="#detect-incomplete-cases" class="anchor"></a>Detect Incomplete Cases</h3>
+<div class="sourceCode" id="cb16"><html><body><pre class="r">hospital %&gt;%
   detect_incomplete_cases(activities = c("Registration","Triage","Clinical exam","Treatment","Treatment evaluation"))
-#&gt; Error in detect_incomplete_cases(., activities = c("Registration", "Triage", : unused argument (activities = c("Registration", "Triage", "Clinical exam", "Treatment", "Treatment evaluation"))</pre></body></html></div>
+#&gt; *** OUTPUT ***
+#&gt; It was checked whether the activities Clinical exam, Registration, Treatment, Treatment evaluation, Triage are present for cases.
+#&gt; These activities are present for 4 (39.62%) of the cases and are not present for 18 (60.38%) of the cases.
+#&gt; Note: this function only checks the presence of activities for a particular case, not the completeness of these entries in the activity log or the order of activities.
+#&gt; For cases for which the aforementioned activities are not all present, the following activities are recorded (ordered by decreasing frequeny of occurrence):
+#&gt; # A tibble: 9 x 3
+#&gt;   activity               n case_ids                                             
+#&gt;   <chr><int><chr>                                                
+#&gt; 1 Triage                11 510 - 512 - 517 - 521 - 524 - 525 - 526 - 527 - 528 ~
+#&gt; 2 Registration           9 512 - 518 - 518 - 518 - 521 - 522 - 527 - 528 - 534  
+#&gt; 3 Clinical exam          5 512 - 510 - 527 - 528 - 512                          
+#&gt; 4 Treatment evaluat~     2 529 - 532                                            
+#&gt; 5 0                      1 533                                                  
+#&gt; 6 registration           1 510                                                  
+#&gt; 7 Trage                  1 520                                                  
+#&gt; 8 Treatment              1 532                                                  
+#&gt; 9 Triaga                 1 522</chr></int></chr></pre></body></html></div>
 </div>
 <div id="detect-incorrect-activity-names" class="section level3">
 <h3 class="hasAnchor">
 <a href="#detect-incorrect-activity-names" class="anchor"></a>Detect Incorrect Activity Names</h3>
-<div class="sourceCode" id="cb15"><html><body><pre class="r">hospital %&gt;%
+<div class="sourceCode" id="cb17"><html><body><pre class="r">hospital %&gt;%
   detect_incorrect_activity_names(allowed_activities = c("Registration","Triage","Clinical exam","Treatment","Treatment evaluation"))
-#&gt; Error in detect_incorrect_activity_names(., allowed_activities = c("Registration", : unused argument (allowed_activities = c("Registration", "Triage", "Clinical exam", "Treatment", "Treatment evaluation"))</pre></body></html></div>
+#&gt; *** OUTPUT ***
+#&gt; 4 out of 9 (44.44% ) activity labels are identified to be incorrect.
+#&gt; These activity labels are:
+#&gt; registration - Trage - Triaga - 0
+#&gt; Given this information, 4 of 53 (7.55%) rows in the activity log are incorrect. These are the following:
+#&gt; # A tibble: 4 x 7
+#&gt;   patient_visit_nr activity originator start               complete           
+#&gt;              <dbl><chr><chr><dttm><dttm>             
+#&gt; 1              510 registr~ Clerk 9    2017-11-20 10:18:17 2017-11-20 10:20:06
+#&gt; 2              520 Trage    Nurse 17   2017-11-21 13:43:16 2017-11-21 13:39:00
+#&gt; 3              522 Triaga   Nurse 5    2017-11-21 15:15:25 2017-11-21 15:18:04
+#&gt; 4              533 0        <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
+#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr></chr></dbl></na></dttm></dttm></chr></chr></dbl></pre></body></html></div>
 </div>
 <div id="detect-missing-values" class="section level3">
 <h3 class="hasAnchor">
 <a href="#detect-missing-values" class="anchor"></a>Detect Missing Values</h3>
-<div class="sourceCode" id="cb16"><html><body><pre class="r">hospital %&gt;%
+<div class="sourceCode" id="cb18"><html><body><pre class="r">hospital %&gt;%
   detect_missing_values(column = "activity")
-#&gt; Error in detect_missing_values(., column = "activity"): unused argument (column = "activity")
-## column heeft hier geen zin?!</pre></body></html></div>
-<div class="sourceCode" id="cb17"><html><body><pre class="r">hospital %&gt;% 
+#&gt; Selected level of aggregation: overview 
+#&gt; 
+#&gt; Warning in detect_missing_values.activitylog(., column = "activity"): Ignoring
+#&gt; provided column argument at overview level.
+#&gt; *** OUTPUT *** 
+#&gt; Absolute number of missing values per column: 
+#&gt;                   
+#&gt; patient_visit_nr 0
+#&gt; activity         0
+#&gt; originator       2
+#&gt; start            1
+#&gt; complete         0
+#&gt; triagecode       1
+#&gt; specialization   0
+#&gt; 
+#&gt; Relative number of missing values per column (expressed as percentage): 
+#&gt;                          
+#&gt; patient_visit_nr 0.000000
+#&gt; activity         0.000000
+#&gt; originator       3.773585
+#&gt; start            1.886792
+#&gt; complete         0.000000
+#&gt; triagecode       1.886792
+#&gt; specialization   0.000000
+#&gt; 
+#&gt; Overview of activity log rows which are incomplete:
+#&gt; # A tibble: 4 x 7
+#&gt;   patient_visit_nr activity originator start               complete           
+#&gt;              <dbl><chr><chr><dttm><dttm>             
+#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01 2017-11-20 11:36:09
+#&gt; 2              533 0        <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
+#&gt; 3              534 Registr~ <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
+#&gt; 4              512 Clinica~ Doctor 7   NA                  2017-11-20 11:33:57
+#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr>
+## column heeft hier geen zin?!</chr></dbl></na></na></dttm></dttm></chr></chr></dbl></pre></body></html></div>
+<div class="sourceCode" id="cb19"><html><body><pre class="r">hospital %&gt;% 
   detect_missing_values(level_of_aggregation = "activity")
 #&gt; Selected level of aggregation: activity 
 #&gt;  
 #&gt; *** OUTPUT *** 
 #&gt; Absolute number of missing values per column (per activity): 
 #&gt; # A tibble: 9 x 7
-#&gt;   activity patient_visit_nr originator start complete triagecode
-#&gt;   <chr><int><int><int><int><int>
-#&gt; 1 0                       0          1     0        0          0
-#&gt; 2 Clinica~                0          0     1        0          1
-#&gt; 3 registr~                0          0     0        0          0
-#&gt; 4 Registr~                0          1     0        0          0
-#&gt; 5 Trage                   0          0     0        0          0
-#&gt; 6 Treatme~                0          0     0        0          0
-#&gt; 7 Treatme~                0          0     0        0          0
-#&gt; 8 Triaga                  0          0     0        0          0
-#&gt; 9 Triage                  0          0     0        0          0
-#&gt; # ... with 1 more variable: specialization <int>
+#&gt;   activity  patient_visit_nr originator start complete triagecode specialization
+#&gt;   <chr><int><int><int><int><int><int>
+#&gt; 1 0                        0          1     0        0          0              0
+#&gt; 2 Clinical~                0          0     1        0          1              0
+#&gt; 3 registra~                0          0     0        0          0              0
+#&gt; 4 Registra~                0          1     0        0          0              0
+#&gt; 5 Trage                    0          0     0        0          0              0
+#&gt; 6 Treatment                0          0     0        0          0              0
+#&gt; 7 Treatmen~                0          0     0        0          0              0
+#&gt; 8 Triaga                   0          0     0        0          0              0
+#&gt; 9 Triage                   0          0     0        0          0              0
 #&gt; 
 #&gt; Relative number of missing values per column (per activity, expressed as percentage): 
 #&gt; # A tibble: 9 x 7
-#&gt;   activity patient_visit_nr originator start complete triagecode
-#&gt;   <chr><dbl><dbl><dbl><dbl><dbl>
-#&gt; 1 0                       0     1      0            0      0    
-#&gt; 2 Clinica~                0     0      0.111        0      0.111
-#&gt; 3 registr~                0     0      0            0      0    
-#&gt; 4 Registr~                0     0.0714 0            0      0    
-#&gt; 5 Trage                   0     0      0            0      0    
-#&gt; 6 Treatme~                0     0      0            0      0    
-#&gt; 7 Treatme~                0     0      0            0      0    
-#&gt; 8 Triaga                  0     0      0            0      0    
-#&gt; 9 Triage                  0     0      0            0      0    
-#&gt; # ... with 1 more variable: specialization <dbl>
+#&gt;   activity  patient_visit_nr originator start complete triagecode specialization
+#&gt;   <chr><dbl><dbl><dbl><dbl><dbl><dbl>
+#&gt; 1 0                        0     1      0            0      0                  0
+#&gt; 2 Clinical~                0     0      0.111        0      0.111              0
+#&gt; 3 registra~                0     0      0            0      0                  0
+#&gt; 4 Registra~                0     0.0714 0            0      0                  0
+#&gt; 5 Trage                    0     0      0            0      0                  0
+#&gt; 6 Treatment                0     0      0            0      0                  0
+#&gt; 7 Treatmen~                0     0      0            0      0                  0
+#&gt; 8 Triaga                   0     0      0            0      0                  0
+#&gt; 9 Triage                   0     0      0            0      0                  0
 #&gt; 
 #&gt; Overview of activity log rows which are incomplete:
 #&gt; # A tibble: 4 x 7
-#&gt;   patient_visit_nr activity originator start complete triagecode
-#&gt;              <dbl><chr><chr><chr><chr><dbl>
-#&gt; 1              510 Clinica~ Doctor 7   20/1~ 20/11/2~         NA
-#&gt; 2              533 0        <na>       22/1~ 22/11/2~          7
-#&gt; 3              534 Registr~ <na>       22/1~ 22/11/2~          0
-#&gt; 4              512 Clinica~ Doctor 7   <na>  20/11/2~          3
-#&gt; # ... with 1 more variable: specialization <chr></chr></na></na></na></dbl></chr></chr></chr></chr></dbl></dbl></dbl></dbl></dbl></dbl></dbl></chr></int></int></int></int></int></int></chr></pre></body></html></div>
-<div class="sourceCode" id="cb18"><html><body><pre class="r">hospital %&gt;% 
+#&gt;   patient_visit_nr activity originator start               complete           
+#&gt;              <dbl><chr><chr><dttm><dttm>             
+#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01 2017-11-20 11:36:09
+#&gt; 2              533 0        <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
+#&gt; 3              534 Registr~ <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
+#&gt; 4              512 Clinica~ Doctor 7   NA                  2017-11-20 11:33:57
+#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr></chr></dbl></na></na></dttm></dttm></chr></chr></dbl></dbl></dbl></dbl></dbl></dbl></dbl></chr></int></int></int></int></int></int></chr></pre></body></html></div>
+<div class="sourceCode" id="cb20"><html><body><pre class="r">hospital %&gt;% 
   detect_missing_values(
   level_of_aggregation = "column",
   column = "triagecode")
-#&gt; Error in detect_missing_values(., level_of_aggregation = "column", column = "triagecode"): unused argument (column = "triagecode")</pre></body></html></div>
+#&gt; Selected level of aggregation: column 
+#&gt;  
+#&gt; *** OUTPUT *** 
+#&gt; Absolute number of missing values in column triagecode : 1 
+#&gt; Relative number of missing values in column triagecode (expressed as percentage): 1.886792 
+#&gt; 
+#&gt; Overview of activity log rows in which triagecode is missing:
+#&gt; # A tibble: 1 x 7
+#&gt;   patient_visit_nr activity originator start               complete           
+#&gt;              <dbl><chr><chr><dttm><dttm>             
+#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01 2017-11-20 11:36:09
+#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr></chr></dbl></dttm></dttm></chr></chr></dbl></pre></body></html></div>
 </div>
 <div id="detect-multiregistration" class="section level3">
 <h3 class="hasAnchor">
 <a href="#detect-multiregistration" class="anchor"></a>Detect Multiregistration</h3>
+<div class="sourceCode" id="cb21"><html><body><pre class="r">hospital %&gt;%
+  detect_multiregistration(threshold_in_seconds = 10)
+#&gt; Selected level of aggregation: resource
+#&gt; Selected timestamp parameter value: complete
+#&gt; *** OUTPUT ***
+#&gt; Multi-registration is detected for 4 of the 12 resources (33.33%). These resources are:
+#&gt; Doctor 7 - Nurse 5 - Nurse 27 - NA
+#&gt; For the following rows in the activity log, multi-registration is detected:
+#&gt; # A tibble: 9 x 7
+#&gt; # Groups:   originator [4]
+#&gt;   patient_visit_nr activity originator start               complete           
+#&gt;              <dbl><chr><chr><dttm><dttm>             
+#&gt; 1              512 Clinica~ Doctor 7   2017-11-20 11:27:12 2017-11-20 11:33:57
+#&gt; 2              512 Clinica~ Doctor 7   NA                  2017-11-20 11:33:57
+#&gt; 3              524 Triage   Nurse 5    2017-11-21 17:04:03 2017-11-21 17:06:05
+#&gt; 4              525 Triage   Nurse 5    2017-11-21 17:04:13 2017-11-21 17:06:08
+#&gt; 5              526 Triage   Nurse 5    2017-11-21 17:04:15 2017-11-21 17:06:10
+#&gt; 6              536 Triage   Nurse 27   2017-11-22 15:15:39 2017-11-22 15:25:01
+#&gt; 7              536 Treatme~ Nurse 27   2017-11-22 15:15:41 2017-11-22 15:25:03
+#&gt; 8              533 0        <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
+#&gt; 9              534 Registr~ <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
+#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr></chr></dbl></na></na></dttm></dttm></chr></chr></dbl></pre></body></html></div>
+</div>
+<div id="detect-overlaps" class="section level3">
+<h3 class="hasAnchor">
+<a href="#detect-overlaps" class="anchor"></a>Detect Overlaps</h3>
+<div class="sourceCode" id="cb22"><html><body><pre class="r">hospital %&gt;%
+  detect_overlaps()
+#&gt; # A tibble: 7 x 4
+#&gt; # Groups:   activity_a [3]
+#&gt;   activity_a    activity_b        n avg_overlap_mins
+#&gt;   <chr><chr><int><dbl>
+#&gt; 1 Clinical exam Treatment         2            8.17 
+#&gt; 2 Registration  Clinical exam     1            1.9  
+#&gt; 3 Registration  Triaga            1            2.65 
+#&gt; 4 Registration  Triage            1            1.93 
+#&gt; 5 Triage        Clinical exam     2            5.63 
+#&gt; 6 Triage        Registration      1            0.817
+#&gt; 7 Triage        Treatment         1            9.33</dbl></int></chr></chr></pre></body></html></div>
 </div>
 <div id="detect-related-activities" class="section level3">
 <h3 class="hasAnchor">
-<a href="#detect-related-activities" class="anchor"></a>Detect Related activities</h3>
-<div class="sourceCode" id="cb19"><html><body><pre class="r">hospital %&gt;%
+<a href="#detect-related-activities" class="anchor"></a>Detect Related Activities</h3>
+<div class="sourceCode" id="cb23"><html><body><pre class="r">hospital %&gt;%
   detect_related_activities(antecedent = "Treatment evaluation", 
                             consequent = "Treatment")
-#&gt; Error in detect_related_activities(., antecedent = "Treatment evaluation", : unused arguments (antecedent = "Treatment evaluation", consequent = "Treatment")</pre></body></html></div>
+#&gt; *** OUTPUT ***
+#&gt; The following statement was checked: if Treatment evaluation is recorded for a case, then Treatment should also be recorded.
+#&gt; This statement holds for 5 (83.33%) of the cases in which Treatment evaluation was recorded and does not hold for 1 (16.67%) of the cases in which Treatment evaluation was recorded.
+#&gt; For the following cases, only Treatment evaluation is recorded:
+#&gt; [1] 529</pre></body></html></div>
 </div>
 <div id="detect-similar-labels" class="section level3">
 <h3 class="hasAnchor">
-<a href="#detect-similar-labels" class="anchor"></a>Detect similar labels</h3>
-<div class="sourceCode" id="cb20"><html><body><pre class="r">hospital %&gt;%
+<a href="#detect-similar-labels" class="anchor"></a>Detect Similar Labels</h3>
+<div class="sourceCode" id="cb24"><html><body><pre class="r">hospital %&gt;%
   detect_similar_labels(column_labels = "activity", max_edit_distance = 3)
-#&gt; Error in detect_similar_labels(., column_labels = "activity", max_edit_distance = 3): unused argument (column_labels = "activity")</pre></body></html></div>
+#&gt; # A tibble: 5 x 3
+#&gt;   column_labels labels       similar_to     
+#&gt;   <chr><chr><chr>          
+#&gt; 1 activity      registration Registration   
+#&gt; 2 activity      Registration registration   
+#&gt; 3 activity      Triage       Trage - Triaga 
+#&gt; 4 activity      Trage        Triage - Triaga
+#&gt; 5 activity      Triaga       Triage - Trage</chr></chr></chr></pre></body></html></div>
 </div>
 <div id="detect-time-anomalies" class="section level3">
 <h3 class="hasAnchor">
 <a href="#detect-time-anomalies" class="anchor"></a>Detect Time Anomalies</h3>
-<div class="sourceCode" id="cb21"><html><body><pre class="r">hospital %&gt;%
+<div class="sourceCode" id="cb25"><html><body><pre class="r">hospital %&gt;%
   detect_time_anomalies()
-#&gt; Selected anomaly type: both 
-#&gt;  
-#&gt; *** OUTPUT *** 
-#&gt; For 51 rows in the activity log ( 96.22642 %), an anomaly is detected. 
-#&gt; The anomalies are spread over the activities as follows: 
-#&gt; # A tibble: 9 x 3
-#&gt; # Groups:   activity [9]
-#&gt;   activity             type              n
+#&gt; Selected anomaly type: both
+#&gt; *** OUTPUT ***
+#&gt; For 5 rows in the activity log (9.43%), an anomaly is detected.
+#&gt; The anomalies are spread over the activities as follows:
+#&gt; # A tibble: 3 x 3
+#&gt; # Groups:   activity [3]
+#&gt;   activity      type                  n
 #&gt;   <chr><chr><int>
-#&gt; 1 Triage               zero duration    15
-#&gt; 2 Registration         zero duration    14
-#&gt; 3 Clinical exam        zero duration     8
-#&gt; 4 Treatment            zero duration     5
-#&gt; 5 Treatment evaluation zero duration     5
-#&gt; 6 0                    zero duration     1
-#&gt; 7 registration         zero duration     1
-#&gt; 8 Trage                zero duration     1
-#&gt; 9 Triaga               zero duration     1
-#&gt; 
-#&gt;  
+#&gt; 1 Registration  negative duration     3
+#&gt; 2 Clinical exam zero duration         1
+#&gt; 3 Trage         negative duration     1
 #&gt; Anomalies are found in the following rows:
-#&gt; # A tibble: 51 x 9
-#&gt;    patient_visit_nr activity originator start complete triagecode
-#&gt;               <dbl><chr><chr><chr><chr><dbl>
-#&gt;  1              510 registr~ Clerk 9    20/1~ 20/11/2~          3
-#&gt;  2              512 Registr~ Clerk 12   20/1~ 20/11/2~          3
-#&gt;  3              510 Triage   Nurse 27   20/1~ 20/11/2~          3
-#&gt;  4              512 Triage   Nurse 27   20/1~ 20/11/2~          3
-#&gt;  5              512 Clinica~ Doctor 7   20/1~ 20/11/2~          3
-#&gt;  6              510 Clinica~ Doctor 7   20/1~ 20/11/2~         NA
-#&gt;  7              517 Triage   Nurse 17   21/1~ 21/11/2~          3
-#&gt;  8              518 Registr~ Clerk 12   21/1~ 21/11/2~          4
-#&gt;  9              518 Registr~ Clerk 6    21/1~ 21/11/2~          4
-#&gt; 10              518 Registr~ Clerk 9    21/1~ 21/11/2~          4
-#&gt; # ... with 41 more rows, and 3 more variables: specialization <chr>,
-#&gt; #   duration <dbl>, type <chr></chr></dbl></chr></dbl></chr></chr></chr></chr></dbl></int></chr></chr></pre></body></html></div>
+#&gt; # A tibble: 5 x 9
+#&gt;   patient_visit_nr activity originator start               complete           
+#&gt;              <dbl><chr><chr><dttm><dttm>             
+#&gt; 1              518 Registr~ Clerk 12   2017-11-21 11:45:16 2017-11-21 11:22:16
+#&gt; 2              518 Registr~ Clerk 6    2017-11-21 11:45:16 2017-11-21 11:22:16
+#&gt; 3              518 Registr~ Clerk 9    2017-11-21 11:45:16 2017-11-21 11:22:16
+#&gt; 4              520 Trage    Nurse 17   2017-11-21 13:43:16 2017-11-21 13:39:00
+#&gt; 5              528 Clinica~ Doctor 1   2017-11-21 19:00:00 2017-11-21 19:00:00
+#&gt; # ... with 4 more variables: triagecode <dbl>, specialization <chr>,
+#&gt; #   duration <dbl>, type <chr></chr></dbl></chr></dbl></dttm></dttm></chr></chr></dbl></int></chr></chr></pre></body></html></div>
 </div>
 <div id="detect-unique-values" class="section level3">
 <h3 class="hasAnchor">
 <a href="#detect-unique-values" class="anchor"></a>Detect Unique Values</h3>
-<div class="sourceCode" id="cb22"><html><body><pre class="r">hospital %&gt;%
+<div class="sourceCode" id="cb26"><html><body><pre class="r">hospital %&gt;%
   detect_unique_values(column_labels = "activity")
-#&gt; *** OUTPUT *** 
-#&gt; Distinct entries are computed for the following columns:
-#&gt;   activity
+#&gt; *** OUTPUT ***
+#&gt; Distinct entries are computed for the following columns: 
+#&gt; activity
 #&gt; # A tibble: 9 x 1
 #&gt;   activity            
 #&gt;   <chr>               
-#&gt; 1 0                   
-#&gt; 2 Clinical exam       
-#&gt; 3 registration        
-#&gt; 4 Registration        
+#&gt; 1 registration        
+#&gt; 2 Registration        
+#&gt; 3 Triage              
+#&gt; 4 Clinical exam       
 #&gt; 5 Trage               
 #&gt; 6 Treatment           
-#&gt; 7 Treatment evaluation
-#&gt; 8 Triaga              
-#&gt; 9 Triage</chr></pre></body></html></div>
-<div class="sourceCode" id="cb23"><html><body><pre class="r">hospital %&gt;%
+#&gt; 7 Triaga              
+#&gt; 8 Treatment evaluation
+#&gt; 9 0</chr></pre></body></html></div>
+<div class="sourceCode" id="cb27"><html><body><pre class="r">hospital %&gt;%
   detect_unique_values(column_labels = c("activity", "originator"))
-#&gt; More than one expression parsed</pre></body></html></div>
+#&gt; *** OUTPUT ***
+#&gt; Distinct entries are computed for the following columns: 
+#&gt; activity - originator
+#&gt; # A tibble: 22 x 2
+#&gt;    activity      originator
+#&gt;    <chr><chr>     
+#&gt;  1 registration  Clerk 9   
+#&gt;  2 Registration  Clerk 12  
+#&gt;  3 Triage        Nurse 27  
+#&gt;  4 Clinical exam Doctor 7  
+#&gt;  5 Triage        Nurse 17  
+#&gt;  6 Registration  Clerk 6   
+#&gt;  7 Registration  Clerk 9   
+#&gt;  8 Trage         Nurse 17  
+#&gt;  9 Clinical exam Doctor 4  
+#&gt; 10 Registration  Clerk 3   
+#&gt; # ... with 12 more rows</chr></chr></pre></body></html></div>
 </div>
 <div id="detect-value-range-violations" class="section level3">
 <h3 class="hasAnchor">
 <a href="#detect-value-range-violations" class="anchor"></a>Detect Value Range Violations</h3>
-<div class="sourceCode" id="cb24"><html><body><pre class="r">hospital %&gt;%
+<div class="sourceCode" id="cb28"><html><body><pre class="r">hospital %&gt;%
   detect_value_range_violations(triagecode = domain_numeric(from = 0, to = 5))
-#&gt; Error in detect_value_range_violations(., triagecode = domain_numeric(from = 0, : unused argument (triagecode = domain_numeric(from = 0, to = 5))</pre></body></html></div>
+#&gt; *** OUTPUT ***
+#&gt; The domain range for column triagecode is checked.
+#&gt; Values allowed between 0 and 5
+#&gt; The values fall within the specified domain range for 46 (86.79%) of the rows in the activity log and outside the domain range for 7 (13.21%) of these rows.
+#&gt; 
+#&gt; The following rows fall outside the specified domain range for indicated column:
+#&gt; # A tibble: 7 x 8
+#&gt;   column_checked patient_visit_nr activity originator start              
+#&gt;   <chr><dbl><chr><chr><dttm>             
+#&gt; 1 triagecode                  510 Clinica~ Doctor 7   2017-11-20 11:35:01
+#&gt; 2 triagecode                  529 Treatme~ Doctor 1   2017-11-22 16:30:00
+#&gt; 3 triagecode                  530 Triage   Nurse 17   2017-11-22 18:00:00
+#&gt; 4 triagecode                  531 Triage   Nurse 17   2017-11-22 18:05:00
+#&gt; 5 triagecode                  532 Treatme~ Nurse 17   2017-11-22 18:15:00
+#&gt; 6 triagecode                  532 Treatme~ Doctor 7   2017-11-22 18:27:00
+#&gt; 7 triagecode                  533 0        <na>       2017-11-22 18:35:00
+#&gt; # ... with 3 more variables: complete <dttm>, triagecode <dbl>,
+#&gt; #   specialization <chr></chr></dbl></dttm></na></dttm></chr></chr></dbl></chr></pre></body></html></div>
 </div>
-<div id="detect_value_range_violations" class="section level3">
-<h3 class="hasAnchor">
-<a href="#detect_value_range_violations" class="anchor"></a><code>detect_value_range_violations()</code>
-</h3>
-<p>The <code><a href="../reference/detect_value_range_violations.html">detect_value_range_violations()</a></code> function checks whether the values of a passed attribute are within certain bounds for numeric attributes, or in a list of values for a character or factor attribute. For example, the triage code is typically a number between 1 and 5. We can easily test whether all cases abide to this rule.</p>
-<div class="sourceCode" id="cb25"><html><body><pre class="r">detect_value_range_violations(hospital, "triagecode" = domain_numeric(1,5))
-#&gt; Error in detect_value_range_violations(hospital, triagecode = domain_numeric(1, : unused argument (triagecode = domain_numeric(1, 5))</pre></body></html></div>
-<p>Data quality assessment tests provide the user with summary statistics in the console. Also, where appropriate, they return the rows in the log that are considered to be an anomaly. In this case, you get all rows where <code>cattr_triagecode &lt; 1</code> or <code>cattr_triagecode &gt; 5</code>. Therefore, one can simply request the unique cases in this result to get more specific information.</p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r">detect_value_range_violations(hospital, "triagecode" = domain_numeric(1,5)) %&gt;%
-  distinct(case_id, cattr_triagecode)
-#&gt; Error in detect_value_range_violations(hospital, triagecode = domain_numeric(1, : unused argument (triagecode = domain_numeric(1, 5))</pre></body></html></div>
-<p>Note that the test will always print output statistics.</p>
 </div>
-<div id="detect_duration_outliers" class="section level3">
-<h3 class="hasAnchor">
-<a href="#detect_duration_outliers" class="anchor"></a><code>detect_duration_outliers()</code>
-</h3>
-<p>This test checks if there are any activities with a deviating duration compared to the average. The bounds of when a duration is considered to be an outlier can be customized by the user.</p>
-<div class="sourceCode" id="cb27"><html><body><pre class="r">detect_duration_outliers(hospital, "Clinical exam" = duration_within())
-#&gt; Error in detect_duration_outliers(hospital, `Clinical exam` = duration_within()): unused argument (`Clinical exam` = duration_within())</pre></body></html></div>
-<p>At this point, no outliers are detected. But say you are more sensitive to duration variance, then you can tweak the bounds by either hard-coding it or by altering the number of standard deviations used to calculate the bounds.</p>
-<div class="sourceCode" id="cb28"><html><body><pre class="r">detect_duration_outliers(hospital,  "Clinical exam" = duration_within(bound_sd = 2)) -&gt; anomalies
-#&gt; Error in detect_duration_outliers(hospital, `Clinical exam` = duration_within(bound_sd = 2)): unused argument (`Clinical exam` = duration_within(bound_sd = 2))
-anomalies
-#&gt; Error in eval(expr, envir, enclos): object 'anomalies' not found</pre></body></html></div>
-<p>Assume that this line is entered by mistake. In that case, we can easily take the output from this assessment test to correct the hospital dataset. For this purpose, we provide you with <code><a href="../reference/filter_anomalies.html">filter_anomalies()</a></code>.</p>
-<div class="sourceCode" id="cb29"><html><body><pre class="r">filter_anomalies(activity_log = hospital, anomaly_log = anomalies) -&gt; hospital
-#&gt; Error in tbl_vars_dispatch(x): object 'anomalies' not found</pre></body></html></div>
-</div>
-<div id="detect_case_id_sequence_gaps" class="section level3">
-<h3 class="hasAnchor">
-<a href="#detect_case_id_sequence_gaps" class="anchor"></a><code>detect_case_id_sequence_gaps()</code>
-</h3>
-<p>In our toy dataset, the case identifier is a numeric attribute. Therefore, we can check if there are any cases missing in the sequence.</p>
-<div class="sourceCode" id="cb30"><html><body><pre class="r">detect_case_id_sequence_gaps(hospital)
-#&gt; Error in detect_case_id_sequence_gaps(hospital): The following columns, which are required for the test, were not found in the activity log: case_id.
-#&gt;   Please check rename_activity_log.</pre></body></html></div>
-<p>Note that this function can only be applied if the case numbering is unique to the business process under investigation.</p>
-</div>
-<div id="detect_related_activities" class="section level3">
-<h3 class="hasAnchor">
-<a href="#detect_related_activities" class="anchor"></a><code>detect_related_activities()</code>
-</h3>
-<p>Finally, we will demonstrate <code><a href="../reference/detect_related_activities.html">detect_related_activities()</a></code>, where you can check if an activity is recorded for a case if another is present. This link is very clear between a treatment and its evaluation: a treatment can only be evaluated if a treatment was recorded in the first place.</p>
-<div class="sourceCode" id="cb31"><html><body><pre class="r">detect_related_activities(hospital, antecedent = "Treatment evaluation", consequent =  "Treatment")
-#&gt; Error in detect_related_activities(hospital, antecedent = "Treatment evaluation", : unused arguments (antecedent = "Treatment evaluation", consequent = "Treatment")</pre></body></html></div>
-</div>
+<div class="footnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Hasselt University, Research group Business Informatics | Research Foundation Flanders (FWO). <a href="mailto:niels.martin@uhasselt.be" class="email">niels.martin@uhasselt.be</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Hasselt University, Research group Business Informatics. <a href="mailto:greg.vanhoudt@uhasselt.be" class="email">greg.vanhoudt@uhasselt.be</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>Hasselt University, Research group Business Informatics. <a href="mailto:gert.janssenswillen@uhasselt.be" class="email">gert.janssenswillen@uhasselt.be</a><a href="#fnref3" class="footnote-back">↩</a></p></li>
+</ol>
 </div>
   </div>
 

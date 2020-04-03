@@ -11,22 +11,22 @@ library(dplyr)
 data("hospital")
 data("hospital_events")
 
-## ----LogTypes_Activity, echo = F----------------------------------------------
+## ----LogTypes_Activity--------------------------------------------------------
 str(hospital)
 
 ## ----LogTypes_Event-----------------------------------------------------------
 str(hospital_events)
 
-## -----------------------------------------------------------------------------
+## ----rename-------------------------------------------------------------------
 hospital %>%
   rename(start = start_ts,
          complete = complete_ts) -> hospital
 
-## -----------------------------------------------------------------------------
+## ----convert_timestamps-------------------------------------------------------
 hospital %>%
   convert_timestamps(c("start","complete"), format = dmy_hms) -> hospital
 
-## -----------------------------------------------------------------------------
+## ----create_activitylog-------------------------------------------------------
 hospital %>%
   activitylog(case_id = "patient_visit_nr",
               activity_id = "activity",
@@ -54,6 +54,11 @@ hospital %>%
                                        "Clinical exam" = 1)
 
 ## -----------------------------------------------------------------------------
+hospital %>%
+  detect_activity_order_violations(activity_order = c("Registration", "Triage", "Clinical exam",
+                                                      "Treatment", "Treatment evaluation"))
+
+## -----------------------------------------------------------------------------
 hospital %>% 
   detect_attribute_dependencies(antecedent = activity == "Registration",
                                 consequent = startsWith(originator,"Clerk"))
@@ -74,6 +79,10 @@ hospital %>%
 ## -----------------------------------------------------------------------------
 hospital %>%
   detect_duration_outliers(Treatment = duration_within(lower_bound = 0, upper_bound = 15))
+
+## -----------------------------------------------------------------------------
+hospital %>%
+  detect_inactive_periods(threshold = 30)
 
 ## -----------------------------------------------------------------------------
 hospital %>%
@@ -100,6 +109,14 @@ hospital %>%
 
 ## -----------------------------------------------------------------------------
 hospital %>%
+  detect_multiregistration(threshold_in_seconds = 10)
+
+## -----------------------------------------------------------------------------
+hospital %>%
+  detect_overlaps()
+
+## -----------------------------------------------------------------------------
+hospital %>%
   detect_related_activities(antecedent = "Treatment evaluation", 
                             consequent = "Treatment")
 
@@ -122,28 +139,4 @@ hospital %>%
 ## -----------------------------------------------------------------------------
 hospital %>%
   detect_value_range_violations(triagecode = domain_numeric(from = 0, to = 5))
-
-## -----------------------------------------------------------------------------
-detect_value_range_violations(hospital, "triagecode" = domain_numeric(1,5))
-
-## -----------------------------------------------------------------------------
-detect_value_range_violations(hospital, "triagecode" = domain_numeric(1,5)) %>%
-  distinct(case_id, cattr_triagecode)
-
-## -----------------------------------------------------------------------------
-detect_duration_outliers(hospital, "Clinical exam" = duration_within())
-
-## -----------------------------------------------------------------------------
-detect_duration_outliers(hospital,  "Clinical exam" = duration_within(bound_sd = 2)) -> anomalies
-anomalies
-
-## -----------------------------------------------------------------------------
-filter_anomalies(activity_log = hospital, anomaly_log = anomalies) -> hospital
-
-
-## -----------------------------------------------------------------------------
-detect_case_id_sequence_gaps(hospital)
-
-## -----------------------------------------------------------------------------
-detect_related_activities(hospital, antecedent = "Treatment evaluation", consequent =  "Treatment")
 

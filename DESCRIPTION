@@ -11,7 +11,7 @@ License: MIT + file LICENSE
 URL: https://github.com/nielsmartin
 BugReports: https://github.com/nielsmartin/daqapo/issues
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Encoding: UTF-8
 Depends:
   R (>= 3.5.0)

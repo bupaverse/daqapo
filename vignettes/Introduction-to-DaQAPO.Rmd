@@ -1,6 +1,7 @@
 ---
 title: "Introduction to DaQAPO"
-author: "Niels Martin and Greg Van Houdt, Hasselt University, Research group Business Informatics"
+author:
+  - Niels Martin^[Hasselt University, Research group Business Informatics | Research Foundation Flanders. niels.martin@uhasselt.be], Greg Van Houdt^[Hasselt University, Research group Business Informatics. greg.vanhoudt@uhasselt.be], and Gert Janssenswillen^[Hasselt University, Research group Business Informatics. gert.janssenswillen@uhasselt.be]
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >

@@ -4,14 +4,8 @@
 \alias{detect_attribute_dependencies}
 \title{Detect dependency violations between attributes}
 \usage{
-detect_attribute_dependencies(
-  activitylog,
-  antecedent,
-  consequent,
-  details = TRUE,
-  filter_condition = NULL,
-  ...
-)
+detect_attribute_dependencies(activitylog, antecedent, consequent,
+  details = TRUE, filter_condition = NULL, ...)
 }
 \arguments{
 \item{activitylog}{The activity log}

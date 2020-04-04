@@ -1,6 +1,6 @@
 Package: daqapo
 Type: Package
-Title: Data Quality Assessment for Process-oriented Data
+Title: Data Quality Assessment for Process-Oriented Data
 Version: 0.3.0
 Date: 2020-04-03
 Authors@R: c(

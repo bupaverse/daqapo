@@ -20,6 +20,8 @@ detect_overlaps(activitylog, details, level_of_aggregation,
 Detect overlapping acitivity instances
 }
 \examples{
+\dontrun{
 data("hospital_actlog")
 detect_overlaps(activitylog = hospital_actlog)
+}
 }

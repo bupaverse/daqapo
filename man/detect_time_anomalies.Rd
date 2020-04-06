@@ -23,6 +23,8 @@ Information on the presence of time anomalies of the specified anomaly type
 Function detecting time anomalies, which can refer to activities with negative or zero duration
 }
 \examples{
+\dontrun{
 data("hospital_actlog")
 detect_time_anomalies(activitylog = hospital_actlog)
+}
 }

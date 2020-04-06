@@ -3,7 +3,7 @@
 \docType{data}
 \name{hospital}
 \alias{hospital}
-\title{An activity log of 20 patients in a hospital}
+\title{An activity log of 20 patients in a hospital (data frame)}
 \format{A data frame with 53 rows and 7 variables:
 \describe{
   \item{patient_visit_nr}{the patient's identifier}
@@ -15,7 +15,7 @@
   \item{specialization}{a case attribute describing the specialization}
 }}
 \source{
-An illustrative example developed in-house for demonstrational purposes in the Swirl course 'Introduction to DaQAPO'.
+An illustrative example developed in-house for demonstrational purposes.
 }
 \usage{
 hospital

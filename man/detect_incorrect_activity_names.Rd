@@ -23,7 +23,9 @@ Information on the incorrect activities in the log
 Function returning the incorrect activity labels in the log as indicated by the user. If details are requested, the entire activity log's rows containing incorrect activities are returned.
 }
 \examples{
+\dontrun{
 data("hospital_actlog")
 detect_incorrect_activity_names(activitylog = hospital_actlog,
      allowed_activities = c("Registration","Triage","Clinical exam","Treatment","Treatment evaluation"))
+}
 }

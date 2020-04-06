@@ -129,12 +129,8 @@
     <p>Function detecting time anomalies, which can refer to activities with negative or zero duration</p>
     </div>
 
-    <pre class="usage"><span class='fu'>detect_time_anomalies</span>(
-  <span class='no'>activitylog</span>,
-  <span class='kw'>anomaly_type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"both"</span>, <span class='st'>"negative"</span>, <span class='st'>"zero"</span>),
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>filter_condition</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>detect_time_anomalies</span>(<span class='no'>activitylog</span>, <span class='kw'>anomaly_type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"both"</span>, <span class='st'>"negative"</span>,
+  <span class='st'>"zero"</span>), <span class='kw'>details</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>filter_condition</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,6 +157,11 @@
 
     <p>Information on the presence of time anomalies of the specified anomaly type</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"hospital_actlog"</span>)
+<span class='fu'>detect_time_anomalies</span>(<span class='kw'>activitylog</span> <span class='kw'>=</span> <span class='no'>hospital_actlog</span>)
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

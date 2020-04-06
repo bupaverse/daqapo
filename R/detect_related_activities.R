@@ -6,10 +6,12 @@
 #' @param consequent Activity name of the activity that acts as a an consequent (if antecedent occurs, then consequent should also occur)
 #' @return Information on the presence/absence of related activities.
 #' @examples
+#' \dontrun{
 #' data("hospital_actlog")
 #' detect_related_activities(activitylog = hospital_actlog,
 #'      antecedent = "Treatment evaluation",
 #'      consequent = "Treatment")
+#' }
 #' @export
 
 detect_related_activities <- function(activitylog, antecedent, consequent, details, filter_condition) {

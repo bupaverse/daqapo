@@ -4,8 +4,10 @@
 #' @inheritParams detect_activity_frequency_violations
 #' @return The case IDs that are missing in the sequence.
 #' @examples
+#' \dontrun{
 #' data("hospital_actlog")
 #' detect_case_id_sequence_gaps(activitylog = hospital_actlog)
+#' }
 #' @export
 
 detect_case_id_sequence_gaps <- function(activitylog, details, filter_condition) {

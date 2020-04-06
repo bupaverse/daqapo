@@ -20,6 +20,8 @@ The case IDs that are missing in the sequence.
 Function detecting gaps in the sequence of case identifiers
 }
 \examples{
+\dontrun{
 data("hospital_actlog")
 detect_case_id_sequence_gaps(activitylog = hospital_actlog)
+}
 }

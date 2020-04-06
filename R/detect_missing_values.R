@@ -12,11 +12,13 @@
 #' @param column Column name of the column that needs to be analyzed when the level of aggregation is "column"
 #' @return Information on the absolute and relative number of missing values at the requested level of aggregation
 #' @examples
+#' \dontrun{
 #' data("hospital_actlog")
-#' detect_missing_values(activitylog = hospital_actlog, column = "activity")
+#' detect_missing_values(activitylog = hospital_actlog)
 #' detect_missing_values(activitylog = hospital_actlog, level_of_aggregation = "activity")
 #' detect_missing_values(activitylog = hospital_actlog, level_of_aggregation = "column",
 #'      column = "triagecode")
+#' }
 #' @export
 
 detect_missing_values <- function(activitylog, level_of_aggregation, column, details, filter_condition) {

@@ -27,8 +27,10 @@ Information on the degree to which the specified dependencies are respected/viol
 Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold(s))
 }
 \examples{
+\dontrun{
 data("hospital_actlog")
 detect_attribute_dependencies(activitylog = hospital_actlog,
      antecedent = activity == "Registration",
      consequent = startsWith(originator,"Clerk"))
+}
 }

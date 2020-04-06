@@ -6,9 +6,11 @@
 #' @param timestamp Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)
 #' @return Information on the degree to which the specified activity order is respected/violated.
 #' @examples
+#' \dontrun{
 #' data("hospital_actlog")
 #' detect_activity_order_violations(activitylog = hospital_actlog,
 #'      activity_order = c("Registration", "Triage", "Clinical exam","Treatment", "Treatment evaluation"))
+#' }
 #' @export
 #'
 

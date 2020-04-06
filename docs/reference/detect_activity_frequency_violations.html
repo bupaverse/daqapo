@@ -129,12 +129,8 @@
     <p>Function that detects activity frequency anomalies per case</p>
     </div>
 
-    <pre class="usage"><span class='fu'>detect_activity_frequency_violations</span>(
-  <span class='no'>activitylog</span>,
-  <span class='no'>...</span>,
-  <span class='no'>details</span>,
-  <span class='no'>filter_condition</span>
-)</pre>
+    <pre class="usage"><span class='fu'>detect_activity_frequency_violations</span>(<span class='no'>activitylog</span>, <span class='no'>...</span>, <span class='no'>details</span>,
+  <span class='no'>filter_condition</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,6 +157,12 @@
 
     <p>An overview of frequencies of activities</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"hospital_actlog"</span>)
+<span class='fu'>detect_activity_frequency_violations</span>(<span class='kw'>activitylog</span> <span class='kw'>=</span> <span class='no'>hospital_actlog</span>,
+     <span class='st'>"Registration"</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='st'>"Clinical exam"</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

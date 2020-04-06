@@ -8,10 +8,12 @@
 #' @param ignore_capitals A boolean indicating if capitalization should be included or excluded when calculating the edit distance between two strings
 #' @return A data frame containing, for each label in the column, an overview of similar labels.
 #' @examples
+#' \dontrun{
 #' data("hospital_actlog")
 #' detect_similar_labels(activitylog = hospital_actlog,
 #'      column_labels = "activity",
 #'      max_edit_distance = 3)
+#' }
 #' @export
 
 

@@ -27,6 +27,8 @@ Information on the occurrence of multi-registration at the selected level of agg
 Function detecting multi-registration for the same case or by the same resource at the same point in time
 }
 \examples{
+\dontrun{
 data("hospital_actlog")
 detect_multiregistration(activitylog = hospital_actlog, threshold_in_seconds = 10)
+}
 }

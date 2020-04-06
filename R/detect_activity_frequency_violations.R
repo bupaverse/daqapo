@@ -7,9 +7,11 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return An overview of frequencies of activities
 #' @examples
+#' \dontrun{
 #' data("hospital_actlog")
 #' detect_activity_frequency_violations(activitylog = hospital_actlog,
 #'      "Registration" = 1, "Clinical exam" = 1)
+#' }
 #' @export
 
 detect_activity_frequency_violations <- function(activitylog, ..., details, filter_condition) {

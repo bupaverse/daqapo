@@ -6,10 +6,12 @@
 #' @param consequent (Vector of) condition(s) which serve as a consequent (if the condition(s) in antecedent hold, then the condition(s) in consequent should also hold)
 #' @return Information on the degree to which the specified dependencies are respected/violated.
 #' @examples
+#' \dontrun{
 #' data("hospital_actlog")
 #' detect_attribute_dependencies(activitylog = hospital_actlog,
 #'      antecedent = activity == "Registration",
 #'      consequent = startsWith(originator,"Clerk"))
+#' }
 #' @export
 detect_attribute_dependencies <- function(activitylog, antecedent, consequent, details = TRUE, filter_condition = NULL, ...){
 

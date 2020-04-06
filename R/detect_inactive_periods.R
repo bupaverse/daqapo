@@ -8,8 +8,10 @@
 #' @param start_activities List of activity labels marking the first activity in the process. When specified, an inactive period only occurs when the time between two consecutive arrivals exceeds the specified threshold (arrival is proxied by the activity/activities specified in this argument).
 #' @return Information on the presence of inactive periods.
 #' @examples
+#' \dontrun{
 #' data("hospital_actlog")
 #' detect_inactive_periods(activitylog = hospital_actlog,threshold = 30)
+#' }
 #' @export
 #'
 detect_inactive_periods <- function(activitylog,

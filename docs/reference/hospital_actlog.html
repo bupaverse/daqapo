@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Objects exported from other packages — reexports • daqapo</title>
+<title>An activity log of 20 patients in a hospital (activity log object) — hospital_actlog • daqapo</title>
 
 
 <!-- jquery -->
@@ -39,21 +39,10 @@
 
 
 
-<meta property="og:title" content="Objects exported from other packages — reexports" />
-<meta property="og:description" content="These objects are imported from other packages. Follow the links
-below to see their documentation.
-
-  bupaRstandardize_lifecycle, events_to_activitylog, activitylog, assign_instance_id, convert_timestamps, detect_resource_inconsistencies, fix_resource_inconsistencies
-
-  dplyrrename
-
-  lubridateymd_hms, ymd_hm, ymd_h, ymd, dmy_hms, dmy_hm, dmy_h, dmy, mdy_hms, mdy_hm, mdy_h, mdy
-
-  magrittr%&amp;gt;%
-
-  readrread_csv, read_csv2
-
-" />
+<meta property="og:title" content="An activity log of 20 patients in a hospital (activity log object) — hospital_actlog" />
+<meta property="og:description" content="A dataset containing the logged activities in an illustrative hospital process.
+20 patients are described in the log.
+Process activities include Registration, Triage, Clinical exam, Treatment and Treatment evaluation." />
 
 
 
@@ -133,30 +122,35 @@ below to see their documentation.
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Objects exported from other packages</h1>
-    <small class="dont-index">Source: <a href='https://github.com/nielsmartin/daqapo/blob/master/R/bupar_reexports.R'><code>R/bupar_reexports.R</code></a>, <a href='https://github.com/nielsmartin/daqapo/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
-    <div class="hidden name"><code>reexports.Rd</code></div>
+    <h1>An activity log of 20 patients in a hospital (activity log object)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/nielsmartin/daqapo/blob/master/R/data.R'><code>R/data.R</code></a></small>
+    <div class="hidden name"><code>hospital_actlog.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>These objects are imported from other packages. Follow the links
-below to see their documentation.</p>
-<dl'>
-  <dt>bupaR</dt><dd><p><code><a href='https://rdrr.io/pkg/bupaR/man/standardize_lifecycle.html'>standardize_lifecycle</a></code>, <code><a href='https://rdrr.io/pkg/bupaR/man/events_to_activitylog.html'>events_to_activitylog</a></code>, <code><a href='https://rdrr.io/pkg/bupaR/man/activitylog.html'>activitylog</a></code>, <code><a href='https://rdrr.io/pkg/bupaR/man/assign_instance_id.html'>assign_instance_id</a></code>, <code><a href='https://rdrr.io/pkg/bupaR/man/convert_timestamps.html'>convert_timestamps</a></code>, <code><a href='https://rdrr.io/pkg/bupaR/man/detect_resource_inconsistencies.html'>detect_resource_inconsistencies</a></code>, <code><a href='https://rdrr.io/pkg/bupaR/man/fix_resource_inconsistencies.html'>fix_resource_inconsistencies</a></code></p></dd>
-
-  <dt>dplyr</dt><dd><p><code><a href='https://dplyr.tidyverse.org/reference/select.html'>rename</a></code></p></dd>
-
-  <dt>lubridate</dt><dd><p><code><a href='http://lubridate.tidyverse.org/reference/ymd_hms.html'>ymd_hms</a></code>, <code><a href='http://lubridate.tidyverse.org/reference/ymd_hms.html'>ymd_hm</a></code>, <code><a href='http://lubridate.tidyverse.org/reference/ymd_hms.html'>ymd_h</a></code>, <code><a href='http://lubridate.tidyverse.org/reference/ymd.html'>ymd</a></code>, <code><a href='http://lubridate.tidyverse.org/reference/ymd_hms.html'>dmy_hms</a></code>, <code><a href='http://lubridate.tidyverse.org/reference/ymd_hms.html'>dmy_hm</a></code>, <code><a href='http://lubridate.tidyverse.org/reference/ymd_hms.html'>dmy_h</a></code>, <code><a href='http://lubridate.tidyverse.org/reference/ymd.html'>dmy</a></code>, <code><a href='http://lubridate.tidyverse.org/reference/ymd_hms.html'>mdy_hms</a></code>, <code><a href='http://lubridate.tidyverse.org/reference/ymd_hms.html'>mdy_hm</a></code>, <code><a href='http://lubridate.tidyverse.org/reference/ymd_hms.html'>mdy_h</a></code>, <code><a href='http://lubridate.tidyverse.org/reference/ymd.html'>mdy</a></code></p></dd>
-
-  <dt>magrittr</dt><dd><p><code>%&gt;%</code></p></dd>
-
-  <dt>readr</dt><dd><p><code><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></code>, <code><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv2</a></code></p></dd>
-
-</dl>
+    <p>A dataset containing the logged activities in an illustrative hospital process.
+20 patients are described in the log.
+Process activities include Registration, Triage, Clinical exam, Treatment and Treatment evaluation.</p>
     </div>
 
+    <pre class="usage"><span class='no'>hospital_actlog</span></pre>
 
 
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>An activity log with 53 rows and 7 variables:</p><dl'>
+  <dt>patient_visit_nr</dt><dd><p>the patient's identifier</p></dd>
+  <dt>activity</dt><dd><p>the executed activity</p></dd>
+  <dt>originator</dt><dd><p>the resource performing the activity execution</p></dd>
+  <dt>start</dt><dd><p>the timestamp at which the activity was started</p></dd>
+  <dt>complete</dt><dd><p>the timestamp at which the activity was completed</p></dd>
+  <dt>triagecode</dt><dd><p>a case attribute describing the triage code</p></dd>
+  <dt>specialization</dt><dd><p>a case attribute describing the specialization</p></dd>
+
+</dl>
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p>An illustrative example developed in-house for demonstrational purposes.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

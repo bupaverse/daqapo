@@ -35,7 +35,9 @@ Function detecting violations in activity order. Having additional or less activ
 }}
 
 \examples{
+\dontrun{
 data("hospital_actlog")
 detect_activity_order_violations(activitylog = hospital_actlog,
      activity_order = c("Registration", "Triage", "Clinical exam","Treatment", "Treatment evaluation"))
+}
 }

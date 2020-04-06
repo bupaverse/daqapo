@@ -22,7 +22,9 @@ Information on the presence/absence of incomplete cases.
 Function detecting incomplete cases in terms of the activities that need to be recorded for a case. The function only checks the presence of activities, not the completeness of the rows describing the activity executions.
 }
 \examples{
+\dontrun{
 data("hospital_actlog")
 detect_incomplete_cases(activitylog = hospital_actlog,
      activities = c("Registration","Triage","Clinical exam","Treatment","Treatment evaluation"))
+}
 }

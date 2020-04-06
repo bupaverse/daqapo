@@ -9,8 +9,10 @@
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
 #' @return Information on the occurrence of multi-registration at the selected level of aggregation
 #' @examples
+#' \dontrun{
 #' data("hospital_actlog")
 #' detect_multiregistration(activitylog = hospital_actlog, threshold_in_seconds = 10)
+#' }
 #' @export
 
 

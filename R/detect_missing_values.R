@@ -47,7 +47,7 @@ detect_missing_values.activitylog <- function(activitylog,
   }
 
   # Print general output information
-  cat("Selected level of aggregation:", level_of_aggregation, "\n", "\n")
+  message("Selected level of aggregation:", level_of_aggregation)
 
   # Provide appropriate output depending on the level of aggregation
   if(level_of_aggregation == "overview"){
@@ -56,17 +56,15 @@ detect_missing_values.activitylog <- function(activitylog,
       warning("Ignoring provided column argument at overview level.")
     }
 
-    cat("*** OUTPUT ***", "\n")
-    cat("Absolute number of missing values per column:", "\n")
+    message("*** OUTPUT ***")
+    message("Absolute number of missing values per column:")
     print(as.data.frame(colSums(is.na(activitylog)), optional = TRUE))
-    cat("\n")
-    cat("Relative number of missing values per column (expressed as percentage):", "\n")
+    message("Relative number of missing values per column (expressed as percentage):")
     print(as.data.frame(colMeans(is.na(activitylog)) * 100, optional = TRUE))
 
     if(details == TRUE){
       # Provide overview of incomplete rows
-      cat("\n")
-      cat("Overview of activity log rows which are incomplete:", "\n")
+      message("Overview of activity log rows which are incomplete:")
       activitylog <- activitylog[!complete.cases(activitylog),]
       return(activitylog)
     }
@@ -75,15 +73,15 @@ detect_missing_values.activitylog <- function(activitylog,
     if(is.null(column) || !(column %in% colnames(activitylog))){
       stop("Provided column name (argument column) is not present in the activity log.")
     } else{
-      cat("*** OUTPUT ***", "\n")
-      cat("Absolute number of missing values in column", column, ":", sum(is.na(activitylog[,column])) ,"\n")
-      cat("Relative number of missing values in column", column, "(expressed as percentage):",
+      message("*** OUTPUT ***")
+      message("Absolute number of missing values in column", column, ":", sum(is.na(activitylog[,column])))
+      message("Relative number of missing values in column", column, "(expressed as percentage):",
           sum(is.na(activitylog[,column]))/nrow(activitylog) * 100 ,"\n")
 
       if(details == TRUE){
         # Provide overview of rows where the column under consideration is NA
-        cat("\n")
-        cat("Overview of activity log rows in which", column, "is missing:", "\n")
+        message("\n")
+        message("Overview of activity log rows in which", column, "is missing:")
         activitylog <- activitylog[is.na(activitylog[,column]),]
         return(activitylog)
       }
@@ -94,17 +92,15 @@ detect_missing_values.activitylog <- function(activitylog,
       warning("Ignoring provided column argument at overview level.")
     }
 
-    cat("*** OUTPUT ***", "\n")
-    cat("Absolute number of missing values per column (per activity):", "\n")
+    message("*** OUTPUT ***")
+    message("Absolute number of missing values per column (per activity):")
     print(activitylog %>% group_by(!!activity_id_(activitylog)) %>% summarise_all(funs(sum(is.na(.)))))
-    cat("\n")
-    cat("Relative number of missing values per column (per activity, expressed as percentage):", "\n")
+    message("Relative number of missing values per column (per activity, expressed as percentage):")
     print(activitylog %>% group_by(!!activity_id_(activitylog)) %>% summarise_all(funs(sum(is.na(.)) / length(.))))
 
     if(details == TRUE){
       # Provide overview of incomplete rows
-      cat("\n")
-      cat("Overview of activity log rows which are incomplete:", "\n")
+      message("Overview of activity log rows which are incomplete:")
       activitylog <- activitylog[!complete.cases(activitylog),]
       return(activitylog)
     }

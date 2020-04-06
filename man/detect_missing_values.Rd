@@ -4,8 +4,13 @@
 \alias{detect_missing_values}
 \title{Detect missing values}
 \usage{
-detect_missing_values(activitylog, level_of_aggregation, column, details,
-  filter_condition)
+detect_missing_values(
+  activitylog,
+  level_of_aggregation,
+  column,
+  details,
+  filter_condition
+)
 }
 \arguments{
 \item{activitylog}{The activity log}

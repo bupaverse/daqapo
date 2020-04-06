@@ -4,8 +4,12 @@
 \alias{detect_time_anomalies}
 \title{Detect time anomalies}
 \usage{
-detect_time_anomalies(activitylog, anomaly_type = c("both", "negative",
-  "zero"), details = TRUE, filter_condition = NULL)
+detect_time_anomalies(
+  activitylog,
+  anomaly_type = c("both", "negative", "zero"),
+  details = TRUE,
+  filter_condition = NULL
+)
 }
 \arguments{
 \item{activitylog}{The activity log}

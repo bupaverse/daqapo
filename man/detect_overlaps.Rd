@@ -4,8 +4,7 @@
 \alias{detect_overlaps}
 \title{Detect overlapping acitivity instances}
 \usage{
-detect_overlaps(activitylog, details, level_of_aggregation,
-  filter_condition)
+detect_overlaps(activitylog, details, level_of_aggregation, filter_condition)
 }
 \arguments{
 \item{activitylog}{The activity log}

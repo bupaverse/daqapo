@@ -9,7 +9,12 @@
 #' \dontrun{
 #' data("hospital_actlog")
 #' detect_activity_order_violations(activitylog = hospital_actlog,
-#'      activity_order = c("Registration", "Triage", "Clinical exam","Treatment", "Treatment evaluation"))
+#'      activity_order = c(
+#'          "Registration",
+#'          "Triage",
+#'          "Clinical exam",
+#'          "Treatment",
+#'          "Treatment evaluation"))
 #' }
 #' @export
 #'

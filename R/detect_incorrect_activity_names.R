@@ -8,7 +8,12 @@
 #' \dontrun{
 #' data("hospital_actlog")
 #' detect_incorrect_activity_names(activitylog = hospital_actlog,
-#'      allowed_activities = c("Registration","Triage","Clinical exam","Treatment","Treatment evaluation"))
+#'      allowed_activities = c(
+#'          "Registration",
+#'          "Triage",
+#'          "Clinical exam",
+#'          "Treatment",
+#'          "Treatment evaluation"))
 #' }
 #' @import shiny
 #' @import miniUI

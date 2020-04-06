@@ -4,8 +4,12 @@
 \alias{detect_incorrect_activity_names}
 \title{Detect incorrect activity names}
 \usage{
-detect_incorrect_activity_names(activitylog, allowed_activities, details,
-  filter_condition)
+detect_incorrect_activity_names(
+  activitylog,
+  allowed_activities,
+  details,
+  filter_condition
+)
 }
 \arguments{
 \item{activitylog}{The activity log}
@@ -26,6 +30,11 @@ Function returning the incorrect activity labels in the log as indicated by the 
 \dontrun{
 data("hospital_actlog")
 detect_incorrect_activity_names(activitylog = hospital_actlog,
-     allowed_activities = c("Registration","Triage","Clinical exam","Treatment","Treatment evaluation"))
+     allowed_activities = c(
+         "Registration",
+         "Triage",
+         "Clinical exam",
+         "Treatment",
+         "Treatment evaluation"))
 }
 }

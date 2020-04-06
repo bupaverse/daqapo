@@ -4,8 +4,12 @@
 \alias{detect_activity_frequency_violations}
 \title{Check activity frequencies}
 \usage{
-detect_activity_frequency_violations(activitylog, ..., details,
-  filter_condition)
+detect_activity_frequency_violations(
+  activitylog,
+  ...,
+  details,
+  filter_condition
+)
 }
 \arguments{
 \item{activitylog}{The activity log}

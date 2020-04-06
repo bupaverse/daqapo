@@ -3,7 +3,6 @@
 \docType{package}
 \name{daqapo}
 \alias{daqapo}
-\alias{daqapo-package}
 \title{daqapo - Data Quality Assessment for Process-oriented Data}
 \description{
 This package is designed to perform data quality assessment on process-oriented data.

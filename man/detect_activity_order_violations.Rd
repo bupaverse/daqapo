@@ -5,12 +5,21 @@
 \alias{detect_activity_order_violations.activitylog}
 \title{Detect activity order violations}
 \usage{
-detect_activity_order_violations(activitylog, activity_order, timestamp,
-  details, filter_condition)
+detect_activity_order_violations(
+  activitylog,
+  activity_order,
+  timestamp,
+  details,
+  filter_condition
+)
 
-\method{detect_activity_order_violations}{activitylog}(activitylog,
-  activity_order, timestamp = c("both", "start", "complete"),
-  details = TRUE, filter_condition = NULL)
+\method{detect_activity_order_violations}{activitylog}(
+  activitylog,
+  activity_order,
+  timestamp = c("both", "start", "complete"),
+  details = TRUE,
+  filter_condition = NULL
+)
 }
 \arguments{
 \item{activitylog}{The activity log}
@@ -38,6 +47,11 @@ Function detecting violations in activity order. Having additional or less activ
 \dontrun{
 data("hospital_actlog")
 detect_activity_order_violations(activitylog = hospital_actlog,
-     activity_order = c("Registration", "Triage", "Clinical exam","Treatment", "Treatment evaluation"))
+     activity_order = c(
+         "Registration",
+         "Triage",
+         "Clinical exam",
+         "Treatment",
+         "Treatment evaluation"))
 }
 }

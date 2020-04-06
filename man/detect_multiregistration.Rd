@@ -4,8 +4,14 @@
 \alias{detect_multiregistration}
 \title{Detect multi-registration}
 \usage{
-detect_multiregistration(activitylog, level_of_aggregation, timestamp,
-  threshold_in_seconds, details, filter_condition)
+detect_multiregistration(
+  activitylog,
+  level_of_aggregation,
+  timestamp,
+  threshold_in_seconds,
+  details,
+  filter_condition
+)
 }
 \arguments{
 \item{activitylog}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}

@@ -5,6 +5,11 @@
 #' Detect overlapping acitivity instances
 #' @inheritParams detect_activity_frequency_violations
 #' @param level_of_aggregation Look for overlapping activity instances within a case or within a resource.
+#' @examples
+#' \dontrun{
+#' data("hospital_actlog")
+#' detect_overlaps(activitylog = hospital_actlog)
+#' }
 #' @importFrom purrr map2
 #' @importFrom purrr map2_lgl
 #' @importFrom purrr map_dbl

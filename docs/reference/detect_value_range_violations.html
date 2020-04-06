@@ -159,6 +159,12 @@
 
     <div class='dont-index'><p><code><a href='domain_categorical.html'>domain_categorical</a></code>,<code><a href='domain_time.html'>domain_time</a></code>,<code><a href='domain_numeric.html'>domain_numeric</a></code></p></div>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"hospital_actlog"</span>)
+<span class='fu'>detect_value_range_violations</span>(<span class='kw'>activitylog</span> <span class='kw'>=</span> <span class='no'>hospital_actlog</span>,
+     <span class='kw'>triagecode</span> <span class='kw'>=</span> <span class='fu'><a href='domain_numeric.html'>domain_numeric</a></span>(<span class='kw'>from</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='fl'>5</span>))
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -129,14 +129,8 @@
     <p>Function detecting multi-registration for the same case or by the same resource at the same point in time</p>
     </div>
 
-    <pre class="usage"><span class='fu'>detect_multiregistration</span>(
-  <span class='no'>activitylog</span>,
-  <span class='no'>level_of_aggregation</span>,
-  <span class='no'>timestamp</span>,
-  <span class='no'>threshold_in_seconds</span>,
-  <span class='no'>details</span>,
-  <span class='no'>filter_condition</span>
-)</pre>
+    <pre class="usage"><span class='fu'>detect_multiregistration</span>(<span class='no'>activitylog</span>, <span class='no'>level_of_aggregation</span>, <span class='no'>timestamp</span>,
+  <span class='no'>threshold_in_seconds</span>, <span class='no'>details</span>, <span class='no'>filter_condition</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -171,6 +165,11 @@
 
     <p>Information on the occurrence of multi-registration at the selected level of aggregation</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"hospital_actlog"</span>)
+<span class='fu'>detect_multiregistration</span>(<span class='kw'>activitylog</span> <span class='kw'>=</span> <span class='no'>hospital_actlog</span>, <span class='kw'>threshold_in_seconds</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -83,7 +83,7 @@
                         <h4 class="author">Niels Martin<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, Greg Van Houdt<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>, and Gert Janssenswillen<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>
 </h4>
             
-            <h4 class="date">2020-04-03</h4>
+            <h4 class="date">2020-04-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nielsmartin/daqapo/blob/master/vignettes/Introduction-to-DaQAPO.Rmd"><code>vignettes/Introduction-to-DaQAPO.Rmd</code></a></small>
       <div class="hidden name"><code>Introduction-to-DaQAPO.Rmd</code></div>
@@ -200,20 +200,20 @@
 <p>With event logs, things are a bit more complex. In an event log, each row represents only a part of an activity instance. Therefore, more complex data transformations must be executed and several problems could arise. In this section, we will use an event log variant of the activity log used earlier, named <code>hospital_events</code>.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r">hospital_events
 #&gt; # A tibble: 106 x 8
-#&gt;    patient_visit_nr activity originator event_lifecycle~ timestamp triagecode
-#&gt;               <dbl><chr><chr><chr><chr><dbl>
-#&gt;  1              510 registr~ Clerk 9    start            20/11/20~          3
-#&gt;  2              510 registr~ Clerk 9    complete         20/11/20~          3
-#&gt;  3              510 Triage   Nurse 27   start            20/11/20~          3
-#&gt;  4              510 Triage   Nurse 27   complete         20/11/20~          3
-#&gt;  5              510 Clinica~ Doctor 7   start            20/11/20~         NA
-#&gt;  6              510 Clinica~ Doctor 4   complete         20/11/20~         NA
-#&gt;  7              512 Registr~ Clerk 12   start            20/11/20~          3
-#&gt;  8              512 Registr~ Clerk 12   complete         20/11/20~          3
-#&gt;  9              512 Triage   Nurse 27   start            20/11/20~          3
-#&gt; 10              512 Triage   Nurse 27   complete         20/11/20~          3
-#&gt; # ... with 96 more rows, and 2 more variables: specialization <chr>,
-#&gt; #   event_matching <dbl></dbl></chr></dbl></chr></chr></chr></chr></dbl></pre></body></html></div>
+#&gt;    patient_visit_nr activity originator event_lifecycle~ timestamp
+#&gt;               <dbl><chr><chr><chr><chr>    
+#&gt;  1              510 registr~ Clerk 9    start            20/11/20~
+#&gt;  2              510 registr~ Clerk 9    complete         20/11/20~
+#&gt;  3              510 Triage   Nurse 27   start            20/11/20~
+#&gt;  4              510 Triage   Nurse 27   complete         20/11/20~
+#&gt;  5              510 Clinica~ Doctor 7   start            20/11/20~
+#&gt;  6              510 Clinica~ Doctor 4   complete         20/11/20~
+#&gt;  7              512 Registr~ Clerk 12   start            20/11/20~
+#&gt;  8              512 Registr~ Clerk 12   complete         20/11/20~
+#&gt;  9              512 Triage   Nurse 27   start            20/11/20~
+#&gt; 10              512 Triage   Nurse 27   complete         20/11/20~
+#&gt; # ... with 96 more rows, and 3 more variables: triagecode <dbl>,
+#&gt; #   specialization <chr>, event_matching <dbl></dbl></chr></dbl></chr></chr></chr></chr></dbl></pre></body></html></div>
 <p>The same principle regarding the timestamps apply. Therefore, the <code>POSIXct</code> format must be applied in advance. Additionally, the event log object also requires an activity instance id. If needed, one can be created manually as illustrated below.</p>
 <p>The following functions form the building blocks of the required data preparation, but not all must be called to obtain a fully prepared event log at all times:</p>
 <ul>
@@ -360,9 +360,9 @@
 <div class="sourceCode" id="cb9"><html><body><pre class="r">hospital %&gt;%
   detect_activity_order_violations(activity_order = c("Registration", "Triage", "Clinical exam",
                                                       "Treatment", "Treatment evaluation"))
-#&gt; Warning in detect_activity_order_violations.activitylog(., activity_order =
-#&gt; c("Registration", : Some activity instances within the same case overlap. Use
-#&gt; detect_overlaps to investigate further.
+#&gt; Warning in detect_activity_order_violations.activitylog(., activity_order
+#&gt; = c("Registration", : Some activity instances within the same case overlap.
+#&gt; Use detect_overlaps to investigate further.
 #&gt; Warning in detect_activity_order_violations.activitylog(., activity_order
 #&gt; = c("Registration", : Not all specified activities occur in each case. Use
 #&gt; detect_incomplete_cases to investigate further.
@@ -372,12 +372,12 @@
 #&gt; This activity order is respected for 18 (81.82%) of the cases and not for4 (18.18%) of the cases.
 #&gt; For cases for which the aformentioned activity order is not respected, the following order is detected (ordered by decreasing frequeny of occurrence):
 #&gt; # A tibble: 4 x 3
-#&gt;   activity_list                                                       n case_ids
+#&gt;   activity_list                                                  n case_ids
 #&gt;   <chr><int><chr>   
-#&gt; 1 Registration - Registration - Registration                          1 518     
-#&gt; 2 Registration - Registration - Triage - Clinical exam - Treatme~     1 535     
-#&gt; 3 Registration - Triage - Clinical exam - Clinical exam               1 512     
-#&gt; 4 Triage - Registration                                               1 521</chr></int></chr></pre></body></html></div>
+#&gt; 1 Registration - Registration - Registration                     1 518     
+#&gt; 2 Registration - Registration - Triage - Clinical exam - Tr~     1 535     
+#&gt; 3 Registration - Triage - Clinical exam - Clinical exam          1 512     
+#&gt; 4 Triage - Registration                                          1 521</chr></int></chr></pre></body></html></div>
 </div>
 <div id="detect-attribute-dependencies" class="section level3">
 <h3 class="hasAnchor">
@@ -390,11 +390,12 @@
 #&gt; This statement holds for 12 (85.71%) of the rows in the activity log for which the first condition(s) hold and does not hold for 2 (14.29%) of these rows.
 #&gt; For the following rows, the first condition(s) hold(s), but the second condition does not:
 #&gt; # A tibble: 2 x 7
-#&gt;   patient_visit_nr activity originator start               complete           
-#&gt;              <dbl><chr><chr><dttm><dttm>             
-#&gt; 1              528 Registr~ Nurse 6    2017-11-21 18:10:17 2017-11-21 18:15:04
-#&gt; 2              534 Registr~ <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
-#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr></chr></dbl></na></dttm></dttm></chr></chr></dbl></pre></body></html></div>
+#&gt;   patient_visit_nr activity originator start              
+#&gt;              <dbl><chr><chr><dttm>             
+#&gt; 1              528 Registr~ Nurse 6    2017-11-21 18:10:17
+#&gt; 2              534 Registr~ <na>       2017-11-22 18:35:00
+#&gt; # ... with 3 more variables: complete <dttm>, triagecode <dbl>,
+#&gt; #   specialization <chr></chr></dbl></dttm></na></dttm></chr></chr></dbl></pre></body></html></div>
 </div>
 <div id="detect-case-id-sequence-gaps" class="section level3">
 <h3 class="hasAnchor">
@@ -435,12 +436,12 @@
 #&gt; A total of 1 is detected (1.89% of the activity executions)
 #&gt; For the following activity instances, outliers are detected:
 #&gt; # A tibble: 1 x 13
-#&gt;   patient_visit_nr activity originator start               complete           
-#&gt;              <dbl><chr><chr><dttm><dttm>             
-#&gt; 1              523 Treatme~ Nurse 17   2017-11-21 18:26:04 2017-11-21 18:55:00
-#&gt; # ... with 8 more variables: triagecode <dbl>, specialization <chr>,
-#&gt; #   duration <dbl>, mean <dbl>, sd <dbl>, bound_sd <dbl>, lower_bound <dbl>,
-#&gt; #   upper_bound <dbl></dbl></dbl></dbl></dbl></dbl></dbl></chr></dbl></dttm></dttm></chr></chr></dbl></pre></body></html></div>
+#&gt;   patient_visit_nr activity originator start              
+#&gt;              <dbl><chr><chr><dttm>             
+#&gt; 1              523 Treatme~ Nurse 17   2017-11-21 18:26:04
+#&gt; # ... with 9 more variables: complete <dttm>, triagecode <dbl>,
+#&gt; #   specialization <chr>, duration <dbl>, mean <dbl>, sd <dbl>,
+#&gt; #   bound_sd <dbl>, lower_bound <dbl>, upper_bound <dbl></dbl></dbl></dbl></dbl></dbl></dbl></chr></dbl></dttm></dttm></chr></chr></dbl></pre></body></html></div>
 <div class="sourceCode" id="cb14"><html><body><pre class="r">hospital %&gt;%
   detect_duration_outliers(Treatment = duration_within(lower_bound = 0, upper_bound = 15))
 #&gt; *** OUTPUT ***
@@ -449,12 +450,12 @@
 #&gt; A total of 1 is detected (1.89% of the activity executions)
 #&gt; For the following activity instances, outliers are detected:
 #&gt; # A tibble: 1 x 13
-#&gt;   patient_visit_nr activity originator start               complete           
-#&gt;              <dbl><chr><chr><dttm><dttm>             
-#&gt; 1              523 Treatme~ Nurse 17   2017-11-21 18:26:04 2017-11-21 18:55:00
-#&gt; # ... with 8 more variables: triagecode <dbl>, specialization <chr>,
-#&gt; #   duration <dbl>, mean <dbl>, sd <dbl>, bound_sd <dbl>, lower_bound <dbl>,
-#&gt; #   upper_bound <dbl></dbl></dbl></dbl></dbl></dbl></dbl></chr></dbl></dttm></dttm></chr></chr></dbl></pre></body></html></div>
+#&gt;   patient_visit_nr activity originator start              
+#&gt;              <dbl><chr><chr><dttm>             
+#&gt; 1              523 Treatme~ Nurse 17   2017-11-21 18:26:04
+#&gt; # ... with 9 more variables: complete <dttm>, triagecode <dbl>,
+#&gt; #   specialization <chr>, duration <dbl>, mean <dbl>, sd <dbl>,
+#&gt; #   bound_sd <dbl>, lower_bound <dbl>, upper_bound <dbl></dbl></dbl></dbl></dbl></dbl></dbl></chr></dbl></dttm></dttm></chr></chr></dbl></pre></body></html></div>
 </div>
 <div id="detect-inactive-periods" class="section level3">
 <h3 class="hasAnchor">
@@ -490,17 +491,17 @@
 #&gt; Note: this function only checks the presence of activities for a particular case, not the completeness of these entries in the activity log or the order of activities.
 #&gt; For cases for which the aforementioned activities are not all present, the following activities are recorded (ordered by decreasing frequeny of occurrence):
 #&gt; # A tibble: 9 x 3
-#&gt;   activity               n case_ids                                             
-#&gt;   <chr><int><chr>                                                
-#&gt; 1 Triage                11 510 - 512 - 517 - 521 - 524 - 525 - 526 - 527 - 528 ~
-#&gt; 2 Registration           9 512 - 518 - 518 - 518 - 521 - 522 - 527 - 528 - 534  
-#&gt; 3 Clinical exam          5 512 - 510 - 527 - 528 - 512                          
-#&gt; 4 Treatment evaluat~     2 529 - 532                                            
-#&gt; 5 0                      1 533                                                  
-#&gt; 6 registration           1 510                                                  
-#&gt; 7 Trage                  1 520                                                  
-#&gt; 8 Treatment              1 532                                                  
-#&gt; 9 Triaga                 1 522</chr></int></chr></pre></body></html></div>
+#&gt;   activity              n case_ids                                         
+#&gt;   <chr><int><chr>                                            
+#&gt; 1 Triage               11 510 - 512 - 517 - 521 - 524 - 525 - 526 - 527 - ~
+#&gt; 2 Registration          9 512 - 518 - 518 - 518 - 521 - 522 - 527 - 528 - ~
+#&gt; 3 Clinical exam         5 512 - 510 - 527 - 528 - 512                      
+#&gt; 4 Treatment evalua~     2 529 - 532                                        
+#&gt; 5 0                     1 533                                              
+#&gt; 6 registration          1 510                                              
+#&gt; 7 Trage                 1 520                                              
+#&gt; 8 Treatment             1 532                                              
+#&gt; 9 Triaga                1 522</chr></int></chr></pre></body></html></div>
 </div>
 <div id="detect-incorrect-activity-names" class="section level3">
 <h3 class="hasAnchor">
@@ -513,25 +514,25 @@
 #&gt; registration - Trage - Triaga - 0
 #&gt; Given this information, 4 of 53 (7.55%) rows in the activity log are incorrect. These are the following:
 #&gt; # A tibble: 4 x 7
-#&gt;   patient_visit_nr activity originator start               complete           
-#&gt;              <dbl><chr><chr><dttm><dttm>             
-#&gt; 1              510 registr~ Clerk 9    2017-11-20 10:18:17 2017-11-20 10:20:06
-#&gt; 2              520 Trage    Nurse 17   2017-11-21 13:43:16 2017-11-21 13:39:00
-#&gt; 3              522 Triaga   Nurse 5    2017-11-21 15:15:25 2017-11-21 15:18:04
-#&gt; 4              533 0        <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
-#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr></chr></dbl></na></dttm></dttm></chr></chr></dbl></pre></body></html></div>
+#&gt;   patient_visit_nr activity originator start              
+#&gt;              <dbl><chr><chr><dttm>             
+#&gt; 1              510 registr~ Clerk 9    2017-11-20 10:18:17
+#&gt; 2              520 Trage    Nurse 17   2017-11-21 13:43:16
+#&gt; 3              522 Triaga   Nurse 5    2017-11-21 15:15:25
+#&gt; 4              533 0        <na>       2017-11-22 18:35:00
+#&gt; # ... with 3 more variables: complete <dttm>, triagecode <dbl>,
+#&gt; #   specialization <chr></chr></dbl></dttm></na></dttm></chr></chr></dbl></pre></body></html></div>
 </div>
 <div id="detect-missing-values" class="section level3">
 <h3 class="hasAnchor">
 <a href="#detect-missing-values" class="anchor"></a>Detect Missing Values</h3>
 <div class="sourceCode" id="cb18"><html><body><pre class="r">hospital %&gt;%
   detect_missing_values(column = "activity")
-#&gt; Selected level of aggregation: overview 
-#&gt; 
-#&gt; Warning in detect_missing_values.activitylog(., column = "activity"): Ignoring
-#&gt; provided column argument at overview level.
-#&gt; *** OUTPUT *** 
-#&gt; Absolute number of missing values per column: 
+#&gt; Selected level of aggregation:overview
+#&gt; Warning in detect_missing_values.activitylog(., column = "activity"):
+#&gt; Ignoring provided column argument at overview level.
+#&gt; *** OUTPUT ***
+#&gt; Absolute number of missing values per column:
 #&gt;                   
 #&gt; patient_visit_nr 0
 #&gt; activity         0
@@ -540,8 +541,7 @@
 #&gt; complete         0
 #&gt; triagecode       1
 #&gt; specialization   0
-#&gt; 
-#&gt; Relative number of missing values per column (expressed as percentage): 
+#&gt; Relative number of missing values per column (expressed as percentage):
 #&gt;                          
 #&gt; patient_visit_nr 0.000000
 #&gt; activity         0.000000
@@ -550,75 +550,75 @@
 #&gt; complete         0.000000
 #&gt; triagecode       1.886792
 #&gt; specialization   0.000000
-#&gt; 
 #&gt; Overview of activity log rows which are incomplete:
 #&gt; # A tibble: 4 x 7
-#&gt;   patient_visit_nr activity originator start               complete           
-#&gt;              <dbl><chr><chr><dttm><dttm>             
-#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01 2017-11-20 11:36:09
-#&gt; 2              533 0        <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
-#&gt; 3              534 Registr~ <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
-#&gt; 4              512 Clinica~ Doctor 7   NA                  2017-11-20 11:33:57
-#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr>
-## column heeft hier geen zin?!</chr></dbl></na></na></dttm></dttm></chr></chr></dbl></pre></body></html></div>
+#&gt;   patient_visit_nr activity originator start              
+#&gt;              <dbl><chr><chr><dttm>             
+#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01
+#&gt; 2              533 0        <na>       2017-11-22 18:35:00
+#&gt; 3              534 Registr~ <na>       2017-11-22 18:35:00
+#&gt; 4              512 Clinica~ Doctor 7   NA                 
+#&gt; # ... with 3 more variables: complete <dttm>, triagecode <dbl>,
+#&gt; #   specialization <chr>
+## column heeft hier geen zin?!</chr></dbl></dttm></na></na></dttm></chr></chr></dbl></pre></body></html></div>
 <div class="sourceCode" id="cb19"><html><body><pre class="r">hospital %&gt;% 
   detect_missing_values(level_of_aggregation = "activity")
-#&gt; Selected level of aggregation: activity 
-#&gt;  
-#&gt; *** OUTPUT *** 
-#&gt; Absolute number of missing values per column (per activity): 
+#&gt; Selected level of aggregation:activity
+#&gt; *** OUTPUT ***
+#&gt; Absolute number of missing values per column (per activity):
 #&gt; # A tibble: 9 x 7
-#&gt;   activity  patient_visit_nr originator start complete triagecode specialization
-#&gt;   <chr><int><int><int><int><int><int>
-#&gt; 1 0                        0          1     0        0          0              0
-#&gt; 2 Clinical~                0          0     1        0          1              0
-#&gt; 3 registra~                0          0     0        0          0              0
-#&gt; 4 Registra~                0          1     0        0          0              0
-#&gt; 5 Trage                    0          0     0        0          0              0
-#&gt; 6 Treatment                0          0     0        0          0              0
-#&gt; 7 Treatmen~                0          0     0        0          0              0
-#&gt; 8 Triaga                   0          0     0        0          0              0
-#&gt; 9 Triage                   0          0     0        0          0              0
-#&gt; 
-#&gt; Relative number of missing values per column (per activity, expressed as percentage): 
+#&gt;   activity patient_visit_nr originator start complete triagecode
+#&gt;   <chr><int><int><int><int><int>
+#&gt; 1 0                       0          1     0        0          0
+#&gt; 2 Clinica~                0          0     1        0          1
+#&gt; 3 registr~                0          0     0        0          0
+#&gt; 4 Registr~                0          1     0        0          0
+#&gt; 5 Trage                   0          0     0        0          0
+#&gt; 6 Treatme~                0          0     0        0          0
+#&gt; 7 Treatme~                0          0     0        0          0
+#&gt; 8 Triaga                  0          0     0        0          0
+#&gt; 9 Triage                  0          0     0        0          0
+#&gt; # ... with 1 more variable: specialization <int>
+#&gt; Relative number of missing values per column (per activity, expressed as percentage):
 #&gt; # A tibble: 9 x 7
-#&gt;   activity  patient_visit_nr originator start complete triagecode specialization
-#&gt;   <chr><dbl><dbl><dbl><dbl><dbl><dbl>
-#&gt; 1 0                        0     1      0            0      0                  0
-#&gt; 2 Clinical~                0     0      0.111        0      0.111              0
-#&gt; 3 registra~                0     0      0            0      0                  0
-#&gt; 4 Registra~                0     0.0714 0            0      0                  0
-#&gt; 5 Trage                    0     0      0            0      0                  0
-#&gt; 6 Treatment                0     0      0            0      0                  0
-#&gt; 7 Treatmen~                0     0      0            0      0                  0
-#&gt; 8 Triaga                   0     0      0            0      0                  0
-#&gt; 9 Triage                   0     0      0            0      0                  0
-#&gt; 
+#&gt;   activity patient_visit_nr originator start complete triagecode
+#&gt;   <chr><dbl><dbl><dbl><dbl><dbl>
+#&gt; 1 0                       0     1      0            0      0    
+#&gt; 2 Clinica~                0     0      0.111        0      0.111
+#&gt; 3 registr~                0     0      0            0      0    
+#&gt; 4 Registr~                0     0.0714 0            0      0    
+#&gt; 5 Trage                   0     0      0            0      0    
+#&gt; 6 Treatme~                0     0      0            0      0    
+#&gt; 7 Treatme~                0     0      0            0      0    
+#&gt; 8 Triaga                  0     0      0            0      0    
+#&gt; 9 Triage                  0     0      0            0      0    
+#&gt; # ... with 1 more variable: specialization <dbl>
 #&gt; Overview of activity log rows which are incomplete:
 #&gt; # A tibble: 4 x 7
-#&gt;   patient_visit_nr activity originator start               complete           
-#&gt;              <dbl><chr><chr><dttm><dttm>             
-#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01 2017-11-20 11:36:09
-#&gt; 2              533 0        <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
-#&gt; 3              534 Registr~ <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
-#&gt; 4              512 Clinica~ Doctor 7   NA                  2017-11-20 11:33:57
-#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr></chr></dbl></na></na></dttm></dttm></chr></chr></dbl></dbl></dbl></dbl></dbl></dbl></dbl></chr></int></int></int></int></int></int></chr></pre></body></html></div>
+#&gt;   patient_visit_nr activity originator start              
+#&gt;              <dbl><chr><chr><dttm>             
+#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01
+#&gt; 2              533 0        <na>       2017-11-22 18:35:00
+#&gt; 3              534 Registr~ <na>       2017-11-22 18:35:00
+#&gt; 4              512 Clinica~ Doctor 7   NA                 
+#&gt; # ... with 3 more variables: complete <dttm>, triagecode <dbl>,
+#&gt; #   specialization <chr></chr></dbl></dttm></na></na></dttm></chr></chr></dbl></dbl></dbl></dbl></dbl></dbl></dbl></chr></int></int></int></int></int></int></chr></pre></body></html></div>
 <div class="sourceCode" id="cb20"><html><body><pre class="r">hospital %&gt;% 
   detect_missing_values(
   level_of_aggregation = "column",
   column = "triagecode")
-#&gt; Selected level of aggregation: column 
-#&gt;  
-#&gt; *** OUTPUT *** 
-#&gt; Absolute number of missing values in column triagecode : 1 
-#&gt; Relative number of missing values in column triagecode (expressed as percentage): 1.886792 
+#&gt; Selected level of aggregation:column
+#&gt; *** OUTPUT ***
+#&gt; Absolute number of missing values in columntriagecode:1
+#&gt; Relative number of missing values in columntriagecode(expressed as percentage):1.88679245283019
 #&gt; 
-#&gt; Overview of activity log rows in which triagecode is missing:
+#&gt; Overview of activity log rows in whichtriagecodeis missing:
 #&gt; # A tibble: 1 x 7
-#&gt;   patient_visit_nr activity originator start               complete           
-#&gt;              <dbl><chr><chr><dttm><dttm>             
-#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01 2017-11-20 11:36:09
-#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr></chr></dbl></dttm></dttm></chr></chr></dbl></pre></body></html></div>
+#&gt;   patient_visit_nr activity originator start              
+#&gt;              <dbl><chr><chr><dttm>             
+#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01
+#&gt; # ... with 3 more variables: complete <dttm>, triagecode <dbl>,
+#&gt; #   specialization <chr></chr></dbl></dttm></dttm></chr></chr></dbl></pre></body></html></div>
 </div>
 <div id="detect-multiregistration" class="section level3">
 <h3 class="hasAnchor">
@@ -633,18 +633,19 @@
 #&gt; For the following rows in the activity log, multi-registration is detected:
 #&gt; # A tibble: 9 x 7
 #&gt; # Groups:   originator [4]
-#&gt;   patient_visit_nr activity originator start               complete           
-#&gt;              <dbl><chr><chr><dttm><dttm>             
-#&gt; 1              512 Clinica~ Doctor 7   2017-11-20 11:27:12 2017-11-20 11:33:57
-#&gt; 2              512 Clinica~ Doctor 7   NA                  2017-11-20 11:33:57
-#&gt; 3              524 Triage   Nurse 5    2017-11-21 17:04:03 2017-11-21 17:06:05
-#&gt; 4              525 Triage   Nurse 5    2017-11-21 17:04:13 2017-11-21 17:06:08
-#&gt; 5              526 Triage   Nurse 5    2017-11-21 17:04:15 2017-11-21 17:06:10
-#&gt; 6              536 Triage   Nurse 27   2017-11-22 15:15:39 2017-11-22 15:25:01
-#&gt; 7              536 Treatme~ Nurse 27   2017-11-22 15:15:41 2017-11-22 15:25:03
-#&gt; 8              533 0        <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
-#&gt; 9              534 Registr~ <na>       2017-11-22 18:35:00 2017-11-22 18:37:00
-#&gt; # ... with 2 more variables: triagecode <dbl>, specialization <chr></chr></dbl></na></na></dttm></dttm></chr></chr></dbl></pre></body></html></div>
+#&gt;   patient_visit_nr activity originator start              
+#&gt;              <dbl><chr><chr><dttm>             
+#&gt; 1              512 Clinica~ Doctor 7   2017-11-20 11:27:12
+#&gt; 2              512 Clinica~ Doctor 7   NA                 
+#&gt; 3              524 Triage   Nurse 5    2017-11-21 17:04:03
+#&gt; 4              525 Triage   Nurse 5    2017-11-21 17:04:13
+#&gt; 5              526 Triage   Nurse 5    2017-11-21 17:04:15
+#&gt; 6              536 Triage   Nurse 27   2017-11-22 15:15:39
+#&gt; 7              536 Treatme~ Nurse 27   2017-11-22 15:15:41
+#&gt; 8              533 0        <na>       2017-11-22 18:35:00
+#&gt; 9              534 Registr~ <na>       2017-11-22 18:35:00
+#&gt; # ... with 3 more variables: complete <dttm>, triagecode <dbl>,
+#&gt; #   specialization <chr></chr></dbl></dttm></na></na></dttm></chr></chr></dbl></pre></body></html></div>
 </div>
 <div id="detect-overlaps" class="section level3">
 <h3 class="hasAnchor">
@@ -707,15 +708,15 @@
 #&gt; 3 Trage         negative duration     1
 #&gt; Anomalies are found in the following rows:
 #&gt; # A tibble: 5 x 9
-#&gt;   patient_visit_nr activity originator start               complete           
-#&gt;              <dbl><chr><chr><dttm><dttm>             
-#&gt; 1              518 Registr~ Clerk 12   2017-11-21 11:45:16 2017-11-21 11:22:16
-#&gt; 2              518 Registr~ Clerk 6    2017-11-21 11:45:16 2017-11-21 11:22:16
-#&gt; 3              518 Registr~ Clerk 9    2017-11-21 11:45:16 2017-11-21 11:22:16
-#&gt; 4              520 Trage    Nurse 17   2017-11-21 13:43:16 2017-11-21 13:39:00
-#&gt; 5              528 Clinica~ Doctor 1   2017-11-21 19:00:00 2017-11-21 19:00:00
-#&gt; # ... with 4 more variables: triagecode <dbl>, specialization <chr>,
-#&gt; #   duration <dbl>, type <chr></chr></dbl></chr></dbl></dttm></dttm></chr></chr></dbl></int></chr></chr></pre></body></html></div>
+#&gt;   patient_visit_nr activity originator start              
+#&gt;              <dbl><chr><chr><dttm>             
+#&gt; 1              518 Registr~ Clerk 12   2017-11-21 11:45:16
+#&gt; 2              518 Registr~ Clerk 6    2017-11-21 11:45:16
+#&gt; 3              518 Registr~ Clerk 9    2017-11-21 11:45:16
+#&gt; 4              520 Trage    Nurse 17   2017-11-21 13:43:16
+#&gt; 5              528 Clinica~ Doctor 1   2017-11-21 19:00:00
+#&gt; # ... with 5 more variables: complete <dttm>, triagecode <dbl>,
+#&gt; #   specialization <chr>, duration <dbl>, type <chr></chr></dbl></chr></dbl></dttm></dttm></chr></chr></dbl></int></chr></chr></pre></body></html></div>
 </div>
 <div id="detect-unique-values" class="section level3">
 <h3 class="hasAnchor">

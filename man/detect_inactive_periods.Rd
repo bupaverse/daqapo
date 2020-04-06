@@ -35,3 +35,9 @@ Information on the presence of inactive periods.
 \description{
 Function detecting inactive periods, i.e. periods of time in which no activity executions/arrivals are recorded in the activity log
 }
+\examples{
+\dontrun{
+data("hospital_actlog")
+detect_inactive_periods(activitylog = hospital_actlog,threshold = 30)
+}
+}

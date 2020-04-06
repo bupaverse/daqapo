@@ -4,6 +4,12 @@
 #' @inheritParams detect_activity_frequency_violations
 #' @param allowed_activities Vector with correct activity labels. If NULL, user input will be asked.
 #' @return Information on the incorrect activities in the log
+#' @examples
+#' \dontrun{
+#' data("hospital_actlog")
+#' detect_incorrect_activity_names(activitylog = hospital_actlog,
+#'      allowed_activities = c("Registration","Triage","Clinical exam","Treatment","Treatment evaluation"))
+#' }
 #' @import shiny
 #' @import miniUI
 #' @export

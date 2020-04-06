@@ -21,6 +21,11 @@ Information on the presence of attribute range violations in the specified colum
 \description{
 Function detecting violations of the value range, i.e. values outside the range of tolerable values
 }
+\examples{
+data("hospital_actlog")
+detect_value_range_violations(activitylog = hospital_actlog,
+     triagecode = domain_numeric(from = 0, to = 5))
+}
 \seealso{
 \code{\link{domain_categorical}},\code{\link{domain_time}},\code{\link{domain_numeric}}
 }

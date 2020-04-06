@@ -26,3 +26,9 @@ A data frame containing, for each label in the column, an overview of similar la
 \description{
 Function that tries to detect spelling mistakes in a given activity log column
 }
+\examples{
+data("hospital_actlog")
+detect_similar_labels(activitylog = hospital_actlog,
+     column_labels = "activity",
+     max_edit_distance = 3)
+}

@@ -19,3 +19,7 @@ detect_overlaps(activitylog, details, level_of_aggregation,
 \description{
 Detect overlapping acitivity instances
 }
+\examples{
+data("hospital_actlog")
+detect_overlaps(activitylog = hospital_actlog)
+}

@@ -4,6 +4,10 @@
 #' @inheritParams detect_activity_frequency_violations
 #' @param activities A vector of activity names which should be present for a case
 #' @return Information on the presence/absence of incomplete cases.
+#' @examples
+#' data("hospital_actlog")
+#' detect_incomplete_cases(activitylog = hospital_actlog,
+#'      activities = c("Registration","Triage","Clinical exam","Treatment","Treatment evaluation"))
 #' @export
 #'
 #'

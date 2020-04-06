@@ -21,6 +21,11 @@ Information on the presence of activity duration outliers
 \description{
 Function detecting duration outliers for a particular activity
 }
+\examples{
+data("hospital_actlog")
+detect_duration_outliers(activitylog = hospital_actlog,
+     Treatment = duration_within(bound_sd = 1))
+}
 \seealso{
 \code{\link{duration_within}}
 }

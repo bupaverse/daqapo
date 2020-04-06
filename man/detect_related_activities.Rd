@@ -24,3 +24,9 @@ Information on the presence/absence of related activities.
 \description{
 Function detecting missing related activity registration, i.e. detecting activities that should be registered for a case because another activity is registered for that case
 }
+\examples{
+data("hospital_actlog")
+detect_related_activities(activitylog = hospital_actlog,
+     antecedent = "Treatment evaluation",
+     consequent = "Treatment")
+}

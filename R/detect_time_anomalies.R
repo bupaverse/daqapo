@@ -4,6 +4,9 @@
 #' @inheritParams detect_activity_frequency_violations
 #' @param anomaly_type Type of anomalies that need to be detected (either "negative", "zero" or "both")
 #' @return Information on the presence of time anomalies of the specified anomaly type
+#' @examples
+#' data("hospital_actlog")
+#' detect_time_anomalies(activitylog = hospital_actlog)
 #' @export
 
 detect_time_anomalies <- function(activitylog, anomaly_type = c("both", "negative","zero") ,

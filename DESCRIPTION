@@ -2,12 +2,12 @@ Package: daqapo
 Type: Package
 Title: Data Quality Assessment for Process-Oriented Data
 Version: 0.3.0
-Date: 2020-04-03
+Date: 2020-04-06
 Authors@R: c(
             person("Niels", "Martin", email = "niels.martin@uhasselt.be", role = c("aut", "cre")),
             person("Greg", "Van Houdt", email = "greg.vanhoudt@uhasselt.be", role = "ctb"),
             person("Gert", "Janssenswillen", email = "gert.janssenswillen@uhasselt.be", role = "ctb"))
-Description: Data quality assessment for process-oriented data. Provides a variety of methods to identify data quality issues in process data, which are useful to verify data quality in a process mining context. Builds on the class for activity logs implemented in the package 'bupaR'.
+Description: Provides a variety of methods to identify data quality issues in process-oriented data, which are useful to verify data quality in a process mining context. Builds on the class for activity logs implemented in the package 'bupaR'. Methods to identify data quality issues either consider each activity log entry independently (e.g. missing values, activity duration outliers,...), or focus on the relation amongst several activity log entries (e.g. batch registrations, violations of the expected activity order,...).
 License: MIT + file LICENSE
 URL: https://github.com/nielsmartin
 BugReports: https://github.com/nielsmartin/daqapo/issues

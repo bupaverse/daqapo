@@ -22,3 +22,7 @@ Information on the presence of time anomalies of the specified anomaly type
 \description{
 Function detecting time anomalies, which can refer to activities with negative or zero duration
 }
+\examples{
+data("hospital_actlog")
+detect_time_anomalies(activitylog = hospital_actlog)
+}

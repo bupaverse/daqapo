@@ -22,3 +22,8 @@ An overview of frequencies of activities
 \description{
 Function that detects activity frequency anomalies per case
 }
+\examples{
+data("hospital_actlog")
+detect_activity_frequency_violations(activitylog = hospital_actlog,
+     "Registration" = 1, "Clinical exam" = 1)
+}

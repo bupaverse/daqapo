@@ -4,6 +4,10 @@
 #' @inheritParams detect_activity_frequency_violations
 #' @param ... for each activity to be checked, an argument "activity_name" = duration_within(...) to define bounds. See ?duration_within
 #' @return Information on the presence of activity duration outliers
+#' @examples
+#' data("hospital_actlog")
+#' detect_duration_outliers(activitylog = hospital_actlog,
+#'      Treatment = duration_within(bound_sd = 1))
 #' @seealso \code{\link{duration_within}}
 #' @importFrom purrr map
 #' @importFrom tidyr unnest

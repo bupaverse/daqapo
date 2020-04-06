@@ -19,3 +19,10 @@ A data frame containing the unique (distinct) values (combinations) in the reque
 \description{
 Function that lists all distinct combinations of the given columns in the activity log
 }
+\examples{
+data("hospital_actlog")
+detect_unique_values(activitylog = hospital_actlog,
+     column_labels = "activity")
+detect_unique_values(activitylog = hospital_actlog,
+     column_labels = c("activity", "originator"))
+}

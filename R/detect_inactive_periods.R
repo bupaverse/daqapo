@@ -7,6 +7,9 @@
 #' @param timestamp Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)
 #' @param start_activities List of activity labels marking the first activity in the process. When specified, an inactive period only occurs when the time between two consecutive arrivals exceeds the specified threshold (arrival is proxied by the activity/activities specified in this argument).
 #' @return Information on the presence of inactive periods.
+#' @examples
+#' data("hospital_actlog")
+#' detect_inactive_periods(activitylog = hospital_actlog,threshold = 30)
 #' @export
 #'
 detect_inactive_periods <- function(activitylog,

@@ -29,3 +29,10 @@ Function detecting missing values at different levels of aggregation
 \item activity: presents an overview of the absolute and relative number of missing values for each column, aggregated by activity
 }
 }
+\examples{
+data("hospital_actlog")
+detect_missing_values(activitylog = hospital_actlog, column = "activity")
+detect_missing_values(activitylog = hospital_actlog, level_of_aggregation = "activity")
+detect_missing_values(activitylog = hospital_actlog, level_of_aggregation = "column",
+     column = "triagecode")
+}

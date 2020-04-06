@@ -19,3 +19,7 @@ The case IDs that are missing in the sequence.
 \description{
 Function detecting gaps in the sequence of case identifiers
 }
+\examples{
+data("hospital_actlog")
+detect_case_id_sequence_gaps(activitylog = hospital_actlog)
+}

@@ -4,6 +4,10 @@
 #' @inheritParams detect_activity_frequency_violations
 #' @param ... Define domain range using domain_numeric, domain_categorical and/or domain_time for each column
 #' @return Information on the presence of attribute range violations in the specified column
+#' @examples
+#' data("hospital_actlog")
+#' detect_value_range_violations(activitylog = hospital_actlog,
+#'      triagecode = domain_numeric(from = 0, to = 5))
 #' @seealso \code{\link{domain_categorical}},\code{\link{domain_time}},\code{\link{domain_numeric}}
 #' @importFrom glue glue
 #' @export

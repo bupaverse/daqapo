@@ -4,6 +4,12 @@
 #' @inheritParams detect_activity_frequency_violations
 #' @param column_labels The names of columns in the activity log for which you want to show the different combinations found in the log. If only one column is provided, this results in a list of unique values in that column.
 #' @return A data frame containing the unique (distinct) values (combinations) in the requested column(s).
+#' @examples
+#' data("hospital_actlog")
+#' detect_unique_values(activitylog = hospital_actlog,
+#'      column_labels = "activity")
+#' detect_unique_values(activitylog = hospital_actlog,
+#'      column_labels = c("activity", "originator"))
 #' @export
 
 detect_unique_values <- function(activitylog, column_labels, filter_condition = NULL) {

@@ -4,8 +4,7 @@
 \name{hospital_actlog}
 \alias{hospital_actlog}
 \title{An activity log of 20 patients in a hospital (activity log object)}
-\format{
-An activity log with 53 rows and 7 variables:
+\format{An activity log with 53 rows and 7 variables:
 \describe{
   \item{patient_visit_nr}{the patient's identifier}
   \item{activity}{the executed activity}
@@ -14,8 +13,7 @@ An activity log with 53 rows and 7 variables:
   \item{complete}{the timestamp at which the activity was completed}
   \item{triagecode}{a case attribute describing the triage code}
   \item{specialization}{a case attribute describing the specialization}
-}
-}
+}}
 \source{
 An illustrative example developed in-house for demonstrational purposes.
 }

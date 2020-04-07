@@ -4,8 +4,13 @@
 \alias{detect_related_activities}
 \title{Detect missing related activities}
 \usage{
-detect_related_activities(activitylog, antecedent, consequent, details,
-  filter_condition)
+detect_related_activities(
+  activitylog,
+  antecedent,
+  consequent,
+  details,
+  filter_condition
+)
 }
 \arguments{
 \item{activitylog}{The activity log}

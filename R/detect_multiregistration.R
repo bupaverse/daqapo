@@ -7,7 +7,7 @@
 #' @param threshold_in_seconds Threshold which is applied to determine whether multi-registration occurs (expressed in seconds) (time gaps smaller than threshold are considered as multi-registration)
 #' @param details Boolean indicating wheter details of the results need to be shown
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
-#' @return grouped_df containing the rows of the original activity log for which multi-registration is present
+#' @return activitylog containing the rows of the original activity log for which multi-registration is present
 #' @examples
 #' \donttest{
 #' data("hospital_actlog")
@@ -103,6 +103,8 @@ detect_multiregistration.activitylog <- function(activitylog,
     message(paste(unique(multi_reg[[case_id(activitylog)]]), collapse = " - "))
     message("\n")
   }
+
+  multi_reg <- re_map(multi_reg, mapping(activitylog))
 
   if(details == TRUE){
     if(level_of_aggregation == "resource" & pct_resource > 0){

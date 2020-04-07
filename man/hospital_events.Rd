@@ -4,7 +4,8 @@
 \name{hospital_events}
 \alias{hospital_events}
 \title{An event log of 20 patients in a hospital}
-\format{A data frame with 53 rows and 7 variables:
+\format{
+A data frame with 53 rows and 7 variables:
 \describe{
   \item{patient_visit_nr}{the patient's identifier}
   \item{activity}{the executed activity}
@@ -14,7 +15,8 @@
   \item{triagecode}{a case attribute describing the triage code}
   \item{specialization}{a case attribute describing the specialization}
   \item{event_matching}{a specification of which events form a pair in the log}
-}}
+}
+}
 \source{
 An illustrative example developed in-house for demonstrational purposes.
 }

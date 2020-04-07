@@ -129,8 +129,14 @@
     <p>Function detecting multi-registration for the same case or by the same resource at the same point in time</p>
     </div>
 
-    <pre class="usage"><span class='fu'>detect_multiregistration</span>(<span class='no'>activitylog</span>, <span class='no'>level_of_aggregation</span>, <span class='no'>timestamp</span>,
-  <span class='no'>threshold_in_seconds</span>, <span class='no'>details</span>, <span class='no'>filter_condition</span>)</pre>
+    <pre class="usage"><span class='fu'>detect_multiregistration</span>(
+  <span class='no'>activitylog</span>,
+  <span class='no'>level_of_aggregation</span>,
+  <span class='no'>timestamp</span>,
+  <span class='no'>threshold_in_seconds</span>,
+  <span class='no'>details</span>,
+  <span class='no'>filter_condition</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -163,13 +169,12 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>grouped_df containing the rows of the original activity log for which multi-registration is present</p>
+    <p>activitylog containing the rows of the original activity log for which multi-registration is present</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"hospital_actlog"</span>)
 <span class='fu'>detect_multiregistration</span>(<span class='kw'>activitylog</span> <span class='kw'>=</span> <span class='no'>hospital_actlog</span>, <span class='kw'>threshold_in_seconds</span> <span class='kw'>=</span> <span class='fl'>10</span>)</div><div class='output co'>#&gt; <span class='message'>Selected level of aggregation: resource</span></div><div class='output co'>#&gt; <span class='message'>Selected timestamp parameter value: complete</span></div><div class='output co'>#&gt; <span class='message'>*** OUTPUT ***</span></div><div class='output co'>#&gt; <span class='message'>Multi-registration is detected for 4 of the 12 resources (33.33%). These resources are:</span></div><div class='output co'>#&gt; <span class='message'>Doctor 7 - Nurse 5 - Nurse 27 - NA</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>For the following rows in the activity log, multi-registration is detected:</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 9 x 7</span><span>
-#&gt; </span><span style='color: #555555;'># Groups:   originator [4]</span><span>
 #&gt;   patient_visit_nr activity originator start               complete           
 #&gt;              </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;dttm&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;dttm&gt;</span><span>             
 #&gt; </span><span style='color: #555555;'>1</span><span>              512 Clinica~ Doctor 7   2017-11-20 </span><span style='color: #555555;'>11:27:12</span><span> 2017-11-20 </span><span style='color: #555555;'>11:33:57</span><span>

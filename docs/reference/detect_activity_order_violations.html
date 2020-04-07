@@ -129,13 +129,22 @@
     <p>Function detecting violations in activity order. Having additional or less activity types than those specified in activity_order is no violation, but the activity types present should occur in the specified order, and only once.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>detect_activity_order_violations</span>(<span class='no'>activitylog</span>, <span class='no'>activity_order</span>, <span class='no'>timestamp</span>,
-  <span class='no'>details</span>, <span class='no'>filter_condition</span>)
+    <pre class="usage"><span class='fu'>detect_activity_order_violations</span>(
+  <span class='no'>activitylog</span>,
+  <span class='no'>activity_order</span>,
+  <span class='no'>timestamp</span>,
+  <span class='no'>details</span>,
+  <span class='no'>filter_condition</span>
+)
 
 <span class='co'># S3 method for activitylog</span>
-<span class='fu'>detect_activity_order_violations</span>(<span class='no'>activitylog</span>,
-  <span class='no'>activity_order</span>, <span class='kw'>timestamp</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"both"</span>, <span class='st'>"start"</span>, <span class='st'>"complete"</span>),
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>filter_condition</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>detect_activity_order_violations</span>(
+  <span class='no'>activitylog</span>,
+  <span class='no'>activity_order</span>,
+  <span class='kw'>timestamp</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"both"</span>, <span class='st'>"start"</span>, <span class='st'>"complete"</span>),
+  <span class='kw'>details</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>filter_condition</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

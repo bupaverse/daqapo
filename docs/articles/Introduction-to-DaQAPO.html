@@ -632,7 +632,6 @@
 #&gt; Doctor 7 - Nurse 5 - Nurse 27 - NA
 #&gt; For the following rows in the activity log, multi-registration is detected:
 #&gt; # A tibble: 9 x 7
-#&gt; # Groups:   originator [4]
 #&gt;   patient_visit_nr activity originator start              
 #&gt;              <dbl><chr><chr><dttm>             
 #&gt; 1              512 Clinica~ Doctor 7   2017-11-20 11:27:12
@@ -653,7 +652,6 @@
 <div class="sourceCode" id="cb22"><html><body><pre class="r">hospital %&gt;%
   detect_overlaps()
 #&gt; # A tibble: 7 x 4
-#&gt; # Groups:   activity_a [3]
 #&gt;   activity_a    activity_b        n avg_overlap_mins
 #&gt;   <chr><chr><int><dbl>
 #&gt; 1 Clinical exam Treatment         2            8.17 

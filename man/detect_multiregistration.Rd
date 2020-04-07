@@ -4,8 +4,14 @@
 \alias{detect_multiregistration}
 \title{Detect multi-registration}
 \usage{
-detect_multiregistration(activitylog, level_of_aggregation, timestamp,
-  threshold_in_seconds, details, filter_condition)
+detect_multiregistration(
+  activitylog,
+  level_of_aggregation,
+  timestamp,
+  threshold_in_seconds,
+  details,
+  filter_condition
+)
 }
 \arguments{
 \item{activitylog}{The activity log (renamed/formatted using functions rename_activity_log and convert_timestamp_format)}
@@ -21,7 +27,7 @@ detect_multiregistration(activitylog, level_of_aggregation, timestamp,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-grouped_df containing the rows of the original activity log for which multi-registration is present
+activitylog containing the rows of the original activity log for which multi-registration is present
 }
 \description{
 Function detecting multi-registration for the same case or by the same resource at the same point in time

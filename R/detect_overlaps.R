@@ -1,7 +1,7 @@
 #' Detect overlapping acitivity instances
 #' @inheritParams detect_activity_frequency_violations
 #' @param level_of_aggregation Look for overlapping activity instances within a case or within a resource.
-#' @return grouped_df providing an overview of activities which are performed in parallel by a resource, together with the occurrence frequency of the overlap and the average time overlap in minutes
+#' @return tbl_df providing an overview of activities which are performed in parallel by a resource, together with the occurrence frequency of the overlap and the average time overlap in minutes
 #' @examples
 #' \donttest{
 #' data("hospital_actlog")
@@ -110,7 +110,8 @@ detect_overlaps_case <- function(activitylog, details) {
   } else {
       raw %>%
       group_by(activity_a, activity_b) %>%
-      summarize(n = n(), avg_overlap_mins = mean(time_of_overlap_mins))
+      summarize(n = n(), avg_overlap_mins = mean(time_of_overlap_mins)) %>%
+      ungroup()
 
   }
 }
@@ -155,6 +156,7 @@ detect_overlaps_resource <- function(activitylog, details) {
   } else {
     raw %>%
       group_by(activity_a, activity_b) %>%
-      summarize(n = n(), avg_overlap_mins = mean(time_of_overlap_mins))
+      summarize(n = n(), avg_overlap_mins = mean(time_of_overlap_mins)) %>%
+      ungroup()
   }
 }

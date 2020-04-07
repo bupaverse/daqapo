@@ -4,8 +4,7 @@
 \alias{detect_overlaps}
 \title{Detect overlapping acitivity instances}
 \usage{
-detect_overlaps(activitylog, details, level_of_aggregation,
-  filter_condition)
+detect_overlaps(activitylog, details, level_of_aggregation, filter_condition)
 }
 \arguments{
 \item{activitylog}{The activity log}
@@ -17,7 +16,7 @@ detect_overlaps(activitylog, details, level_of_aggregation,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-grouped_df providing an overview of activities which are performed in parallel by a resource, together with the occurrence frequency of the overlap and the average time overlap in minutes
+tbl_df providing an overview of activities which are performed in parallel by a resource, together with the occurrence frequency of the overlap and the average time overlap in minutes
 }
 \description{
 Detect overlapping acitivity instances

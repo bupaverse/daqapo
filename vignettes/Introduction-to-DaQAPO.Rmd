@@ -174,8 +174,8 @@ The table below summarizes the different data quality assessment tests available
 | detect_incorrect_activity_names | Function returning the incorrect activity labels in the log | Summary in console + Returns rows with incorrect activities |
 | detect_missing_values | Function detecting missing values at different levels of aggregation | Summary in console + Returns rows with NAs |
 | detect_multiregistration | Function detecting the registration of a series of events in a short time period for the same case or by the same resource | Summary in console + Returns rows with multiregistration on resource or case level |
-| detect_overlaps | Checks if a resource has performed 2 activities in parallel | Data frame containing the activities, the number of overlaps and average overlap in minutes |
-| detect_related_activities | Function detecting missing related activities, i.e. activities that should be registered because another activity is registered for a case | Summary in console + Returns cases violating relating activities |
+| detect_overlaps | Checks if a resource has performed two activities in parallel | Data frame containing the activities, the number of overlaps and average overlap in minutes |
+| detect_related_activities | Function detecting missing related activities, i.e. activities that should be registered because another activity is registered for a case | Summary in console + Returns cases violating related activities |
 | detect_similar_labels | Function detecting potential spelling mistakes | Table showing similarities for each label |
 | detect_time_anomalies | Funtion detecting activity executions with negative or zero duration | Summary in console + Returns rows with negative or zero durations |
 | detect_unique_values | Function listing all distinct combinations of the given log attributes | Summary in console + Returns all unique combinations of values in given columns |

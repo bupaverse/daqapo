@@ -21,13 +21,13 @@ detect_attribute_dependencies(activitylog, antecedent, consequent,
 \item{...}{Named vectors with name of the activity, and value of the threshold.}
 }
 \value{
-Information on the degree to which the specified dependencies are respected/violated.
+activitylog containing the rows of the original activity log for which the dependencies between attributes are violated
 }
 \description{
 Function detecting violations of dependencies between attributes (i.e. condition(s) that should hold when (an)other condition(s) hold(s))
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_attribute_dependencies(activitylog = hospital_actlog,
      antecedent = activity == "Registration",

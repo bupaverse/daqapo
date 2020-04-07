@@ -16,13 +16,13 @@ detect_value_range_violations(activitylog, ..., details, filter_condition)
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-Information on the presence of attribute range violations in the specified column
+activitylog containing the rows of the original activity log for which the provided value range is violated
 }
 \description{
 Function detecting violations of the value range, i.e. values outside the range of tolerable values
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_value_range_violations(activitylog = hospital_actlog,
      triagecode = domain_numeric(from = 0, to = 5))

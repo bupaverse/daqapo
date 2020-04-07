@@ -21,13 +21,13 @@ detect_multiregistration(activitylog, level_of_aggregation, timestamp,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-Information on the occurrence of multi-registration at the selected level of aggregation
+grouped_df containing the rows of the original activity log for which multi-registration is present
 }
 \description{
 Function detecting multi-registration for the same case or by the same resource at the same point in time
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_multiregistration(activitylog = hospital_actlog, threshold_in_seconds = 10)
 }

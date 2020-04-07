@@ -4,9 +4,9 @@
 #' @inheritParams detect_activity_frequency_violations
 #' @param activity_order Vector expressing the activity order that needs to be checked (using activity names)
 #' @param timestamp Type of timestamp that needs to be taken into account in the analysis (either "start", "complete" or "both)
-#' @return Information on the degree to which the specified activity order is respected/violated.
+#' @return tbl_df providing an overview of detected activity orders which violate the specified activity order
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_activity_order_violations(activitylog = hospital_actlog,
 #'      activity_order = c(

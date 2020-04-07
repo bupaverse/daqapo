@@ -3,9 +3,10 @@
 #' Function detecting duration outliers for a particular activity
 #' @inheritParams detect_activity_frequency_violations
 #' @param ... for each activity to be checked, an argument "activity_name" = duration_within(...) to define bounds. See ?duration_within
-#' @return Information on the presence of activity duration outliers
+#' @return activitylog containing the rows of the original activity log for which activity duration outliers are detected
+#' Information on the presence of activity duration outliers
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_duration_outliers(activitylog = hospital_actlog,
 #'      Treatment = duration_within(bound_sd = 1))

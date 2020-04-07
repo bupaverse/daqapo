@@ -13,6 +13,9 @@ domain_time(from, to, format = ymd_hms)
 
 \item{format}{Format of to and from (either ymd_hms, dmy_hms, ymd_hm, ymd, dmy, dmy, ...). Both from and to should have the same format.}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Define allowable time range
 }

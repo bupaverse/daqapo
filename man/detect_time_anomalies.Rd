@@ -17,13 +17,13 @@ detect_time_anomalies(activitylog, anomaly_type = c("both", "negative",
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-Information on the presence of time anomalies of the specified anomaly type
+activitylog containing the rows of the original activity log for which a negative or zero duration is detected, together with the duration value and whether it constitutes a zero or negative duration
 }
 \description{
 Function detecting time anomalies, which can refer to activities with negative or zero duration
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_time_anomalies(activitylog = hospital_actlog)
 }

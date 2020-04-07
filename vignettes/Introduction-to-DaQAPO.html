@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 
 <meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <meta name="author" content="Niels Martin, Greg Van Houdt, and Gert Janssenswillen" />
 
-<meta name="date" content="2020-04-03" />
+<meta name="date" content="2020-04-07" />
 
 <title>Introduction to DaQAPO</title>
 
@@ -117,6 +118,9 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
+}
+#header {
+text-align: center;
 }
 #TOC {
 clear: both;
@@ -285,8 +289,7 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; } 
-code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -301,7 +304,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Introduction to DaQAPO</h1>
 <h4 class="author">Niels Martin<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, Greg Van Houdt<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>, and Gert Janssenswillen<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></h4>
-<h4 class="date">2020-04-03</h4>
+<h4 class="date">2020-04-07</h4>
 
 
 
@@ -403,20 +406,20 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>With event logs, things are a bit more complex. In an event log, each row represents only a part of an activity instance. Therefore, more complex data transformations must be executed and several problems could arise. In this section, we will use an event log variant of the activity log used earlier, named <code>hospital_events</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">hospital_events</a>
 <a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt; # A tibble: 106 x 8</span></a>
-<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt;    patient_visit_nr activity originator event_lifecycle~ timestamp triagecode</span></a>
-<a class="sourceLine" id="cb6-4" title="4"><span class="co">#&gt;               &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;          &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-5" title="5"><span class="co">#&gt;  1              510 registr~ Clerk 9    start            20/11/20~          3</span></a>
-<a class="sourceLine" id="cb6-6" title="6"><span class="co">#&gt;  2              510 registr~ Clerk 9    complete         20/11/20~          3</span></a>
-<a class="sourceLine" id="cb6-7" title="7"><span class="co">#&gt;  3              510 Triage   Nurse 27   start            20/11/20~          3</span></a>
-<a class="sourceLine" id="cb6-8" title="8"><span class="co">#&gt;  4              510 Triage   Nurse 27   complete         20/11/20~          3</span></a>
-<a class="sourceLine" id="cb6-9" title="9"><span class="co">#&gt;  5              510 Clinica~ Doctor 7   start            20/11/20~         NA</span></a>
-<a class="sourceLine" id="cb6-10" title="10"><span class="co">#&gt;  6              510 Clinica~ Doctor 4   complete         20/11/20~         NA</span></a>
-<a class="sourceLine" id="cb6-11" title="11"><span class="co">#&gt;  7              512 Registr~ Clerk 12   start            20/11/20~          3</span></a>
-<a class="sourceLine" id="cb6-12" title="12"><span class="co">#&gt;  8              512 Registr~ Clerk 12   complete         20/11/20~          3</span></a>
-<a class="sourceLine" id="cb6-13" title="13"><span class="co">#&gt;  9              512 Triage   Nurse 27   start            20/11/20~          3</span></a>
-<a class="sourceLine" id="cb6-14" title="14"><span class="co">#&gt; 10              512 Triage   Nurse 27   complete         20/11/20~          3</span></a>
-<a class="sourceLine" id="cb6-15" title="15"><span class="co">#&gt; # ... with 96 more rows, and 2 more variables: specialization &lt;chr&gt;,</span></a>
-<a class="sourceLine" id="cb6-16" title="16"><span class="co">#&gt; #   event_matching &lt;dbl&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt;    patient_visit_nr activity originator event_lifecycle~ timestamp</span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="co">#&gt;               &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;            &lt;chr&gt;    </span></a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="co">#&gt;  1              510 registr~ Clerk 9    start            20/11/20~</span></a>
+<a class="sourceLine" id="cb6-6" title="6"><span class="co">#&gt;  2              510 registr~ Clerk 9    complete         20/11/20~</span></a>
+<a class="sourceLine" id="cb6-7" title="7"><span class="co">#&gt;  3              510 Triage   Nurse 27   start            20/11/20~</span></a>
+<a class="sourceLine" id="cb6-8" title="8"><span class="co">#&gt;  4              510 Triage   Nurse 27   complete         20/11/20~</span></a>
+<a class="sourceLine" id="cb6-9" title="9"><span class="co">#&gt;  5              510 Clinica~ Doctor 7   start            20/11/20~</span></a>
+<a class="sourceLine" id="cb6-10" title="10"><span class="co">#&gt;  6              510 Clinica~ Doctor 4   complete         20/11/20~</span></a>
+<a class="sourceLine" id="cb6-11" title="11"><span class="co">#&gt;  7              512 Registr~ Clerk 12   start            20/11/20~</span></a>
+<a class="sourceLine" id="cb6-12" title="12"><span class="co">#&gt;  8              512 Registr~ Clerk 12   complete         20/11/20~</span></a>
+<a class="sourceLine" id="cb6-13" title="13"><span class="co">#&gt;  9              512 Triage   Nurse 27   start            20/11/20~</span></a>
+<a class="sourceLine" id="cb6-14" title="14"><span class="co">#&gt; 10              512 Triage   Nurse 27   complete         20/11/20~</span></a>
+<a class="sourceLine" id="cb6-15" title="15"><span class="co">#&gt; # ... with 96 more rows, and 3 more variables: triagecode &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb6-16" title="16"><span class="co">#&gt; #   specialization &lt;chr&gt;, event_matching &lt;dbl&gt;</span></a></code></pre></div>
 <p>The same principle regarding the timestamps apply. Therefore, the <code>POSIXct</code> format must be applied in advance. Additionally, the event log object also requires an activity instance id. If needed, one can be created manually as illustrated below.</p>
 <p>The following functions form the building blocks of the required data preparation, but not all must be called to obtain a fully prepared event log at all times:</p>
 <ul>
@@ -512,13 +515,13 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </tr>
 <tr class="even">
 <td align="left">detect_overlaps</td>
-<td align="left">Checks if a resource has performed 2 activities in parallel</td>
+<td align="left">Checks if a resource has performed two activities in parallel</td>
 <td align="left">Data frame containing the activities, the number of overlaps and average overlap in minutes</td>
 </tr>
 <tr class="odd">
 <td align="left">detect_related_activities</td>
 <td align="left">Function detecting missing related activities, i.e. activities that should be registered because another activity is registered for a case</td>
-<td align="left">Summary in console + Returns cases violating relating activities</td>
+<td align="left">Summary in console + Returns cases violating related activities</td>
 </tr>
 <tr class="even">
 <td align="left">detect_similar_labels</td>
@@ -562,9 +565,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">hospital <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb9-2" title="2"><span class="st">  </span><span class="kw">detect_activity_order_violations</span>(<span class="dt">activity_order =</span> <span class="kw">c</span>(<span class="st">&quot;Registration&quot;</span>, <span class="st">&quot;Triage&quot;</span>, <span class="st">&quot;Clinical exam&quot;</span>,</a>
 <a class="sourceLine" id="cb9-3" title="3">                                                      <span class="st">&quot;Treatment&quot;</span>, <span class="st">&quot;Treatment evaluation&quot;</span>))</a>
-<a class="sourceLine" id="cb9-4" title="4"><span class="co">#&gt; Warning in detect_activity_order_violations.activitylog(., activity_order =</span></a>
-<a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt; c(&quot;Registration&quot;, : Some activity instances within the same case overlap. Use</span></a>
-<a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; detect_overlaps to investigate further.</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="co">#&gt; Warning in detect_activity_order_violations.activitylog(., activity_order</span></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt; = c(&quot;Registration&quot;, : Some activity instances within the same case overlap.</span></a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; Use detect_overlaps to investigate further.</span></a>
 <a class="sourceLine" id="cb9-7" title="7"><span class="co">#&gt; Warning in detect_activity_order_violations.activitylog(., activity_order</span></a>
 <a class="sourceLine" id="cb9-8" title="8"><span class="co">#&gt; = c(&quot;Registration&quot;, : Not all specified activities occur in each case. Use</span></a>
 <a class="sourceLine" id="cb9-9" title="9"><span class="co">#&gt; detect_incomplete_cases to investigate further.</span></a>
@@ -574,12 +577,12 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb9-13" title="13"><span class="co">#&gt; This activity order is respected for 18 (81.82%) of the cases and not for4 (18.18%) of the cases.</span></a>
 <a class="sourceLine" id="cb9-14" title="14"><span class="co">#&gt; For cases for which the aformentioned activity order is not respected, the following order is detected (ordered by decreasing frequeny of occurrence):</span></a>
 <a class="sourceLine" id="cb9-15" title="15"><span class="co">#&gt; # A tibble: 4 x 3</span></a>
-<a class="sourceLine" id="cb9-16" title="16"><span class="co">#&gt;   activity_list                                                       n case_ids</span></a>
-<a class="sourceLine" id="cb9-17" title="17"><span class="co">#&gt;   &lt;chr&gt;                                                           &lt;int&gt; &lt;chr&gt;   </span></a>
-<a class="sourceLine" id="cb9-18" title="18"><span class="co">#&gt; 1 Registration - Registration - Registration                          1 518     </span></a>
-<a class="sourceLine" id="cb9-19" title="19"><span class="co">#&gt; 2 Registration - Registration - Triage - Clinical exam - Treatme~     1 535     </span></a>
-<a class="sourceLine" id="cb9-20" title="20"><span class="co">#&gt; 3 Registration - Triage - Clinical exam - Clinical exam               1 512     </span></a>
-<a class="sourceLine" id="cb9-21" title="21"><span class="co">#&gt; 4 Triage - Registration                                               1 521</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-16" title="16"><span class="co">#&gt;   activity_list                                                  n case_ids</span></a>
+<a class="sourceLine" id="cb9-17" title="17"><span class="co">#&gt;   &lt;chr&gt;                                                      &lt;int&gt; &lt;chr&gt;   </span></a>
+<a class="sourceLine" id="cb9-18" title="18"><span class="co">#&gt; 1 Registration - Registration - Registration                     1 518     </span></a>
+<a class="sourceLine" id="cb9-19" title="19"><span class="co">#&gt; 2 Registration - Registration - Triage - Clinical exam - Tr~     1 535     </span></a>
+<a class="sourceLine" id="cb9-20" title="20"><span class="co">#&gt; 3 Registration - Triage - Clinical exam - Clinical exam          1 512     </span></a>
+<a class="sourceLine" id="cb9-21" title="21"><span class="co">#&gt; 4 Triage - Registration                                          1 521</span></a></code></pre></div>
 </div>
 <div id="detect-attribute-dependencies" class="section level3">
 <h3>Detect Attribute Dependencies</h3>
@@ -591,11 +594,12 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb10-6" title="6"><span class="co">#&gt; This statement holds for 12 (85.71%) of the rows in the activity log for which the first condition(s) hold and does not hold for 2 (14.29%) of these rows.</span></a>
 <a class="sourceLine" id="cb10-7" title="7"><span class="co">#&gt; For the following rows, the first condition(s) hold(s), but the second condition does not:</span></a>
 <a class="sourceLine" id="cb10-8" title="8"><span class="co">#&gt; # A tibble: 2 x 7</span></a>
-<a class="sourceLine" id="cb10-9" title="9"><span class="co">#&gt;   patient_visit_nr activity originator start               complete           </span></a>
-<a class="sourceLine" id="cb10-10" title="10"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;              &lt;dttm&gt;             </span></a>
-<a class="sourceLine" id="cb10-11" title="11"><span class="co">#&gt; 1              528 Registr~ Nurse 6    2017-11-21 18:10:17 2017-11-21 18:15:04</span></a>
-<a class="sourceLine" id="cb10-12" title="12"><span class="co">#&gt; 2              534 Registr~ &lt;NA&gt;       2017-11-22 18:35:00 2017-11-22 18:37:00</span></a>
-<a class="sourceLine" id="cb10-13" title="13"><span class="co">#&gt; # ... with 2 more variables: triagecode &lt;dbl&gt;, specialization &lt;chr&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-9" title="9"><span class="co">#&gt;   patient_visit_nr activity originator start              </span></a>
+<a class="sourceLine" id="cb10-10" title="10"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;             </span></a>
+<a class="sourceLine" id="cb10-11" title="11"><span class="co">#&gt; 1              528 Registr~ Nurse 6    2017-11-21 18:10:17</span></a>
+<a class="sourceLine" id="cb10-12" title="12"><span class="co">#&gt; 2              534 Registr~ &lt;NA&gt;       2017-11-22 18:35:00</span></a>
+<a class="sourceLine" id="cb10-13" title="13"><span class="co">#&gt; # ... with 3 more variables: complete &lt;dttm&gt;, triagecode &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb10-14" title="14"><span class="co">#&gt; #   specialization &lt;chr&gt;</span></a></code></pre></div>
 </div>
 <div id="detect-case-id-sequence-gaps" class="section level3">
 <h3>Detect Case ID Sequence Gaps</h3>
@@ -633,12 +637,12 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb13-6" title="6"><span class="co">#&gt; A total of 1 is detected (1.89% of the activity executions)</span></a>
 <a class="sourceLine" id="cb13-7" title="7"><span class="co">#&gt; For the following activity instances, outliers are detected:</span></a>
 <a class="sourceLine" id="cb13-8" title="8"><span class="co">#&gt; # A tibble: 1 x 13</span></a>
-<a class="sourceLine" id="cb13-9" title="9"><span class="co">#&gt;   patient_visit_nr activity originator start               complete           </span></a>
-<a class="sourceLine" id="cb13-10" title="10"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;              &lt;dttm&gt;             </span></a>
-<a class="sourceLine" id="cb13-11" title="11"><span class="co">#&gt; 1              523 Treatme~ Nurse 17   2017-11-21 18:26:04 2017-11-21 18:55:00</span></a>
-<a class="sourceLine" id="cb13-12" title="12"><span class="co">#&gt; # ... with 8 more variables: triagecode &lt;dbl&gt;, specialization &lt;chr&gt;,</span></a>
-<a class="sourceLine" id="cb13-13" title="13"><span class="co">#&gt; #   duration &lt;dbl&gt;, mean &lt;dbl&gt;, sd &lt;dbl&gt;, bound_sd &lt;dbl&gt;, lower_bound &lt;dbl&gt;,</span></a>
-<a class="sourceLine" id="cb13-14" title="14"><span class="co">#&gt; #   upper_bound &lt;dbl&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb13-9" title="9"><span class="co">#&gt;   patient_visit_nr activity originator start              </span></a>
+<a class="sourceLine" id="cb13-10" title="10"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;             </span></a>
+<a class="sourceLine" id="cb13-11" title="11"><span class="co">#&gt; 1              523 Treatme~ Nurse 17   2017-11-21 18:26:04</span></a>
+<a class="sourceLine" id="cb13-12" title="12"><span class="co">#&gt; # ... with 9 more variables: complete &lt;dttm&gt;, triagecode &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb13-13" title="13"><span class="co">#&gt; #   specialization &lt;chr&gt;, duration &lt;dbl&gt;, mean &lt;dbl&gt;, sd &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb13-14" title="14"><span class="co">#&gt; #   bound_sd &lt;dbl&gt;, lower_bound &lt;dbl&gt;, upper_bound &lt;dbl&gt;</span></a></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">hospital <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb14-2" title="2"><span class="st">  </span><span class="kw">detect_duration_outliers</span>(<span class="dt">Treatment =</span> <span class="kw">duration_within</span>(<span class="dt">lower_bound =</span> <span class="dv">0</span>, <span class="dt">upper_bound =</span> <span class="dv">15</span>))</a>
 <a class="sourceLine" id="cb14-3" title="3"><span class="co">#&gt; *** OUTPUT ***</span></a>
@@ -647,12 +651,12 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb14-6" title="6"><span class="co">#&gt; A total of 1 is detected (1.89% of the activity executions)</span></a>
 <a class="sourceLine" id="cb14-7" title="7"><span class="co">#&gt; For the following activity instances, outliers are detected:</span></a>
 <a class="sourceLine" id="cb14-8" title="8"><span class="co">#&gt; # A tibble: 1 x 13</span></a>
-<a class="sourceLine" id="cb14-9" title="9"><span class="co">#&gt;   patient_visit_nr activity originator start               complete           </span></a>
-<a class="sourceLine" id="cb14-10" title="10"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;              &lt;dttm&gt;             </span></a>
-<a class="sourceLine" id="cb14-11" title="11"><span class="co">#&gt; 1              523 Treatme~ Nurse 17   2017-11-21 18:26:04 2017-11-21 18:55:00</span></a>
-<a class="sourceLine" id="cb14-12" title="12"><span class="co">#&gt; # ... with 8 more variables: triagecode &lt;dbl&gt;, specialization &lt;chr&gt;,</span></a>
-<a class="sourceLine" id="cb14-13" title="13"><span class="co">#&gt; #   duration &lt;dbl&gt;, mean &lt;dbl&gt;, sd &lt;dbl&gt;, bound_sd &lt;dbl&gt;, lower_bound &lt;dbl&gt;,</span></a>
-<a class="sourceLine" id="cb14-14" title="14"><span class="co">#&gt; #   upper_bound &lt;dbl&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb14-9" title="9"><span class="co">#&gt;   patient_visit_nr activity originator start              </span></a>
+<a class="sourceLine" id="cb14-10" title="10"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;             </span></a>
+<a class="sourceLine" id="cb14-11" title="11"><span class="co">#&gt; 1              523 Treatme~ Nurse 17   2017-11-21 18:26:04</span></a>
+<a class="sourceLine" id="cb14-12" title="12"><span class="co">#&gt; # ... with 9 more variables: complete &lt;dttm&gt;, triagecode &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb14-13" title="13"><span class="co">#&gt; #   specialization &lt;chr&gt;, duration &lt;dbl&gt;, mean &lt;dbl&gt;, sd &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb14-14" title="14"><span class="co">#&gt; #   bound_sd &lt;dbl&gt;, lower_bound &lt;dbl&gt;, upper_bound &lt;dbl&gt;</span></a></code></pre></div>
 </div>
 <div id="detect-inactive-periods" class="section level3">
 <h3>Detect Inactive Periods</h3>
@@ -686,17 +690,17 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb16-6" title="6"><span class="co">#&gt; Note: this function only checks the presence of activities for a particular case, not the completeness of these entries in the activity log or the order of activities.</span></a>
 <a class="sourceLine" id="cb16-7" title="7"><span class="co">#&gt; For cases for which the aforementioned activities are not all present, the following activities are recorded (ordered by decreasing frequeny of occurrence):</span></a>
 <a class="sourceLine" id="cb16-8" title="8"><span class="co">#&gt; # A tibble: 9 x 3</span></a>
-<a class="sourceLine" id="cb16-9" title="9"><span class="co">#&gt;   activity               n case_ids                                             </span></a>
-<a class="sourceLine" id="cb16-10" title="10"><span class="co">#&gt;   &lt;chr&gt;              &lt;int&gt; &lt;chr&gt;                                                </span></a>
-<a class="sourceLine" id="cb16-11" title="11"><span class="co">#&gt; 1 Triage                11 510 - 512 - 517 - 521 - 524 - 525 - 526 - 527 - 528 ~</span></a>
-<a class="sourceLine" id="cb16-12" title="12"><span class="co">#&gt; 2 Registration           9 512 - 518 - 518 - 518 - 521 - 522 - 527 - 528 - 534  </span></a>
-<a class="sourceLine" id="cb16-13" title="13"><span class="co">#&gt; 3 Clinical exam          5 512 - 510 - 527 - 528 - 512                          </span></a>
-<a class="sourceLine" id="cb16-14" title="14"><span class="co">#&gt; 4 Treatment evaluat~     2 529 - 532                                            </span></a>
-<a class="sourceLine" id="cb16-15" title="15"><span class="co">#&gt; 5 0                      1 533                                                  </span></a>
-<a class="sourceLine" id="cb16-16" title="16"><span class="co">#&gt; 6 Trage                  1 520                                                  </span></a>
-<a class="sourceLine" id="cb16-17" title="17"><span class="co">#&gt; 7 Treatment              1 532                                                  </span></a>
-<a class="sourceLine" id="cb16-18" title="18"><span class="co">#&gt; 8 Triaga                 1 522                                                  </span></a>
-<a class="sourceLine" id="cb16-19" title="19"><span class="co">#&gt; 9 registration           1 510</span></a></code></pre></div>
+<a class="sourceLine" id="cb16-9" title="9"><span class="co">#&gt;   activity              n case_ids                                         </span></a>
+<a class="sourceLine" id="cb16-10" title="10"><span class="co">#&gt;   &lt;chr&gt;             &lt;int&gt; &lt;chr&gt;                                            </span></a>
+<a class="sourceLine" id="cb16-11" title="11"><span class="co">#&gt; 1 Triage               11 510 - 512 - 517 - 521 - 524 - 525 - 526 - 527 - ~</span></a>
+<a class="sourceLine" id="cb16-12" title="12"><span class="co">#&gt; 2 Registration          9 512 - 518 - 518 - 518 - 521 - 522 - 527 - 528 - ~</span></a>
+<a class="sourceLine" id="cb16-13" title="13"><span class="co">#&gt; 3 Clinical exam         5 512 - 510 - 527 - 528 - 512                      </span></a>
+<a class="sourceLine" id="cb16-14" title="14"><span class="co">#&gt; 4 Treatment evalua~     2 529 - 532                                        </span></a>
+<a class="sourceLine" id="cb16-15" title="15"><span class="co">#&gt; 5 0                     1 533                                              </span></a>
+<a class="sourceLine" id="cb16-16" title="16"><span class="co">#&gt; 6 Trage                 1 520                                              </span></a>
+<a class="sourceLine" id="cb16-17" title="17"><span class="co">#&gt; 7 Treatment             1 532                                              </span></a>
+<a class="sourceLine" id="cb16-18" title="18"><span class="co">#&gt; 8 Triaga                1 522                                              </span></a>
+<a class="sourceLine" id="cb16-19" title="19"><span class="co">#&gt; 9 registration          1 510</span></a></code></pre></div>
 </div>
 <div id="detect-incorrect-activity-names" class="section level3">
 <h3>Detect Incorrect Activity Names</h3>
@@ -708,111 +712,110 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb17-6" title="6"><span class="co">#&gt; registration - Trage - Triaga - 0</span></a>
 <a class="sourceLine" id="cb17-7" title="7"><span class="co">#&gt; Given this information, 4 of 53 (7.55%) rows in the activity log are incorrect. These are the following:</span></a>
 <a class="sourceLine" id="cb17-8" title="8"><span class="co">#&gt; # A tibble: 4 x 7</span></a>
-<a class="sourceLine" id="cb17-9" title="9"><span class="co">#&gt;   patient_visit_nr activity originator start               complete           </span></a>
-<a class="sourceLine" id="cb17-10" title="10"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;              &lt;dttm&gt;             </span></a>
-<a class="sourceLine" id="cb17-11" title="11"><span class="co">#&gt; 1              510 registr~ Clerk 9    2017-11-20 10:18:17 2017-11-20 10:20:06</span></a>
-<a class="sourceLine" id="cb17-12" title="12"><span class="co">#&gt; 2              520 Trage    Nurse 17   2017-11-21 13:43:16 2017-11-21 13:39:00</span></a>
-<a class="sourceLine" id="cb17-13" title="13"><span class="co">#&gt; 3              522 Triaga   Nurse 5    2017-11-21 15:15:25 2017-11-21 15:18:04</span></a>
-<a class="sourceLine" id="cb17-14" title="14"><span class="co">#&gt; 4              533 0        &lt;NA&gt;       2017-11-22 18:35:00 2017-11-22 18:37:00</span></a>
-<a class="sourceLine" id="cb17-15" title="15"><span class="co">#&gt; # ... with 2 more variables: triagecode &lt;dbl&gt;, specialization &lt;chr&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb17-9" title="9"><span class="co">#&gt;   patient_visit_nr activity originator start              </span></a>
+<a class="sourceLine" id="cb17-10" title="10"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;             </span></a>
+<a class="sourceLine" id="cb17-11" title="11"><span class="co">#&gt; 1              510 registr~ Clerk 9    2017-11-20 10:18:17</span></a>
+<a class="sourceLine" id="cb17-12" title="12"><span class="co">#&gt; 2              520 Trage    Nurse 17   2017-11-21 13:43:16</span></a>
+<a class="sourceLine" id="cb17-13" title="13"><span class="co">#&gt; 3              522 Triaga   Nurse 5    2017-11-21 15:15:25</span></a>
+<a class="sourceLine" id="cb17-14" title="14"><span class="co">#&gt; 4              533 0        &lt;NA&gt;       2017-11-22 18:35:00</span></a>
+<a class="sourceLine" id="cb17-15" title="15"><span class="co">#&gt; # ... with 3 more variables: complete &lt;dttm&gt;, triagecode &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb17-16" title="16"><span class="co">#&gt; #   specialization &lt;chr&gt;</span></a></code></pre></div>
 </div>
 <div id="detect-missing-values" class="section level3">
 <h3>Detect Missing Values</h3>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">hospital <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb18-2" title="2"><span class="st">  </span><span class="kw">detect_missing_values</span>(<span class="dt">column =</span> <span class="st">&quot;activity&quot;</span>)</a>
-<a class="sourceLine" id="cb18-3" title="3"><span class="co">#&gt; Selected level of aggregation: overview </span></a>
-<a class="sourceLine" id="cb18-4" title="4"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb18-5" title="5"><span class="co">#&gt; Warning in detect_missing_values.activitylog(., column = &quot;activity&quot;): Ignoring</span></a>
-<a class="sourceLine" id="cb18-6" title="6"><span class="co">#&gt; provided column argument at overview level.</span></a>
-<a class="sourceLine" id="cb18-7" title="7"><span class="co">#&gt; *** OUTPUT *** </span></a>
-<a class="sourceLine" id="cb18-8" title="8"><span class="co">#&gt; Absolute number of missing values per column: </span></a>
-<a class="sourceLine" id="cb18-9" title="9"><span class="co">#&gt;                   </span></a>
-<a class="sourceLine" id="cb18-10" title="10"><span class="co">#&gt; patient_visit_nr 0</span></a>
-<a class="sourceLine" id="cb18-11" title="11"><span class="co">#&gt; activity         0</span></a>
-<a class="sourceLine" id="cb18-12" title="12"><span class="co">#&gt; originator       2</span></a>
-<a class="sourceLine" id="cb18-13" title="13"><span class="co">#&gt; start            1</span></a>
-<a class="sourceLine" id="cb18-14" title="14"><span class="co">#&gt; complete         0</span></a>
-<a class="sourceLine" id="cb18-15" title="15"><span class="co">#&gt; triagecode       1</span></a>
-<a class="sourceLine" id="cb18-16" title="16"><span class="co">#&gt; specialization   0</span></a>
-<a class="sourceLine" id="cb18-17" title="17"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb18-18" title="18"><span class="co">#&gt; Relative number of missing values per column (expressed as percentage): </span></a>
-<a class="sourceLine" id="cb18-19" title="19"><span class="co">#&gt;                          </span></a>
-<a class="sourceLine" id="cb18-20" title="20"><span class="co">#&gt; patient_visit_nr 0.000000</span></a>
-<a class="sourceLine" id="cb18-21" title="21"><span class="co">#&gt; activity         0.000000</span></a>
-<a class="sourceLine" id="cb18-22" title="22"><span class="co">#&gt; originator       3.773585</span></a>
-<a class="sourceLine" id="cb18-23" title="23"><span class="co">#&gt; start            1.886792</span></a>
-<a class="sourceLine" id="cb18-24" title="24"><span class="co">#&gt; complete         0.000000</span></a>
-<a class="sourceLine" id="cb18-25" title="25"><span class="co">#&gt; triagecode       1.886792</span></a>
-<a class="sourceLine" id="cb18-26" title="26"><span class="co">#&gt; specialization   0.000000</span></a>
-<a class="sourceLine" id="cb18-27" title="27"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb18-28" title="28"><span class="co">#&gt; Overview of activity log rows which are incomplete:</span></a>
-<a class="sourceLine" id="cb18-29" title="29"><span class="co">#&gt; # A tibble: 4 x 7</span></a>
-<a class="sourceLine" id="cb18-30" title="30"><span class="co">#&gt;   patient_visit_nr activity originator start               complete           </span></a>
-<a class="sourceLine" id="cb18-31" title="31"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;              &lt;dttm&gt;             </span></a>
-<a class="sourceLine" id="cb18-32" title="32"><span class="co">#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01 2017-11-20 11:36:09</span></a>
-<a class="sourceLine" id="cb18-33" title="33"><span class="co">#&gt; 2              533 0        &lt;NA&gt;       2017-11-22 18:35:00 2017-11-22 18:37:00</span></a>
-<a class="sourceLine" id="cb18-34" title="34"><span class="co">#&gt; 3              534 Registr~ &lt;NA&gt;       2017-11-22 18:35:00 2017-11-22 18:37:00</span></a>
-<a class="sourceLine" id="cb18-35" title="35"><span class="co">#&gt; 4              512 Clinica~ Doctor 7   NA                  2017-11-20 11:33:57</span></a>
-<a class="sourceLine" id="cb18-36" title="36"><span class="co">#&gt; # ... with 2 more variables: triagecode &lt;dbl&gt;, specialization &lt;chr&gt;</span></a>
-<a class="sourceLine" id="cb18-37" title="37"><span class="co">## column heeft hier geen zin?!</span></a></code></pre></div>
+<a class="sourceLine" id="cb18-3" title="3"><span class="co">#&gt; Selected level of aggregation:overview</span></a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="co">#&gt; Warning in detect_missing_values.activitylog(., column = &quot;activity&quot;):</span></a>
+<a class="sourceLine" id="cb18-5" title="5"><span class="co">#&gt; Ignoring provided column argument at overview level.</span></a>
+<a class="sourceLine" id="cb18-6" title="6"><span class="co">#&gt; *** OUTPUT ***</span></a>
+<a class="sourceLine" id="cb18-7" title="7"><span class="co">#&gt; Absolute number of missing values per column:</span></a>
+<a class="sourceLine" id="cb18-8" title="8"><span class="co">#&gt;                   </span></a>
+<a class="sourceLine" id="cb18-9" title="9"><span class="co">#&gt; patient_visit_nr 0</span></a>
+<a class="sourceLine" id="cb18-10" title="10"><span class="co">#&gt; activity         0</span></a>
+<a class="sourceLine" id="cb18-11" title="11"><span class="co">#&gt; originator       2</span></a>
+<a class="sourceLine" id="cb18-12" title="12"><span class="co">#&gt; start            1</span></a>
+<a class="sourceLine" id="cb18-13" title="13"><span class="co">#&gt; complete         0</span></a>
+<a class="sourceLine" id="cb18-14" title="14"><span class="co">#&gt; triagecode       1</span></a>
+<a class="sourceLine" id="cb18-15" title="15"><span class="co">#&gt; specialization   0</span></a>
+<a class="sourceLine" id="cb18-16" title="16"><span class="co">#&gt; Relative number of missing values per column (expressed as percentage):</span></a>
+<a class="sourceLine" id="cb18-17" title="17"><span class="co">#&gt;                          </span></a>
+<a class="sourceLine" id="cb18-18" title="18"><span class="co">#&gt; patient_visit_nr 0.000000</span></a>
+<a class="sourceLine" id="cb18-19" title="19"><span class="co">#&gt; activity         0.000000</span></a>
+<a class="sourceLine" id="cb18-20" title="20"><span class="co">#&gt; originator       3.773585</span></a>
+<a class="sourceLine" id="cb18-21" title="21"><span class="co">#&gt; start            1.886792</span></a>
+<a class="sourceLine" id="cb18-22" title="22"><span class="co">#&gt; complete         0.000000</span></a>
+<a class="sourceLine" id="cb18-23" title="23"><span class="co">#&gt; triagecode       1.886792</span></a>
+<a class="sourceLine" id="cb18-24" title="24"><span class="co">#&gt; specialization   0.000000</span></a>
+<a class="sourceLine" id="cb18-25" title="25"><span class="co">#&gt; Overview of activity log rows which are incomplete:</span></a>
+<a class="sourceLine" id="cb18-26" title="26"><span class="co">#&gt; # A tibble: 4 x 7</span></a>
+<a class="sourceLine" id="cb18-27" title="27"><span class="co">#&gt;   patient_visit_nr activity originator start              </span></a>
+<a class="sourceLine" id="cb18-28" title="28"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;             </span></a>
+<a class="sourceLine" id="cb18-29" title="29"><span class="co">#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01</span></a>
+<a class="sourceLine" id="cb18-30" title="30"><span class="co">#&gt; 2              533 0        &lt;NA&gt;       2017-11-22 18:35:00</span></a>
+<a class="sourceLine" id="cb18-31" title="31"><span class="co">#&gt; 3              534 Registr~ &lt;NA&gt;       2017-11-22 18:35:00</span></a>
+<a class="sourceLine" id="cb18-32" title="32"><span class="co">#&gt; 4              512 Clinica~ Doctor 7   NA                 </span></a>
+<a class="sourceLine" id="cb18-33" title="33"><span class="co">#&gt; # ... with 3 more variables: complete &lt;dttm&gt;, triagecode &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb18-34" title="34"><span class="co">#&gt; #   specialization &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb18-35" title="35"><span class="co">## column heeft hier geen zin?!</span></a></code></pre></div>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">hospital <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb19-2" title="2"><span class="st">  </span><span class="kw">detect_missing_values</span>(<span class="dt">level_of_aggregation =</span> <span class="st">&quot;activity&quot;</span>)</a>
-<a class="sourceLine" id="cb19-3" title="3"><span class="co">#&gt; Selected level of aggregation: activity </span></a>
-<a class="sourceLine" id="cb19-4" title="4"><span class="co">#&gt;  </span></a>
-<a class="sourceLine" id="cb19-5" title="5"><span class="co">#&gt; *** OUTPUT *** </span></a>
-<a class="sourceLine" id="cb19-6" title="6"><span class="co">#&gt; Absolute number of missing values per column (per activity): </span></a>
-<a class="sourceLine" id="cb19-7" title="7"><span class="co">#&gt; # A tibble: 9 x 7</span></a>
-<a class="sourceLine" id="cb19-8" title="8"><span class="co">#&gt;   activity  patient_visit_nr originator start complete triagecode specialization</span></a>
-<a class="sourceLine" id="cb19-9" title="9"><span class="co">#&gt;   &lt;chr&gt;                &lt;int&gt;      &lt;int&gt; &lt;int&gt;    &lt;int&gt;      &lt;int&gt;          &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb19-10" title="10"><span class="co">#&gt; 1 0                        0          1     0        0          0              0</span></a>
-<a class="sourceLine" id="cb19-11" title="11"><span class="co">#&gt; 2 Clinical~                0          0     1        0          1              0</span></a>
-<a class="sourceLine" id="cb19-12" title="12"><span class="co">#&gt; 3 Registra~                0          1     0        0          0              0</span></a>
-<a class="sourceLine" id="cb19-13" title="13"><span class="co">#&gt; 4 Trage                    0          0     0        0          0              0</span></a>
-<a class="sourceLine" id="cb19-14" title="14"><span class="co">#&gt; 5 Treatment                0          0     0        0          0              0</span></a>
-<a class="sourceLine" id="cb19-15" title="15"><span class="co">#&gt; 6 Treatmen~                0          0     0        0          0              0</span></a>
-<a class="sourceLine" id="cb19-16" title="16"><span class="co">#&gt; 7 Triaga                   0          0     0        0          0              0</span></a>
-<a class="sourceLine" id="cb19-17" title="17"><span class="co">#&gt; 8 Triage                   0          0     0        0          0              0</span></a>
-<a class="sourceLine" id="cb19-18" title="18"><span class="co">#&gt; 9 registra~                0          0     0        0          0              0</span></a>
-<a class="sourceLine" id="cb19-19" title="19"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb19-20" title="20"><span class="co">#&gt; Relative number of missing values per column (per activity, expressed as percentage): </span></a>
-<a class="sourceLine" id="cb19-21" title="21"><span class="co">#&gt; # A tibble: 9 x 7</span></a>
-<a class="sourceLine" id="cb19-22" title="22"><span class="co">#&gt;   activity  patient_visit_nr originator start complete triagecode specialization</span></a>
-<a class="sourceLine" id="cb19-23" title="23"><span class="co">#&gt;   &lt;chr&gt;                &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;          &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb19-24" title="24"><span class="co">#&gt; 1 0                        0     1      0            0      0                  0</span></a>
-<a class="sourceLine" id="cb19-25" title="25"><span class="co">#&gt; 2 Clinical~                0     0      0.111        0      0.111              0</span></a>
-<a class="sourceLine" id="cb19-26" title="26"><span class="co">#&gt; 3 Registra~                0     0.0714 0            0      0                  0</span></a>
-<a class="sourceLine" id="cb19-27" title="27"><span class="co">#&gt; 4 Trage                    0     0      0            0      0                  0</span></a>
-<a class="sourceLine" id="cb19-28" title="28"><span class="co">#&gt; 5 Treatment                0     0      0            0      0                  0</span></a>
-<a class="sourceLine" id="cb19-29" title="29"><span class="co">#&gt; 6 Treatmen~                0     0      0            0      0                  0</span></a>
-<a class="sourceLine" id="cb19-30" title="30"><span class="co">#&gt; 7 Triaga                   0     0      0            0      0                  0</span></a>
-<a class="sourceLine" id="cb19-31" title="31"><span class="co">#&gt; 8 Triage                   0     0      0            0      0                  0</span></a>
-<a class="sourceLine" id="cb19-32" title="32"><span class="co">#&gt; 9 registra~                0     0      0            0      0                  0</span></a>
-<a class="sourceLine" id="cb19-33" title="33"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb19-34" title="34"><span class="co">#&gt; Overview of activity log rows which are incomplete:</span></a>
-<a class="sourceLine" id="cb19-35" title="35"><span class="co">#&gt; # A tibble: 4 x 7</span></a>
-<a class="sourceLine" id="cb19-36" title="36"><span class="co">#&gt;   patient_visit_nr activity originator start               complete           </span></a>
-<a class="sourceLine" id="cb19-37" title="37"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;              &lt;dttm&gt;             </span></a>
-<a class="sourceLine" id="cb19-38" title="38"><span class="co">#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01 2017-11-20 11:36:09</span></a>
-<a class="sourceLine" id="cb19-39" title="39"><span class="co">#&gt; 2              533 0        &lt;NA&gt;       2017-11-22 18:35:00 2017-11-22 18:37:00</span></a>
-<a class="sourceLine" id="cb19-40" title="40"><span class="co">#&gt; 3              534 Registr~ &lt;NA&gt;       2017-11-22 18:35:00 2017-11-22 18:37:00</span></a>
-<a class="sourceLine" id="cb19-41" title="41"><span class="co">#&gt; 4              512 Clinica~ Doctor 7   NA                  2017-11-20 11:33:57</span></a>
-<a class="sourceLine" id="cb19-42" title="42"><span class="co">#&gt; # ... with 2 more variables: triagecode &lt;dbl&gt;, specialization &lt;chr&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb19-3" title="3"><span class="co">#&gt; Selected level of aggregation:activity</span></a>
+<a class="sourceLine" id="cb19-4" title="4"><span class="co">#&gt; *** OUTPUT ***</span></a>
+<a class="sourceLine" id="cb19-5" title="5"><span class="co">#&gt; Absolute number of missing values per column (per activity):</span></a>
+<a class="sourceLine" id="cb19-6" title="6"><span class="co">#&gt; # A tibble: 9 x 7</span></a>
+<a class="sourceLine" id="cb19-7" title="7"><span class="co">#&gt;   activity patient_visit_nr originator start complete triagecode</span></a>
+<a class="sourceLine" id="cb19-8" title="8"><span class="co">#&gt;   &lt;chr&gt;               &lt;int&gt;      &lt;int&gt; &lt;int&gt;    &lt;int&gt;      &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb19-9" title="9"><span class="co">#&gt; 1 0                       0          1     0        0          0</span></a>
+<a class="sourceLine" id="cb19-10" title="10"><span class="co">#&gt; 2 Clinica~                0          0     1        0          1</span></a>
+<a class="sourceLine" id="cb19-11" title="11"><span class="co">#&gt; 3 Registr~                0          1     0        0          0</span></a>
+<a class="sourceLine" id="cb19-12" title="12"><span class="co">#&gt; 4 Trage                   0          0     0        0          0</span></a>
+<a class="sourceLine" id="cb19-13" title="13"><span class="co">#&gt; 5 Treatme~                0          0     0        0          0</span></a>
+<a class="sourceLine" id="cb19-14" title="14"><span class="co">#&gt; 6 Treatme~                0          0     0        0          0</span></a>
+<a class="sourceLine" id="cb19-15" title="15"><span class="co">#&gt; 7 Triaga                  0          0     0        0          0</span></a>
+<a class="sourceLine" id="cb19-16" title="16"><span class="co">#&gt; 8 Triage                  0          0     0        0          0</span></a>
+<a class="sourceLine" id="cb19-17" title="17"><span class="co">#&gt; 9 registr~                0          0     0        0          0</span></a>
+<a class="sourceLine" id="cb19-18" title="18"><span class="co">#&gt; # ... with 1 more variable: specialization &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb19-19" title="19"><span class="co">#&gt; Relative number of missing values per column (per activity, expressed as percentage):</span></a>
+<a class="sourceLine" id="cb19-20" title="20"><span class="co">#&gt; # A tibble: 9 x 7</span></a>
+<a class="sourceLine" id="cb19-21" title="21"><span class="co">#&gt;   activity patient_visit_nr originator start complete triagecode</span></a>
+<a class="sourceLine" id="cb19-22" title="22"><span class="co">#&gt;   &lt;chr&gt;               &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb19-23" title="23"><span class="co">#&gt; 1 0                       0     1      0            0      0    </span></a>
+<a class="sourceLine" id="cb19-24" title="24"><span class="co">#&gt; 2 Clinica~                0     0      0.111        0      0.111</span></a>
+<a class="sourceLine" id="cb19-25" title="25"><span class="co">#&gt; 3 Registr~                0     0.0714 0            0      0    </span></a>
+<a class="sourceLine" id="cb19-26" title="26"><span class="co">#&gt; 4 Trage                   0     0      0            0      0    </span></a>
+<a class="sourceLine" id="cb19-27" title="27"><span class="co">#&gt; 5 Treatme~                0     0      0            0      0    </span></a>
+<a class="sourceLine" id="cb19-28" title="28"><span class="co">#&gt; 6 Treatme~                0     0      0            0      0    </span></a>
+<a class="sourceLine" id="cb19-29" title="29"><span class="co">#&gt; 7 Triaga                  0     0      0            0      0    </span></a>
+<a class="sourceLine" id="cb19-30" title="30"><span class="co">#&gt; 8 Triage                  0     0      0            0      0    </span></a>
+<a class="sourceLine" id="cb19-31" title="31"><span class="co">#&gt; 9 registr~                0     0      0            0      0    </span></a>
+<a class="sourceLine" id="cb19-32" title="32"><span class="co">#&gt; # ... with 1 more variable: specialization &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb19-33" title="33"><span class="co">#&gt; Overview of activity log rows which are incomplete:</span></a>
+<a class="sourceLine" id="cb19-34" title="34"><span class="co">#&gt; # A tibble: 4 x 7</span></a>
+<a class="sourceLine" id="cb19-35" title="35"><span class="co">#&gt;   patient_visit_nr activity originator start              </span></a>
+<a class="sourceLine" id="cb19-36" title="36"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;             </span></a>
+<a class="sourceLine" id="cb19-37" title="37"><span class="co">#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01</span></a>
+<a class="sourceLine" id="cb19-38" title="38"><span class="co">#&gt; 2              533 0        &lt;NA&gt;       2017-11-22 18:35:00</span></a>
+<a class="sourceLine" id="cb19-39" title="39"><span class="co">#&gt; 3              534 Registr~ &lt;NA&gt;       2017-11-22 18:35:00</span></a>
+<a class="sourceLine" id="cb19-40" title="40"><span class="co">#&gt; 4              512 Clinica~ Doctor 7   NA                 </span></a>
+<a class="sourceLine" id="cb19-41" title="41"><span class="co">#&gt; # ... with 3 more variables: complete &lt;dttm&gt;, triagecode &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb19-42" title="42"><span class="co">#&gt; #   specialization &lt;chr&gt;</span></a></code></pre></div>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">hospital <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb20-2" title="2"><span class="st">  </span><span class="kw">detect_missing_values</span>(</a>
 <a class="sourceLine" id="cb20-3" title="3">  <span class="dt">level_of_aggregation =</span> <span class="st">&quot;column&quot;</span>,</a>
 <a class="sourceLine" id="cb20-4" title="4">  <span class="dt">column =</span> <span class="st">&quot;triagecode&quot;</span>)</a>
-<a class="sourceLine" id="cb20-5" title="5"><span class="co">#&gt; Selected level of aggregation: column </span></a>
-<a class="sourceLine" id="cb20-6" title="6"><span class="co">#&gt;  </span></a>
-<a class="sourceLine" id="cb20-7" title="7"><span class="co">#&gt; *** OUTPUT *** </span></a>
-<a class="sourceLine" id="cb20-8" title="8"><span class="co">#&gt; Absolute number of missing values in column triagecode : 1 </span></a>
-<a class="sourceLine" id="cb20-9" title="9"><span class="co">#&gt; Relative number of missing values in column triagecode (expressed as percentage): 1.886792 </span></a>
-<a class="sourceLine" id="cb20-10" title="10"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb20-11" title="11"><span class="co">#&gt; Overview of activity log rows in which triagecode is missing:</span></a>
-<a class="sourceLine" id="cb20-12" title="12"><span class="co">#&gt; # A tibble: 1 x 7</span></a>
-<a class="sourceLine" id="cb20-13" title="13"><span class="co">#&gt;   patient_visit_nr activity originator start               complete           </span></a>
-<a class="sourceLine" id="cb20-14" title="14"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;              &lt;dttm&gt;             </span></a>
-<a class="sourceLine" id="cb20-15" title="15"><span class="co">#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01 2017-11-20 11:36:09</span></a>
-<a class="sourceLine" id="cb20-16" title="16"><span class="co">#&gt; # ... with 2 more variables: triagecode &lt;dbl&gt;, specialization &lt;chr&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb20-5" title="5"><span class="co">#&gt; Selected level of aggregation:column</span></a>
+<a class="sourceLine" id="cb20-6" title="6"><span class="co">#&gt; *** OUTPUT ***</span></a>
+<a class="sourceLine" id="cb20-7" title="7"><span class="co">#&gt; Absolute number of missing values in columntriagecode:1</span></a>
+<a class="sourceLine" id="cb20-8" title="8"><span class="co">#&gt; Relative number of missing values in columntriagecode(expressed as percentage):1.88679245283019</span></a>
+<a class="sourceLine" id="cb20-9" title="9"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb20-10" title="10"><span class="co">#&gt; Overview of activity log rows in whichtriagecodeis missing:</span></a>
+<a class="sourceLine" id="cb20-11" title="11"><span class="co">#&gt; # A tibble: 1 x 7</span></a>
+<a class="sourceLine" id="cb20-12" title="12"><span class="co">#&gt;   patient_visit_nr activity originator start              </span></a>
+<a class="sourceLine" id="cb20-13" title="13"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;             </span></a>
+<a class="sourceLine" id="cb20-14" title="14"><span class="co">#&gt; 1              510 Clinica~ Doctor 7   2017-11-20 11:35:01</span></a>
+<a class="sourceLine" id="cb20-15" title="15"><span class="co">#&gt; # ... with 3 more variables: complete &lt;dttm&gt;, triagecode &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb20-16" title="16"><span class="co">#&gt; #   specialization &lt;chr&gt;</span></a></code></pre></div>
 </div>
 <div id="detect-multiregistration" class="section level3">
 <h3>Detect Multiregistration</h3>
@@ -826,18 +829,19 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb21-8" title="8"><span class="co">#&gt; For the following rows in the activity log, multi-registration is detected:</span></a>
 <a class="sourceLine" id="cb21-9" title="9"><span class="co">#&gt; # A tibble: 9 x 7</span></a>
 <a class="sourceLine" id="cb21-10" title="10"><span class="co">#&gt; # Groups:   originator [4]</span></a>
-<a class="sourceLine" id="cb21-11" title="11"><span class="co">#&gt;   patient_visit_nr activity originator start               complete           </span></a>
-<a class="sourceLine" id="cb21-12" title="12"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;              &lt;dttm&gt;             </span></a>
-<a class="sourceLine" id="cb21-13" title="13"><span class="co">#&gt; 1              512 Clinica~ Doctor 7   2017-11-20 11:27:12 2017-11-20 11:33:57</span></a>
-<a class="sourceLine" id="cb21-14" title="14"><span class="co">#&gt; 2              512 Clinica~ Doctor 7   NA                  2017-11-20 11:33:57</span></a>
-<a class="sourceLine" id="cb21-15" title="15"><span class="co">#&gt; 3              524 Triage   Nurse 5    2017-11-21 17:04:03 2017-11-21 17:06:05</span></a>
-<a class="sourceLine" id="cb21-16" title="16"><span class="co">#&gt; 4              525 Triage   Nurse 5    2017-11-21 17:04:13 2017-11-21 17:06:08</span></a>
-<a class="sourceLine" id="cb21-17" title="17"><span class="co">#&gt; 5              526 Triage   Nurse 5    2017-11-21 17:04:15 2017-11-21 17:06:10</span></a>
-<a class="sourceLine" id="cb21-18" title="18"><span class="co">#&gt; 6              536 Triage   Nurse 27   2017-11-22 15:15:39 2017-11-22 15:25:01</span></a>
-<a class="sourceLine" id="cb21-19" title="19"><span class="co">#&gt; 7              536 Treatme~ Nurse 27   2017-11-22 15:15:41 2017-11-22 15:25:03</span></a>
-<a class="sourceLine" id="cb21-20" title="20"><span class="co">#&gt; 8              533 0        &lt;NA&gt;       2017-11-22 18:35:00 2017-11-22 18:37:00</span></a>
-<a class="sourceLine" id="cb21-21" title="21"><span class="co">#&gt; 9              534 Registr~ &lt;NA&gt;       2017-11-22 18:35:00 2017-11-22 18:37:00</span></a>
-<a class="sourceLine" id="cb21-22" title="22"><span class="co">#&gt; # ... with 2 more variables: triagecode &lt;dbl&gt;, specialization &lt;chr&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb21-11" title="11"><span class="co">#&gt;   patient_visit_nr activity originator start              </span></a>
+<a class="sourceLine" id="cb21-12" title="12"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;             </span></a>
+<a class="sourceLine" id="cb21-13" title="13"><span class="co">#&gt; 1              512 Clinica~ Doctor 7   2017-11-20 11:27:12</span></a>
+<a class="sourceLine" id="cb21-14" title="14"><span class="co">#&gt; 2              512 Clinica~ Doctor 7   NA                 </span></a>
+<a class="sourceLine" id="cb21-15" title="15"><span class="co">#&gt; 3              524 Triage   Nurse 5    2017-11-21 17:04:03</span></a>
+<a class="sourceLine" id="cb21-16" title="16"><span class="co">#&gt; 4              525 Triage   Nurse 5    2017-11-21 17:04:13</span></a>
+<a class="sourceLine" id="cb21-17" title="17"><span class="co">#&gt; 5              526 Triage   Nurse 5    2017-11-21 17:04:15</span></a>
+<a class="sourceLine" id="cb21-18" title="18"><span class="co">#&gt; 6              536 Triage   Nurse 27   2017-11-22 15:15:39</span></a>
+<a class="sourceLine" id="cb21-19" title="19"><span class="co">#&gt; 7              536 Treatme~ Nurse 27   2017-11-22 15:15:41</span></a>
+<a class="sourceLine" id="cb21-20" title="20"><span class="co">#&gt; 8              533 0        &lt;NA&gt;       2017-11-22 18:35:00</span></a>
+<a class="sourceLine" id="cb21-21" title="21"><span class="co">#&gt; 9              534 Registr~ &lt;NA&gt;       2017-11-22 18:35:00</span></a>
+<a class="sourceLine" id="cb21-22" title="22"><span class="co">#&gt; # ... with 3 more variables: complete &lt;dttm&gt;, triagecode &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb21-23" title="23"><span class="co">#&gt; #   specialization &lt;chr&gt;</span></a></code></pre></div>
 </div>
 <div id="detect-overlaps" class="section level3">
 <h3>Detect Overlaps</h3>
@@ -896,15 +900,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb25-13" title="13"><span class="co">#&gt; 3 Trage         negative duration     1</span></a>
 <a class="sourceLine" id="cb25-14" title="14"><span class="co">#&gt; Anomalies are found in the following rows:</span></a>
 <a class="sourceLine" id="cb25-15" title="15"><span class="co">#&gt; # A tibble: 5 x 9</span></a>
-<a class="sourceLine" id="cb25-16" title="16"><span class="co">#&gt;   patient_visit_nr activity originator start               complete           </span></a>
-<a class="sourceLine" id="cb25-17" title="17"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;              &lt;dttm&gt;             </span></a>
-<a class="sourceLine" id="cb25-18" title="18"><span class="co">#&gt; 1              518 Registr~ Clerk 12   2017-11-21 11:45:16 2017-11-21 11:22:16</span></a>
-<a class="sourceLine" id="cb25-19" title="19"><span class="co">#&gt; 2              518 Registr~ Clerk 6    2017-11-21 11:45:16 2017-11-21 11:22:16</span></a>
-<a class="sourceLine" id="cb25-20" title="20"><span class="co">#&gt; 3              518 Registr~ Clerk 9    2017-11-21 11:45:16 2017-11-21 11:22:16</span></a>
-<a class="sourceLine" id="cb25-21" title="21"><span class="co">#&gt; 4              520 Trage    Nurse 17   2017-11-21 13:43:16 2017-11-21 13:39:00</span></a>
-<a class="sourceLine" id="cb25-22" title="22"><span class="co">#&gt; 5              528 Clinica~ Doctor 1   2017-11-21 19:00:00 2017-11-21 19:00:00</span></a>
-<a class="sourceLine" id="cb25-23" title="23"><span class="co">#&gt; # ... with 4 more variables: triagecode &lt;dbl&gt;, specialization &lt;chr&gt;,</span></a>
-<a class="sourceLine" id="cb25-24" title="24"><span class="co">#&gt; #   duration &lt;dbl&gt;, type &lt;chr&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb25-16" title="16"><span class="co">#&gt;   patient_visit_nr activity originator start              </span></a>
+<a class="sourceLine" id="cb25-17" title="17"><span class="co">#&gt;              &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dttm&gt;             </span></a>
+<a class="sourceLine" id="cb25-18" title="18"><span class="co">#&gt; 1              518 Registr~ Clerk 12   2017-11-21 11:45:16</span></a>
+<a class="sourceLine" id="cb25-19" title="19"><span class="co">#&gt; 2              518 Registr~ Clerk 6    2017-11-21 11:45:16</span></a>
+<a class="sourceLine" id="cb25-20" title="20"><span class="co">#&gt; 3              518 Registr~ Clerk 9    2017-11-21 11:45:16</span></a>
+<a class="sourceLine" id="cb25-21" title="21"><span class="co">#&gt; 4              520 Trage    Nurse 17   2017-11-21 13:43:16</span></a>
+<a class="sourceLine" id="cb25-22" title="22"><span class="co">#&gt; 5              528 Clinica~ Doctor 1   2017-11-21 19:00:00</span></a>
+<a class="sourceLine" id="cb25-23" title="23"><span class="co">#&gt; # ... with 5 more variables: complete &lt;dttm&gt;, triagecode &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb25-24" title="24"><span class="co">#&gt; #   specialization &lt;chr&gt;, duration &lt;dbl&gt;, type &lt;chr&gt;</span></a></code></pre></div>
 </div>
 <div id="detect-unique-values" class="section level3">
 <h3>Detect Unique Values</h3>

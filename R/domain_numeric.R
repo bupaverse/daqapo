@@ -3,6 +3,7 @@
 #' @param from Minimum of allowed range
 #' @param to Maximum of allowed range
 #' @seealso \code{\link{detect_value_range_violations}}
+#' @return No return value, called for side effects
 #' @export
 #'
 

@@ -4,9 +4,9 @@
 #' @inheritParams detect_activity_frequency_violations
 #' @param antecedent (Vector of) condition(s) which serve as an antecedent (if the condition(s) in antecedent hold, then the condition(s) in consequent should also hold)
 #' @param consequent (Vector of) condition(s) which serve as a consequent (if the condition(s) in antecedent hold, then the condition(s) in consequent should also hold)
-#' @return Information on the degree to which the specified dependencies are respected/violated.
+#' @return activitylog containing the rows of the original activity log for which the dependencies between attributes are violated
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_attribute_dependencies(activitylog = hospital_actlog,
 #'      antecedent = activity == "Registration",

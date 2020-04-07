@@ -19,13 +19,13 @@ detect_related_activities(activitylog, antecedent, consequent, details,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-Information on the presence/absence of related activities.
+Numeric vector containing the case identifiers of cases for which related activities are not present
 }
 \description{
 Function detecting missing related activity registration, i.e. detecting activities that should be registered for a case because another activity is registered for that case
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_related_activities(activitylog = hospital_actlog,
      antecedent = "Treatment evaluation",

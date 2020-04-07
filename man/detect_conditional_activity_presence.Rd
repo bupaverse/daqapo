@@ -20,16 +20,17 @@ detect_conditional_activity_presence(activitylog, condition, activities,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-Information on the degree to which the specified conditional activity presence is respected/violated.
+Numeric vector containing the case identifiers of cases for which the specified conditional activity presence is violated
 }
 \description{
 Function detecting violations of conditional activity presence (i.e. an activity/activities that should be present when (a) particular condition(s) hold(s))
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_conditional_activity_presence(activitylog = hospital_actlog,
      condition = specialization == "TRAU",
      activities = "Clinical exam")
 }
+
 }

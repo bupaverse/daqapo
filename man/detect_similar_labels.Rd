@@ -21,13 +21,13 @@ detect_similar_labels(activitylog, column_labels, max_edit_distance = 3,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-A data frame containing, for each label in the column, an overview of similar labels.
+tbl_df providing an overview of similar labels for the indicated column
 }
 \description{
 Function that tries to detect spelling mistakes in a given activity log column
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_similar_labels(activitylog = hospital_actlog,
      column_labels = "activity",

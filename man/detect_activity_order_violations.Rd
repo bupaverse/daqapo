@@ -24,7 +24,7 @@ detect_activity_order_violations(activitylog, activity_order, timestamp,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-Information on the degree to which the specified activity order is respected/violated.
+tbl_df providing an overview of detected activity orders which violate the specified activity order
 }
 \description{
 Function detecting violations in activity order. Having additional or less activity types than those specified in activity_order is no violation, but the activity types present should occur in the specified order, and only once.
@@ -35,7 +35,7 @@ Function detecting violations in activity order. Having additional or less activ
 }}
 
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_activity_order_violations(activitylog = hospital_actlog,
      activity_order = c(

@@ -11,6 +11,9 @@ domain_numeric(from, to)
 
 \item{to}{Maximum of allowed range}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Define allowable range of values
 }

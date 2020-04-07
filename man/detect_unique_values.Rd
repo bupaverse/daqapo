@@ -14,13 +14,13 @@ detect_unique_values(activitylog, column_labels, filter_condition = NULL)
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-A data frame containing the unique (distinct) values (combinations) in the requested column(s).
+activitylog containing the unique (distinct) values (combinations) in the indicated column(s)
 }
 \description{
 Function that lists all distinct combinations of the given columns in the activity log
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_unique_values(activitylog = hospital_actlog,
      column_labels = "activity")

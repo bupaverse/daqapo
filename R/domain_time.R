@@ -5,6 +5,7 @@
 #' @param format Format of to and from (either ymd_hms, dmy_hms, ymd_hm, ymd, dmy, dmy, ...). Both from and to should have the same format.
 #'
 #' @seealso \code{\link{detect_value_range_violations}}
+#' @return No return value, called for side effects
 
 #' @export
 #'

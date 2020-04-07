@@ -4,9 +4,9 @@
 #' @inheritParams detect_activity_frequency_violations
 #' @param antecedent Activity name of the activity that acts as a an antecedent (if antecedent occurs, then consequent should also occur)
 #' @param consequent Activity name of the activity that acts as a an consequent (if antecedent occurs, then consequent should also occur)
-#' @return Information on the presence/absence of related activities.
+#' @return Numeric vector containing the case identifiers of cases for which related activities are not present
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_related_activities(activitylog = hospital_actlog,
 #'      antecedent = "Treatment evaluation",

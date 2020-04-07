@@ -16,13 +16,14 @@ detect_duration_outliers(activitylog, ..., details, filter_condition)
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
+activitylog containing the rows of the original activity log for which activity duration outliers are detected
 Information on the presence of activity duration outliers
 }
 \description{
 Function detecting duration outliers for a particular activity
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_duration_outliers(activitylog = hospital_actlog,
      Treatment = duration_within(bound_sd = 1))

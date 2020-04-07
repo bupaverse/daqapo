@@ -4,14 +4,14 @@
 #' @param condition Condition which serve as an antecedent (if the condition in condition holds, then the activit(y)(ies) in activities should be present.)
 #' @param activities Vector of activity/activities which serve as a consequent (if the condition(s) in condition_vector hold, then the activity/activities in activity_vector should be recorded)
 #' @inheritParams detect_activity_frequency_violations
+#' @return Numeric vector containing the case identifiers of cases for which the specified conditional activity presence is violated
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_conditional_activity_presence(activitylog = hospital_actlog,
 #'      condition = specialization == "TRAU",
 #'      activities = "Clinical exam")
 #' }
-#' @return Information on the degree to which the specified conditional activity presence is respected/violated.
 #'
 #' @export
 

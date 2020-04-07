@@ -17,13 +17,13 @@ detect_activity_frequency_violations(activitylog, ..., details,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-An overview of frequencies of activities
+tbl_df providing an overview of cases for which activities are executed too many times
 }
 \description{
 Function that detects activity frequency anomalies per case
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_activity_frequency_violations(activitylog = hospital_actlog,
      "Registration" = 1, "Clinical exam" = 1)

@@ -1,10 +1,8 @@
-
-
-
 #' Fix problems
 #'
 #' @param detected_problems Output of a detect_ function. Currently supported: detect_resource_inconsistencies.
 #' @param ... Additionals parameters, depending on type of anomalies to fix.
+#' @return No return value, called for side effects
 #'
 #' @export
 fix <- function(detected_problems, ...) {

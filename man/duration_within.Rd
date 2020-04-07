@@ -13,6 +13,9 @@ duration_within(bound_sd = 3, lower_bound = NA, upper_bound = NA)
 
 \item{upper_bound}{Upper bound for activity duration used during outlier detection (expressed in minutes). This means disregarding the sd and bound_sd for upper bound}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Funtion to define bounds on the duration of an activity during detection of duration outliers.
 }

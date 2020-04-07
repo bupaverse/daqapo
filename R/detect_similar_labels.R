@@ -6,9 +6,9 @@
 #' @param max_edit_distance The maximum number of insertions, deletions and substitutions that are allowed to be executed in order for two strings to be considered similar.
 #' @param show_NA A boolean indicating if labels that do not show similarities with others should be shown in the output
 #' @param ignore_capitals A boolean indicating if capitalization should be included or excluded when calculating the edit distance between two strings
-#' @return A data frame containing, for each label in the column, an overview of similar labels.
+#' @return tbl_df providing an overview of similar labels for the indicated column
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_similar_labels(activitylog = hospital_actlog,
 #'      column_labels = "activity",

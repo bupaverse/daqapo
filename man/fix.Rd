@@ -11,6 +11,9 @@ fix(detected_problems, ...)
 
 \item{...}{Additionals parameters, depending on type of anomalies to fix.}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Fix problems
 }

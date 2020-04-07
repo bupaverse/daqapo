@@ -5,9 +5,9 @@
 #' @param ... Named vectors with name of the activity, and value of the threshold.
 #' @param details Boolean indicating wheter details of the results need to be shown
 #' @param filter_condition Condition that is used to extract a subset of the activity log prior to the application of the function
-#' @return An overview of frequencies of activities
+#' @return tbl_df providing an overview of cases for which activities are executed too many times
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_activity_frequency_violations(activitylog = hospital_actlog,
 #'      "Registration" = 1, "Clinical exam" = 1)

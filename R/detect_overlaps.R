@@ -1,12 +1,9 @@
-
-
-
-
 #' Detect overlapping acitivity instances
 #' @inheritParams detect_activity_frequency_violations
 #' @param level_of_aggregation Look for overlapping activity instances within a case or within a resource.
+#' @return grouped_df providing an overview of activities which are performed in parallel by a resource, together with the occurrence frequency of the overlap and the average time overlap in minutes
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_overlaps(activitylog = hospital_actlog)
 #' }

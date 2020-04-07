@@ -6,6 +6,7 @@
 #' @param lower_bound Lower bound for activity duration used during outlier detection (expressed in minutes). This means disregarding the sd and bound_sd for lower bound
 #' @param upper_bound Upper bound for activity duration used during outlier detection (expressed in minutes). This means disregarding the sd and bound_sd for upper bound
 #' @seealso \code{\link{detect_duration_outliers}}
+#' @return No return value, called for side effects
 #' @export
 #'
 duration_within <- function(bound_sd = 3, lower_bound = NA, upper_bound = NA) {

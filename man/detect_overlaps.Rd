@@ -16,11 +16,14 @@ detect_overlaps(activitylog, details, level_of_aggregation,
 
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
+\value{
+grouped_df providing an overview of activities which are performed in parallel by a resource, together with the occurrence frequency of the overlap and the average time overlap in minutes
+}
 \description{
 Detect overlapping acitivity instances
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_overlaps(activitylog = hospital_actlog)
 }

@@ -3,9 +3,9 @@
 #' Function detecting time anomalies, which can refer to activities with negative or zero duration
 #' @inheritParams detect_activity_frequency_violations
 #' @param anomaly_type Type of anomalies that need to be detected (either "negative", "zero" or "both")
-#' @return Information on the presence of time anomalies of the specified anomaly type
+#' @return activitylog containing the rows of the original activity log for which a negative or zero duration is detected, together with the duration value and whether it constitutes a zero or negative duration
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_time_anomalies(activitylog = hospital_actlog)
 #' }

@@ -16,13 +16,13 @@ detect_incomplete_cases(activitylog, activities, details, filter_condition)
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-Information on the presence/absence of incomplete cases.
+tbl_df providing an overview of the traces (i.e. the activities executed for a particular case) in which the specified activities are not present, together with its occurrence frequency and cases having this trace
 }
 \description{
 Function detecting incomplete cases in terms of the activities that need to be recorded for a case. The function only checks the presence of activities, not the completeness of the rows describing the activity executions.
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_incomplete_cases(activitylog = hospital_actlog,
      activities = c("Registration","Triage","Clinical exam","Treatment","Treatment evaluation"))

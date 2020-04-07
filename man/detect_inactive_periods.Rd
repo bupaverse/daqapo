@@ -23,13 +23,13 @@ detect_inactive_periods(activitylog, threshold, type, timestamp,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-Information on the presence of inactive periods.
+tbl_df providing an overview of the start and end of the inactive periods that have been detected, together with the length of the inactive period
 }
 \description{
 Function detecting inactive periods, i.e. periods of time in which no activity executions/arrivals are recorded in the activity log
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_inactive_periods(activitylog = hospital_actlog,threshold = 30)
 }

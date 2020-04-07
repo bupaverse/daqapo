@@ -9,6 +9,9 @@ domain_categorical(allowed)
 \arguments{
 \item{allowed}{Allowed values of categorical column (character or factor)}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Define allowable range of values
 }

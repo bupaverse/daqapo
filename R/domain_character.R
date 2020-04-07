@@ -2,6 +2,7 @@
 #'
 #' @param allowed Allowed values of categorical column (character or factor)
 #' @seealso \code{\link{detect_value_range_violations}}
+#' @return No return value, called for side effects
 #' @export
 #'
 

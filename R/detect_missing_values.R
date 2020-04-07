@@ -10,9 +10,9 @@
 #' @inheritParams detect_activity_frequency_violations
 #' @param level_of_aggregation Level of aggregation at which missing values are identified (either "overview", "column" or "activity)
 #' @param column Column name of the column that needs to be analyzed when the level of aggregation is "column"
-#' @return Information on the absolute and relative number of missing values at the requested level of aggregation
+#' @return activitylog containing the rows of the original activity log which contain a missing value
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_missing_values(activitylog = hospital_actlog)
 #' detect_missing_values(activitylog = hospital_actlog, level_of_aggregation = "activity")

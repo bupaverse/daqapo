@@ -3,9 +3,9 @@
 #' Function that lists all distinct combinations of the given columns in the activity log
 #' @inheritParams detect_activity_frequency_violations
 #' @param column_labels The names of columns in the activity log for which you want to show the different combinations found in the log. If only one column is provided, this results in a list of unique values in that column.
-#' @return A data frame containing the unique (distinct) values (combinations) in the requested column(s).
+#' @return activitylog containing the unique (distinct) values (combinations) in the indicated column(s)
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_unique_values(activitylog = hospital_actlog,
 #'      column_labels = "activity")

@@ -12,7 +12,7 @@ filter_anomalies(activity_log, anomaly_log)
 \item{anomaly_log}{The anomaly log generated from the different DAQAPO tests}
 }
 \value{
-The activity log with anomaly rows filtered out
+activitylog in which the anomaly rows are filtered out
 }
 \description{
 Function that filters detected anomalies from the activity log

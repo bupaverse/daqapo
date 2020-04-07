@@ -14,13 +14,13 @@ detect_case_id_sequence_gaps(activitylog, details, filter_condition)
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-The case IDs that are missing in the sequence.
+data.frame providing an overview of the case identifiers which are expected, but which are not present in the activity log
 }
 \description{
 Function detecting gaps in the sequence of case identifiers
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_case_id_sequence_gaps(activitylog = hospital_actlog)
 }

@@ -19,7 +19,7 @@ detect_missing_values(activitylog, level_of_aggregation, column, details,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-Information on the absolute and relative number of missing values at the requested level of aggregation
+activitylog containing the rows of the original activity log which contain a missing value
 }
 \description{
 Function detecting missing values at different levels of aggregation
@@ -30,7 +30,7 @@ Function detecting missing values at different levels of aggregation
 }
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_missing_values(activitylog = hospital_actlog)
 detect_missing_values(activitylog = hospital_actlog, level_of_aggregation = "activity")

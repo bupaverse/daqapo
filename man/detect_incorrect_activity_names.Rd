@@ -17,13 +17,13 @@ detect_incorrect_activity_names(activitylog, allowed_activities, details,
 \item{filter_condition}{Condition that is used to extract a subset of the activity log prior to the application of the function}
 }
 \value{
-Information on the incorrect activities in the log
+activitylog containing the rows of the original activity log having incorrect activity labels
 }
 \description{
 Function returning the incorrect activity labels in the log as indicated by the user. If details are requested, the entire activity log's rows containing incorrect activities are returned.
 }
 \examples{
-\dontrun{
+\donttest{
 data("hospital_actlog")
 detect_incorrect_activity_names(activitylog = hospital_actlog,
      allowed_activities = c(

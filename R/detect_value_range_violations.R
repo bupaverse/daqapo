@@ -3,9 +3,9 @@
 #' Function detecting violations of the value range, i.e. values outside the range of tolerable values
 #' @inheritParams detect_activity_frequency_violations
 #' @param ... Define domain range using domain_numeric, domain_categorical and/or domain_time for each column
-#' @return Information on the presence of attribute range violations in the specified column
+#' @return activitylog containing the rows of the original activity log for which the provided value range is violated
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("hospital_actlog")
 #' detect_value_range_violations(activitylog = hospital_actlog,
 #'      triagecode = domain_numeric(from = 0, to = 5))

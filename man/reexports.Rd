@@ -33,14 +33,14 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{bupaR}{\code{\link[bupaR]{standardize_lifecycle}}, \code{\link[bupaR]{events_to_activitylog}}, \code{\link[bupaR]{activitylog}}, \code{\link[bupaR]{assign_instance_id}}, \code{\link[bupaR]{convert_timestamps}}, \code{\link[bupaR]{detect_resource_inconsistencies}}, \code{\link[bupaR]{fix_resource_inconsistencies}}}
+  \item{bupaR}{\code{\link[bupaR]{activitylog}}, \code{\link[bupaR]{assign_instance_id}}, \code{\link[bupaR]{convert_timestamps}}, \code{\link[bupaR]{detect_resource_inconsistencies}}, \code{\link[bupaR]{events_to_activitylog}}, \code{\link[bupaR]{fix_resource_inconsistencies}}, \code{\link[bupaR]{standardize_lifecycle}}}
 
   \item{dplyr}{\code{\link[dplyr]{rename}}}
 
-  \item{lubridate}{\code{\link[lubridate]{ymd_hms}}, \code{\link[lubridate]{ymd_hm}}, \code{\link[lubridate]{ymd_h}}, \code{\link[lubridate]{ymd}}, \code{\link[lubridate]{dmy_hms}}, \code{\link[lubridate]{dmy_hm}}, \code{\link[lubridate]{dmy_h}}, \code{\link[lubridate]{dmy}}, \code{\link[lubridate]{mdy_hms}}, \code{\link[lubridate]{mdy_hm}}, \code{\link[lubridate]{mdy_h}}, \code{\link[lubridate]{mdy}}}
+  \item{lubridate}{\code{\link[lubridate:ymd]{dmy}}, \code{\link[lubridate:ymd_hms]{dmy_h}}, \code{\link[lubridate:ymd_hms]{dmy_hm}}, \code{\link[lubridate:ymd_hms]{dmy_hms}}, \code{\link[lubridate:ymd]{mdy}}, \code{\link[lubridate:ymd_hms]{mdy_h}}, \code{\link[lubridate:ymd_hms]{mdy_hm}}, \code{\link[lubridate:ymd_hms]{mdy_hms}}, \code{\link[lubridate]{ymd}}, \code{\link[lubridate:ymd_hms]{ymd_h}}, \code{\link[lubridate:ymd_hms]{ymd_hm}}, \code{\link[lubridate]{ymd_hms}}}
 
-  \item{magrittr}{\code{\link[magrittr]{\%>\%}}}
+  \item{magrittr}{\code{\link[magrittr:pipe]{\%>\%}}}
 
-  \item{readr}{\code{\link[readr]{read_csv}}, \code{\link[readr]{read_csv2}}}
+  \item{readr}{\code{\link[readr:read_delim]{read_csv}}, \code{\link[readr:read_delim]{read_csv2}}}
 }}
 

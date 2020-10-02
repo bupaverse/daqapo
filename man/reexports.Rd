@@ -37,10 +37,10 @@ below to see their documentation.
 
   \item{dplyr}{\code{\link[dplyr]{rename}}}
 
-  \item{lubridate}{\code{\link[lubridate]{dmy}}, \code{\link[lubridate]{dmy_h}}, \code{\link[lubridate]{dmy_hm}}, \code{\link[lubridate]{dmy_hms}}, \code{\link[lubridate]{mdy}}, \code{\link[lubridate]{mdy_h}}, \code{\link[lubridate]{mdy_hm}}, \code{\link[lubridate]{mdy_hms}}, \code{\link[lubridate]{ymd}}, \code{\link[lubridate]{ymd_h}}, \code{\link[lubridate]{ymd_hm}}, \code{\link[lubridate]{ymd_hms}}}
+  \item{lubridate}{\code{\link[lubridate:ymd]{dmy}}, \code{\link[lubridate:ymd_hms]{dmy_h}}, \code{\link[lubridate:ymd_hms]{dmy_hm}}, \code{\link[lubridate:ymd_hms]{dmy_hms}}, \code{\link[lubridate:ymd]{mdy}}, \code{\link[lubridate:ymd_hms]{mdy_h}}, \code{\link[lubridate:ymd_hms]{mdy_hm}}, \code{\link[lubridate:ymd_hms]{mdy_hms}}, \code{\link[lubridate]{ymd}}, \code{\link[lubridate:ymd_hms]{ymd_h}}, \code{\link[lubridate:ymd_hms]{ymd_hm}}, \code{\link[lubridate]{ymd_hms}}}
 
-  \item{magrittr}{\code{\link[magrittr]{\%>\%}}}
+  \item{magrittr}{\code{\link[magrittr:pipe]{\%>\%}}}
 
-  \item{readr}{\code{\link[readr]{read_csv}}, \code{\link[readr]{read_csv2}}}
+  \item{readr}{\code{\link[readr:read_delim]{read_csv}}, \code{\link[readr:read_delim]{read_csv2}}}
 }}
 

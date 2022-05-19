@@ -102,9 +102,9 @@ detect_missing_values.activitylog <- function(activitylog,
 
     message("*** OUTPUT ***")
     message("Absolute number of missing values per column (per activity):")
-    print(activitylog %>% group_by(!!activity_id_(activitylog)) %>% summarise_all(funs(sum(is.na(.)))))
+    print(activitylog %>% group_by(!!activity_id_(activitylog)) %>% summarise_all(list(~sum(is.na(.)))))
     message("Relative number of missing values per column (per activity, expressed as percentage):")
-    print(activitylog %>% group_by(!!activity_id_(activitylog)) %>% summarise_all(funs(sum(is.na(.)) / length(.))))
+    print(activitylog %>% group_by(!!activity_id_(activitylog)) %>% summarise_all(list(~sum(is.na(.)) / length(.))))
 
     if(details == TRUE){
       # Provide overview of incomplete rows

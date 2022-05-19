@@ -12,6 +12,7 @@
 #' }
 #' @seealso \code{\link{domain_categorical}},\code{\link{domain_time}},\code{\link{domain_numeric}}
 #' @importFrom glue glue
+#' @importFrom rlang list2
 #' @export
 #'
 detect_value_range_violations <- function(activitylog, ..., details, filter_condition) {
@@ -39,7 +40,8 @@ detect_value_range_violations.activitylog <- function(activitylog, ... , details
   }
 
 
-  params <- list(...)
+  params <- list2(...)
+  print(params)
 
   classes <- map(params, ~class(.x)[1]) %>% unlist()
   if(any(classes != "value_range")) {

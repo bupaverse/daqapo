@@ -8,6 +8,7 @@
 #' data("hospital_actlog")
 #' detect_case_id_sequence_gaps(activitylog = hospital_actlog)
 #' }
+#' @importFrom tibble tibble
 #' @export
 
 detect_case_id_sequence_gaps <- function(activitylog, details, filter_condition) {
@@ -60,13 +61,16 @@ detect_case_id_sequence_gaps.activitylog <- function(activitylog, details = TRUE
   # Detect gaps
   first <- min(activitylog[[case_id(activitylog)]])
   last <- max(activitylog[[case_id(activitylog)]])
+  cases <- sort(unique(activitylog[[case_id(activitylog)]]))
 
-  cases <- data.frame(case = seq(first, last)) %>%
-    mutate(present = case %in% case_labels(activitylog)) %>%
-    filter(present == F)
+  tibble(cases) %>%
+    mutate(diff = lead(cases) - cases) %>%
+    filter(diff > 1) %>%
+    mutate(from = cases + 1, to = cases + diff - 1, n_missing = diff - 1) %>%
+    select(-diff, -cases) -> cases
 
   # Prepare output
-  n_missing_case_ids <- nrow(cases)
+  n_missing_case_ids <- sum(cases$n_missing)
   n_expected_cases <- last - first + 1
 
   # Print output
@@ -76,7 +80,7 @@ detect_case_id_sequence_gaps.activitylog <- function(activitylog, details = TRUE
   message(glue("From the {n_expected_cases} expected cases in the activity log, ranging from {first} to {last}, {n_missing_case_ids} ({round(100*n_missing_case_ids/n_expected_cases, 2)}%) are missing."))
 
   if(details == TRUE & n_missing_case_ids > 0){
-    message("These case numbers are:\n")
+    message("These missing case numbers are:\n")
     return(cases)
   }
 }

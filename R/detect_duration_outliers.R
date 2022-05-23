@@ -61,7 +61,7 @@ detect_duration_outliers.activitylog <- function(activitylog,
 
   params <- list2(...)
 
-    tibble(act = names(params), params) %>%
+  tibble(act = names(params), params) %>%
     mutate(params = map(params, tibble)) %>%
     mutate(params = map(params, ~mutate(.x, names = names(`<named list>`)))) %>%
     unnest(params) %>%

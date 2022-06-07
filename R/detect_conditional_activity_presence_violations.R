@@ -30,7 +30,7 @@ detect_conditional_activity_presence.activitylog <- function(activitylog, condit
   error.conditionfilter <- FALSE
 
   if(any(!(activities %in% activity_labels(activitylog)))) {
-    warning(glue("The following activities do not occur in the data, and are dropped: {str_c(activities[[!(activities %in% activity_labels(activitylog)]]), collapse = ', ')}"))
+    warning(glue("The following activities do not occur in the data, and are dropped: {str_c(activities[[!(activities %in% activity_labels(activitylog))]]), collapse = ', ')}"))
 
     activities <- activities[[activities %in% activity_labels(activitylog)]]
   }
